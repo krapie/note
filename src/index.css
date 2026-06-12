@@ -280,7 +280,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 /* ── Main ──────────────────────────────────────────────────── */
 .kp-main {
   flex: 1;
-  max-width: var(--kp-wide-width);
+  max-width: var(--kp-content-width);
   width: 100%;
   margin: 0 auto;
   padding: var(--kp-space-7) var(--kp-page-pad) var(--kp-space-9);
@@ -423,7 +423,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 /* ── Note page layout ──────────────────────────────────────── */
 .note-page {
   flex: 1;
-  max-width: var(--kp-wide-width);
+  max-width: var(--kp-content-width);
   width: 100%;
   margin: 0 auto;
   padding: var(--kp-space-6) var(--kp-page-pad) var(--kp-space-9);
