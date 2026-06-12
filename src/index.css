@@ -426,7 +426,6 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .note-page-header {
   margin-bottom: var(--kp-space-6);
-  max-width: 760px;
 }
 .note-page-title {
   font-size: var(--kp-text-2xl);
@@ -453,7 +452,6 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   color: var(--kp-fg-2);
   line-height: var(--kp-leading-relaxed);
   margin-top: var(--kp-space-4);
-  max-width: 600px;
 }
 
 /* ── TCP Explorer (ported from plumber) ───────────────────── */
