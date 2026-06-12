@@ -360,24 +360,20 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .notes-list {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  border: 1px solid var(--kp-border);
-  border-radius: var(--kp-radius-md);
-  overflow: hidden;
 }
 .note-row {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: var(--kp-space-5);
   align-items: start;
-  padding: var(--kp-space-5);
+  padding: var(--kp-space-5) 0;
   border-bottom: 1px solid var(--kp-border-faint);
   text-decoration: none;
   color: inherit;
-  transition: background var(--kp-dur-fast) var(--kp-ease);
+  transition: opacity var(--kp-dur-fast) var(--kp-ease);
 }
 .note-row:last-child { border-bottom: none; }
-.note-row:hover { background: var(--kp-bg-subtle); }
+.note-row:hover { opacity: 0.7; }
 .note-row-main {}
 .note-row-title {
   font-size: var(--kp-text-md);
@@ -431,8 +427,6 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .note-page-header {
   margin-bottom: var(--kp-space-6);
   max-width: 760px;
-  margin-left: auto;
-  margin-right: auto;
 }
 .note-page-title {
   font-size: var(--kp-text-2xl);
@@ -471,8 +465,6 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   flex-direction: column;
   gap: var(--kp-space-4);
   max-width: 720px;
-  margin-left: auto;
-  margin-right: auto;
 }
 .tcp-phases {
   display: flex;
