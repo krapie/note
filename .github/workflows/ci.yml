@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout notes repo
+        uses: actions/checkout@v4
+
+      - name: Set image tag (short SHA)
+        run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: krapi0314/notes:${{ env.IMAGE_TAG }}
+
+      - name: Checkout homeserver repo
+        uses: actions/checkout@v4
+        with:
+          repository: krapie/homeserver
+          token: ${{ secrets.GITOPS_TOKEN }}
+          path: homeserver
+
+      - name: Update image tag in deployment manifest
+        run: |
+          sed -i "s|krapi0314/notes:.*|krapi0314/notes:${{ env.IMAGE_TAG }}|" \
+            homeserver/k8s/notes/deployment.yaml
+
+      - name: Commit and push manifest update
+        run: |
+          cd homeserver
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add k8s/notes/deployment.yaml
+          git commit -m "deploy: notes ${{ env.IMAGE_TAG }}"
+          git push
