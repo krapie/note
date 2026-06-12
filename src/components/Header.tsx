@@ -30,7 +30,7 @@ export default function Header({ backLabel, backHref, title }: HeaderProps) {
         ) : (
           <a href="https://kevinprk.com" className="kp-brand">
             <span className="kp-pi-mark">π</span>
-            <span className="kp-brand-name">note · kevinprk</span>
+            <span className="kp-brand-name">Note · kevinprk</span>
           </a>
         )}
         <div className="kp-header-spacer" />

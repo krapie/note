@@ -14,7 +14,7 @@ interface NoteLayoutProps {
 export default function NoteLayout({ title, date, readTime, tags, intro, children }: NoteLayoutProps) {
   return (
     <div className="app">
-      <Header backLabel="note" backHref="/" title={title} />
+      <Header backLabel="Note" backHref="/" title={title} />
       <main className="note-page">
         <div className="note-page-header">
           <h1 className="note-page-title">{title}</h1>
