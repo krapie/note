@@ -462,7 +462,6 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   display: flex;
   flex-direction: column;
   gap: var(--kp-space-4);
-  max-width: 720px;
 }
 .tcp-phases {
   display: flex;
