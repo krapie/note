@@ -22,7 +22,7 @@ const NOTES = [
   {
     id: 'vpc',
     title: 'VPC packet flow',
-    date: '2026-06-01',
+    date: '2026-06-13',
     read: '5 min',
     tags: ['aws', 'networking', 'vpc'],
     blurb: 'How packets move inside AWS VPC — Nitro cards, Mapping Service, Hyperplane, and Blackfoot edge. Three scenarios: VM→VM, VM→Internet, VM→NLB.',
@@ -30,7 +30,7 @@ const NOTES = [
   {
     id: 'clos',
     title: 'Clos vs. RNG topology',
-    date: '2026-04-10',
+    date: '2026-06-13',
     read: '6 min',
     tags: ['networking', 'datacenter'],
     blurb: 'How AWS replaced hierarchical fat-tree (Clos) data center networks with a flat quasi-random topology — fewer routers, more paths, less power.',
