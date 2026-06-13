@@ -5,19 +5,11 @@ import Footer from '../components/Footer'
 const NOTES = [
   {
     id: 'tcp',
-    title: 'The TCP three-way handshake',
-    date: '2026-05-20',
+    title: 'All about TCP',
+    date: '2026-06-13',
     read: '4 min',
     tags: ['networking', 'tcp'],
     blurb: 'What SYN, SYN-ACK, and ACK actually do — stepped through, packet by packet. Includes teardown, data transfer, state machine, and MTU/MSS.',
-  },
-  {
-    id: 'clos',
-    title: 'Clos vs. RNG topology',
-    date: '2026-04-10',
-    read: '6 min',
-    tags: ['networking', 'datacenter'],
-    blurb: 'How AWS replaced hierarchical fat-tree (Clos) data center networks with a flat quasi-random topology — fewer routers, more paths, less power.',
   },
   {
     id: 'vpc',
@@ -26,6 +18,14 @@ const NOTES = [
     read: '5 min',
     tags: ['aws', 'networking', 'vpc'],
     blurb: 'How packets move inside AWS VPC — Nitro cards, Mapping Service, Hyperplane, and Blackfoot edge. Three scenarios: VM→VM, VM→Internet, VM→NLB.',
+  },
+  {
+    id: 'clos',
+    title: 'Clos vs. RNG topology',
+    date: '2026-04-10',
+    read: '6 min',
+    tags: ['networking', 'datacenter'],
+    blurb: 'How AWS replaced hierarchical fat-tree (Clos) data center networks with a flat quasi-random topology — fewer routers, more paths, less power.',
   },
 ]
 
