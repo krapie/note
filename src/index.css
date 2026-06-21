@@ -1580,6 +1580,17 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   text-transform: uppercase;
   color: var(--kp-fg-4);
 }
+.bgp-sub-label {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--kp-fg-4);
+  margin-bottom: 6px;
+}
+.bgp-ibgp-section { transition: opacity 0.3s ease; }
+.bgp-ibgp-dim { opacity: 0.35; pointer-events: none; }
 .bgp-asn {
   font-family: var(--kp-font-mono);
   font-size: 10px;
@@ -1948,6 +1959,15 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .ipsec-dir-btn:last-child { border-right: none; }
 .ipsec-dir-btn:hover { background: var(--kp-hover-bg); color: var(--kp-fg); }
 .ipsec-dir-btn.active { background: var(--kp-fg); color: var(--kp-bg); }
+.ipsec-xfrm-label {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--kp-fg-4);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
 
 /* ESP packet frame */
 .ipsec-packet-wrap { display: flex; flex-direction: column; gap: var(--kp-space-2); }

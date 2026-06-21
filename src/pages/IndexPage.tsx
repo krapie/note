@@ -15,19 +15,19 @@ interface NoteEntry {
 const NOTES_EN: NoteEntry[] = [
   {
     id: 'ipsec',
-    title: 'IPSec: IKEv2 negotiation and ESP tunnel',
+    title: 'IPSec: ESP encapsulation and decapsulation',
     date: '2026-06-21',
-    read: '8 min',
+    read: '5 min',
     tags: ['networking', 'ipsec', 'security', 'vpn'],
-    blurb: 'How two gateways negotiate a secure tunnel via IKEv2 — DH key exchange, authentication, SA creation — then how every packet is ESP-encapsulated. Covers IKE_SA_INIT, IKE_AUTH, SPD/SAD setup, and step-by-step outbound/inbound packet transformation.',
+    blurb: 'What happens inside the xfrm subsystem when a packet hits an IPSec policy — from original datagram to encrypted wire format and back. Outbound and inbound transforms, step by step.',
   },
   {
     id: 'bgp',
-    title: 'BGP peering and route exchange',
+    title: 'BGP route advertisement and propagation',
     date: '2026-06-21',
-    read: '7 min',
+    read: '5 min',
     tags: ['networking', 'bgp', 'routing'],
-    blurb: 'How two BGP routers establish a session, exchange routes, and install them — then how those routes propagate through the AS via iBGP. Three interactive walkthroughs covering session states, the RIB/FIB pipeline, and convergence.',
+    blurb: 'How two eBGP peers advertise prefixes and install them through the Adj-RIB-In → Loc-RIB → FIB pipeline — then how the border router propagates those routes to internal iBGP peers.',
   },
   {
     id: 'mtr',
@@ -66,19 +66,19 @@ const NOTES_EN: NoteEntry[] = [
 const NOTES_KO: NoteEntry[] = [
   {
     id: 'ipsec',
-    title: 'IPSec: IKEv2 협상과 ESP 터널',
+    title: 'IPSec: ESP 캡슐화와 역캡슐화',
     date: '2026-06-21',
-    read: '8분',
+    read: '5분',
     tags: ['networking', 'ipsec', 'security', 'vpn'],
-    blurb: '두 게이트웨이가 IKEv2로 보안 터널을 협상하는 방법 — DH 키 교환, 인증, SA 생성 — 그리고 모든 패킷이 ESP로 캡슐화되는 과정. IKE_SA_INIT, IKE_AUTH, SPD/SAD 설정, 단계별 아웃바운드/인바운드 패킷 변환을 다룹니다.',
+    blurb: '패킷이 IPSec 정책에 도달했을 때 xfrm 서브시스템 내부에서 일어나는 일 — 원본 데이터그램에서 암호화된 전송 포맷까지, 그리고 다시 되돌아오는 과정. 단계별 아웃바운드/인바운드 변환.',
   },
   {
     id: 'bgp',
-    title: 'BGP 피어링과 경로 교환',
+    title: 'BGP 경로 광고와 전파',
     date: '2026-06-21',
-    read: '7분',
+    read: '5분',
     tags: ['networking', 'bgp', 'routing'],
-    blurb: '두 BGP 라우터가 세션을 수립하고 경로를 교환하고 설치하는 방법 — 이후 iBGP를 통해 AS 전체로 전파되는 과정. 세션 상태, RIB/FIB 파이프라인, 수렴을 다루는 세 가지 인터랙티브 데모.',
+    blurb: '서로 다른 AS의 두 eBGP 피어가 프리픽스를 광고하고 Adj-RIB-In → Loc-RIB → FIB 파이프라인을 통해 설치하는 과정 — 이후 iBGP를 통한 내부 전파.',
   },
   {
     id: 'mtr',
