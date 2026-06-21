@@ -181,15 +181,11 @@ const TCP_T = {
   en: {
     title: 'The TCP three-way handshake',
     readTime: '4 min',
-    intro: 'What SYN, SYN-ACK, and ACK actually do — stepped through, packet by packet. Covers the full lifecycle: handshake, data transfer, and four-way teardown. Includes state machine visualization, MTU/MSS reference, and conntrack.',
+    intro: 'What SYN, SYN-ACK, and ACK actually do — stepped through, packet by packet. Covers the full lifecycle: handshake, data transfer, and four-way teardown. Includes state machine visualization.',
     clientFsm: 'Client', serverFsm: 'Server',
     stateMachine: 'TCP State Machine',
     speed: 'Speed',
     dirCS: 'Client → Server', dirSC: 'Server → Client',
-    mtuSection: 'MTU / MSS / MRU',
-    mtuComingSoon: 'Interactive path MTU discovery demo — coming soon',
-    ctSection: 'Connection Tracking (conntrack)',
-    ctComingSoon: 'Live conntrack table viewer — coming soon',
     frames: [
       { annotation: '3-Way Handshake' },
       { note: 'Client picks a random ISN and sets SYN. No data yet — just synchronizing sequence numbers.' },
@@ -207,29 +203,15 @@ const TCP_T = {
       { note: 'Client sends final ACK and enters TIME_WAIT for 2×MSL (~120s) to ensure the server received it.' },
       { annotation: 'Connection closed (after 2×MSL)' },
     ],
-    eduFacts: {
-      mtu: 'Max L3 packet size per link. Ethernet default: 1500 B. Jumbo frames: up to 9000 B.',
-      mssFull: <>Max TCP payload per segment. <code>MSS = MTU − IP_hdr − TCP_hdr = 1500 − 20 − 20 = <strong>1460 B</strong></code>. Each side advertises its MSS in the SYN.</>,
-      mru: 'Max receive unit — the largest packet the local interface will reassemble. Usually equals MTU on the same link.',
-      pmtud: 'Path MTU Discovery: sender starts at local MTU; routers with smaller MTUs reply ICMP \'Fragmentation Needed\', letting the sender reduce MSS hop-by-hop.',
-      new: 'First packet seen; no reply yet. Firewall can accept or drop before state is established.',
-      established: 'Bidirectional traffic confirmed. Timeout: TCP 5 days, UDP 3 min. Most firewall rules allow this by default.',
-      related: 'New flow spawned by an existing tracked one — e.g., FTP data channel opened by the FTP control connection.',
-      timeWait: 'Connection closed; entry lingers 120 s to absorb delayed or duplicate packets still in flight.',
-    },
   },
   ko: {
     title: 'TCP 완전 해설',
     readTime: '4분',
-    intro: 'SYN, SYN-ACK, ACK가 실제로 무엇을 하는지 — 패킷 하나씩 단계적으로. 핸드셰이크, 데이터 전송, 4-way 종료의 전체 생명주기를 다룹니다. 상태 머신 시각화, MTU/MSS 참조, conntrack 포함.',
+    intro: 'SYN, SYN-ACK, ACK가 실제로 무엇을 하는지 — 패킷 하나씩 단계적으로. 핸드셰이크, 데이터 전송, 4-way 종료의 전체 생명주기를 다룹니다. 상태 머신 시각화 포함.',
     clientFsm: '클라이언트', serverFsm: '서버',
     stateMachine: 'TCP 상태 머신',
     speed: '속도',
     dirCS: '클라이언트 → 서버', dirSC: '서버 → 클라이언트',
-    mtuSection: 'MTU / MSS / MRU',
-    mtuComingSoon: '인터랙티브 경로 MTU 탐색 데모 — 준비 중',
-    ctSection: '연결 추적 (conntrack)',
-    ctComingSoon: '라이브 conntrack 테이블 뷰어 — 준비 중',
     frames: [
       { annotation: '3-Way 핸드셰이크' },
       { note: '클라이언트가 랜덤 ISN을 선택하고 SYN을 설정합니다. 아직 데이터 없음 — 시퀀스 번호 동기화만 수행합니다.' },
@@ -247,25 +229,8 @@ const TCP_T = {
       { note: '클라이언트가 최종 ACK를 전송하고 서버가 수신했는지 확인하기 위해 2×MSL(약 120초) 동안 TIME_WAIT 상태에 머뭅니다.' },
       { annotation: '연결 종료 (2×MSL 후)' },
     ],
-    eduFacts: {
-      mtu: '링크당 최대 L3 패킷 크기. 이더넷 기본값: 1500B. 점보 프레임: 최대 9000B.',
-      mssFull: <>세그먼트당 최대 TCP 페이로드. <code>MSS = MTU − IP_hdr − TCP_hdr = 1500 − 20 − 20 = <strong>1460 B</strong></code>. 각 측이 SYN에서 자체 MSS를 광고합니다.</>,
-      mru: '최대 수신 단위 — 로컬 인터페이스가 재조립할 가장 큰 패킷. 일반적으로 동일 링크에서 MTU와 같습니다.',
-      pmtud: '경로 MTU 탐색: 발신자가 로컬 MTU에서 시작; MTU가 더 작은 라우터가 ICMP \'단편화 필요\'로 응답하여 발신자가 홉별로 MSS를 줄이도록 합니다.',
-      new: '첫 번째 패킷 수신; 아직 응답 없음. 상태 수립 전에 방화벽이 허용 또는 차단할 수 있습니다.',
-      established: '양방향 트래픽 확인됨. 타임아웃: TCP 5일, UDP 3분. 대부분의 방화벽 규칙이 기본적으로 허용합니다.',
-      related: '기존 추적 연결에서 파생된 새 흐름 — 예: FTP 제어 연결이 개시한 FTP 데이터 채널.',
-      timeWait: '연결 종료됨; 항목이 120초 동안 유지되어 아직 전송 중인 지연 또는 중복 패킷을 흡수합니다.',
-    },
   },
 }
-
-const CONNTRACK_ROWS = [
-  { proto: 'TCP', src: '10.0.0.5:58234', dst: '93.184.216.34:443', state: 'ESTABLISHED', ttl: '86390s' },
-  { proto: 'TCP', src: '10.0.0.5:58235', dst: '93.184.216.34:443', state: 'TIME_WAIT',   ttl: '117s'   },
-  { proto: 'TCP', src: '10.0.0.7:49801', dst: '172.16.0.1:22',     state: 'ESTABLISHED', ttl: '431980s'},
-  { proto: 'UDP', src: '10.0.0.5:52341', dst: '8.8.8.8:53',        state: 'UNREPLIED',   ttl: '28s'    },
-]
 
 function StateBadge({ state }: { state: string }) {
   const cls =
@@ -274,15 +239,6 @@ function StateBadge({ state }: { state: string }) {
     ['FIN_WAIT_1','FIN_WAIT_2','TIME_WAIT','CLOSE_WAIT','LAST_ACK'].includes(state) ? 'tcp-st-closing' :
     state === 'CLOSED' ? 'tcp-st-closed' : 'tcp-st-neutral'
   return <span className={`tcp-state-badge ${cls}`}>{state}</span>
-}
-
-function EduFact({ k, v }: { k: string; v: React.ReactNode }) {
-  return (
-    <div className="tcp-edu-fact">
-      <span className="tcp-edu-fact-k">{k}</span>
-      <span className="tcp-edu-fact-v">{v}</span>
-    </div>
-  )
 }
 
 function clientFsmIdx(step: number): number {
@@ -452,60 +408,6 @@ function TcpExplorer() {
         </div>
       )}
 
-      <div className="tcp-edu-section">
-        <div className="tcp-edu-title">{t.mtuSection}</div>
-        <div className="tcp-frame-diagram">
-          <div className="tcp-frame-bar">
-            <div className="tcp-frame-seg tcp-seg-eth"><span>Eth</span><span className="tcp-seg-sz">14 B</span></div>
-            <div className="tcp-frame-seg tcp-seg-ip"><span>IP</span><span className="tcp-seg-sz">20 B</span></div>
-            <div className="tcp-frame-seg tcp-seg-tcp"><span>TCP</span><span className="tcp-seg-sz">20 B</span></div>
-            <div className="tcp-frame-seg tcp-seg-payload"><span>Payload</span><span className="tcp-seg-sz">≤ 1460 B</span></div>
-          </div>
-          <div className="tcp-frame-spans">
-            <div className="tcp-frame-span-mtu">
-              <div className="tcp-span-line" /><span>MTU = 1500 B</span><div className="tcp-span-line" />
-            </div>
-            <div className="tcp-frame-span-mss">
-              <div className="tcp-span-line" /><span>MSS = 1460 B</span><div className="tcp-span-line" />
-            </div>
-          </div>
-        </div>
-        <div className="tcp-edu-facts">
-          <EduFact k="MTU" v={t.eduFacts.mtu} />
-          <EduFact k="MSS" v={t.eduFacts.mssFull} />
-          <EduFact k="MRU" v={t.eduFacts.mru} />
-          <EduFact k="PMTUD" v={t.eduFacts.pmtud} />
-        </div>
-        <div className="tcp-coming-soon">{t.mtuComingSoon}</div>
-      </div>
-
-      <div className="tcp-edu-section">
-        <div className="tcp-edu-title">{t.ctSection}</div>
-        <div className="tcp-ct-table">
-          <div className="tcp-ct-header">
-            <span>proto</span><span>source</span><span>destination</span><span>state</span><span>ttl</span>
-          </div>
-          {CONNTRACK_ROWS.map((r, i) => {
-            const cls = r.state === 'ESTABLISHED' ? 'ct-est' : r.state === 'TIME_WAIT' ? 'ct-closing' : r.state === 'UNREPLIED' ? 'ct-unreplied' : ''
-            return (
-              <div key={i} className="tcp-ct-row">
-                <span className="tcp-ct-proto">{r.proto}</span>
-                <span className="tcp-ct-addr">{r.src}</span>
-                <span className="tcp-ct-addr">{r.dst}</span>
-                <span className={`tcp-ct-state ${cls}`}>{r.state}</span>
-                <span className="tcp-ct-ttl">{r.ttl}</span>
-              </div>
-            )
-          })}
-        </div>
-        <div className="tcp-edu-facts">
-          <EduFact k="NEW"         v={t.eduFacts.new} />
-          <EduFact k="ESTABLISHED" v={t.eduFacts.established} />
-          <EduFact k="RELATED"     v={t.eduFacts.related} />
-          <EduFact k="TIME_WAIT"   v={t.eduFacts.timeWait} />
-        </div>
-        <div className="tcp-coming-soon">{t.ctComingSoon}</div>
-      </div>
     </div>
   )
 }

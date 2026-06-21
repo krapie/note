@@ -7,6 +7,8 @@ import VpcPage from './pages/VpcPage'
 import MtrPage from './pages/MtrPage'
 import BgpPage from './pages/BgpPage'
 import IpsecPage from './pages/IpsecPage'
+import MtuPage from './pages/MtuPage'
+import ConntrackPage from './pages/ConntrackPage'
 
 type Theme = 'light' | 'dark'
 export type Lang = 'en' | 'ko'
@@ -73,6 +75,8 @@ export default function App() {
             <Route path="/mtr" element={<MtrPage />} />
             <Route path="/bgp" element={<BgpPage />} />
             <Route path="/ipsec" element={<IpsecPage />} />
+            <Route path="/mtu" element={<MtuPage />} />
+            <Route path="/conntrack" element={<ConntrackPage />} />
           </Routes>
         </BrowserRouter>
       </ThemeCtx.Provider>

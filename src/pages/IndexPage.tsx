@@ -30,6 +30,22 @@ const NOTES_EN: NoteEntry[] = [
     blurb: 'How two eBGP peers advertise prefixes and install them through the Adj-RIB-In → Loc-RIB → FIB pipeline — then how the border router propagates those routes to internal iBGP peers.',
   },
   {
+    id: 'mtu',
+    title: 'MTU, MSS, and Path MTU Discovery',
+    date: '2026-06-21',
+    read: '4 min',
+    tags: ['networking', 'tcp', 'mtu'],
+    blurb: 'Why large packets get silently dropped mid-path — and how TCP discovers the smallest MTU across all hops without fragmenting. Interactive PMTUD sequence with ICMP feedback loop.',
+  },
+  {
+    id: 'conntrack',
+    title: 'Linux connection tracking (conntrack)',
+    date: '2026-06-21',
+    read: '4 min',
+    tags: ['networking', 'linux', 'conntrack', 'firewall'],
+    blurb: 'How the Linux kernel tracks every active network flow and how conntrack states feed into stateful firewall rules. Three scenarios: TCP lifecycle, UDP timeout, and RELATED entry for FTP.',
+  },
+  {
     id: 'mtr',
     title: 'Reading MTR output',
     date: '2026-06-13',
@@ -39,11 +55,11 @@ const NOTES_EN: NoteEntry[] = [
   },
   {
     id: 'tcp',
-    title: 'All about TCP',
+    title: 'The TCP three-way handshake',
     date: '2026-06-13',
     read: '4 min',
     tags: ['networking', 'tcp'],
-    blurb: 'What SYN, SYN-ACK, and ACK actually do — stepped through, packet by packet. Includes teardown, data transfer, state machine, and MTU/MSS.',
+    blurb: 'What SYN, SYN-ACK, and ACK actually do — stepped through, packet by packet. Covers the full lifecycle: handshake, data transfer, and four-way teardown with state machine visualization.',
   },
   {
     id: 'vpc',
@@ -81,6 +97,22 @@ const NOTES_KO: NoteEntry[] = [
     blurb: '서로 다른 AS의 두 eBGP 피어가 프리픽스를 광고하고 Adj-RIB-In → Loc-RIB → FIB 파이프라인을 통해 설치하는 과정 — 이후 iBGP를 통한 내부 전파.',
   },
   {
+    id: 'mtu',
+    title: 'MTU, MSS, 경로 MTU 탐색',
+    date: '2026-06-21',
+    read: '4분',
+    tags: ['networking', 'tcp', 'mtu'],
+    blurb: '대형 패킷이 경로 중간에서 조용히 손실되는 이유 — 그리고 TCP가 단편화 없이 모든 홉에서 가장 작은 MTU를 탐색하는 방법. ICMP 피드백 루프를 포함한 인터랙티브 PMTUD 시퀀스.',
+  },
+  {
+    id: 'conntrack',
+    title: 'Linux 연결 추적 (conntrack)',
+    date: '2026-06-21',
+    read: '4분',
+    tags: ['networking', 'linux', 'conntrack', 'firewall'],
+    blurb: 'Linux 커널이 모든 활성 네트워크 흐름을 추적하는 방법과 conntrack 상태가 방화벽 규칙에 연결되는 방식. 세 가지 시나리오: TCP 생명주기, UDP 타임아웃, FTP용 RELATED 항목.',
+  },
+  {
     id: 'mtr',
     title: 'MTR 출력 읽기',
     date: '2026-06-13',
@@ -90,11 +122,11 @@ const NOTES_KO: NoteEntry[] = [
   },
   {
     id: 'tcp',
-    title: 'TCP 완전 해설',
+    title: 'TCP 3-Way 핸드셰이크',
     date: '2026-06-13',
     read: '4분',
     tags: ['networking', 'tcp'],
-    blurb: 'SYN, SYN-ACK, ACK가 실제로 무엇을 하는지 — 패킷 하나씩 단계적으로. 종료, 데이터 전송, 상태 머신, MTU/MSS 포함.',
+    blurb: 'SYN, SYN-ACK, ACK가 실제로 무엇을 하는지 — 패킷 하나씩 단계적으로. 핸드셰이크, 데이터 전송, 4-way 종료의 전체 생명주기와 상태 머신 시각화 포함.',
   },
   {
     id: 'vpc',
