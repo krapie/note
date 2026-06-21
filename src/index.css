@@ -2036,6 +2036,170 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 [data-theme="dark"] .ipsec-seg-iv   { background: rgba(146,64,14,.08); }
 [data-theme="dark"] .ipsec-seg-auth { background: rgba(31,122,58,.12); }
 
+/* ── IPSec v2: dual-peer + IKEv2 explorer ─────────────────────── */
+.ipsec2-peers {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-md);
+  overflow: hidden;
+  background: var(--kp-surface);
+}
+.ipsec2-peer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.ipsec2-peer + .ipsec2-peer { border-left: 1px solid var(--kp-border-faint); }
+.ipsec2-peer-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--kp-space-2);
+  padding: var(--kp-space-2) var(--kp-space-3);
+  background: var(--kp-bg-muted);
+  border-bottom: 1px solid var(--kp-border-faint);
+}
+.ipsec2-peer-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--kp-fg);
+}
+.ipsec2-peer-addr {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-3);
+  letter-spacing: var(--kp-tracking-mono);
+}
+
+/* shared inner table */
+.ipsec2-table {
+  border-bottom: 1px solid var(--kp-border-faint);
+  transition: background var(--kp-dur-base) var(--kp-ease);
+}
+.ipsec2-table:last-child { border-bottom: none; }
+.ipsec2-table-hi { background: var(--kp-bg-subtle); }
+.ipsec2-table-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--kp-space-2);
+  padding: 3px var(--kp-space-3);
+  background: var(--kp-bg-muted);
+  border-bottom: 1px solid var(--kp-border-faint);
+}
+.ipsec2-table-name {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--kp-fg-2);
+}
+.ipsec2-table-sub {
+  font-size: 9px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+}
+.ipsec2-table-body {
+  padding: 5px var(--kp-space-3);
+  min-height: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.ipsec2-sad-body { min-height: 46px; }
+.ipsec2-empty {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+  letter-spacing: var(--kp-tracking-mono);
+  font-style: italic;
+}
+.ipsec2-spd-row,
+.ipsec2-sad-row {
+  display: flex;
+  align-items: center;
+  gap: var(--kp-space-2);
+  font-family: var(--kp-font-mono);
+  font-size: var(--kp-text-xs);
+  flex-wrap: wrap;
+  padding: 2px 0;
+  border-radius: var(--kp-radius-xs);
+  transition: background var(--kp-dur-fast) var(--kp-ease);
+}
+.ipsec2-sad-hi {
+  background: var(--kp-bg-subtle);
+  outline: 1.5px solid var(--kp-border-strong);
+  outline-offset: 1px;
+  border-radius: 3px;
+  padding: 2px 4px;
+  animation: ipsec2-sadfade 0.35s ease;
+}
+@keyframes ipsec2-sadfade {
+  from { background: var(--kp-hover-bg); }
+  to   { background: var(--kp-bg-subtle); }
+}
+
+/* Message lane */
+.ipsec2-lane {
+  flex: 0 0 100px;
+  border-left: 1px solid var(--kp-border-faint);
+  border-right: 1px solid var(--kp-border-faint);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--kp-space-2);
+  padding: var(--kp-space-3) var(--kp-space-2);
+  background: var(--kp-bg-muted);
+}
+.ipsec2-msg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  animation: bgp2-pop 0.3s ease;
+}
+.ipsec2-msg-pill {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  font-weight: 600;
+  padding: 3px 6px;
+  border-radius: 3px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  border: 1.5px solid;
+}
+.ipsec2-msg-ike {
+  color: var(--kp-fg-2);
+  border-color: var(--kp-border-strong);
+  background: var(--kp-bg);
+}
+.ipsec2-msg-esp {
+  color: #1f7a3a;
+  border-color: rgba(31,122,58,.35);
+  background: rgba(31,122,58,.05);
+}
+[data-theme="dark"] .ipsec2-msg-esp { background: rgba(31,122,58,.1); }
+
+@media (max-width: 640px) {
+  .ipsec2-peers { flex-direction: column; }
+  .ipsec2-peer + .ipsec2-peer { border-left: none; border-top: 1px solid var(--kp-border-faint); }
+  .ipsec2-lane {
+    flex: none;
+    width: 100%;
+    min-height: 48px;
+    flex-direction: row;
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid var(--kp-border-faint);
+    border-bottom: 1px solid var(--kp-border-faint);
+  }
+}
+
 /* ── BGP v2 Explorer (dual-router cards) ──────────────────────── */
 .bgp2-phases {
   display: flex;
