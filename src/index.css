@@ -1817,3 +1817,184 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   letter-spacing: var(--kp-tracking-mono);
 }
 .bgp-rs-inst .bgp-rs-label { color: #1f7a3a; }
+
+/* ── IPSec / IKE Explorer ──────────────────────────────────────── */
+
+/* IKE message tags */
+.ike-tag-init { color: var(--kp-fg-2); border-color: var(--kp-border); background: var(--kp-bg-muted); }
+.ike-tag-auth { color: var(--kp-bg); background: var(--kp-fg); border-color: var(--kp-fg); }
+
+/* Inline status badges */
+.ike-cleartext-badge,
+.ike-enc-badge {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid;
+  align-self: center;
+}
+.ike-cleartext-badge { color: var(--kp-fg-4); border-color: var(--kp-border-faint); background: transparent; }
+.ike-enc-badge       { color: #1f7a3a; border-color: rgba(31,122,58,.3); background: rgba(31,122,58,.06); }
+
+/* SPD / SAD panel */
+.ike-db-panel {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-md);
+  overflow: hidden;
+  background: var(--kp-surface);
+}
+.ike-db-section {
+  border-bottom: 1px solid var(--kp-border-faint);
+  transition: background var(--kp-dur-base) var(--kp-ease);
+}
+.ike-db-section:last-child { border-bottom: none; }
+.ike-db-active { background: var(--kp-bg-subtle); }
+.ike-db-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--kp-space-3);
+  padding: var(--kp-space-2) var(--kp-space-3);
+  background: var(--kp-bg-muted);
+  border-bottom: 1px solid var(--kp-border-faint);
+}
+.ike-db-title {
+  font-size: 11px;
+  font-family: var(--kp-font-mono);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--kp-fg-2);
+}
+.ike-db-sub {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+  letter-spacing: var(--kp-tracking-mono);
+}
+.ike-db-body {
+  padding: var(--kp-space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--kp-space-2);
+  min-height: 44px;
+}
+.ike-db-row {
+  display: flex;
+  align-items: center;
+  gap: var(--kp-space-3);
+  font-family: var(--kp-font-mono);
+  font-size: var(--kp-text-xs);
+  flex-wrap: wrap;
+}
+.ike-dir-badge {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+.ike-dir-out { color: #1f7a3a; border-color: rgba(31,122,58,.3); background: rgba(31,122,58,.06); }
+.ike-dir-in  { color: #92400e; border-color: rgba(146,64,14,.3); background: rgba(146,64,14,.06); }
+.ike-selector { color: var(--kp-fg); font-size: 12px; }
+.ike-spi      { color: var(--kp-fg); font-size: 12px; }
+.ike-cipher   { color: var(--kp-fg-2); }
+.ike-action   { color: var(--kp-fg-3); }
+.ike-seq      { color: var(--kp-fg-4); }
+
+/* Direction toggle (ESP explorer) */
+.ipsec-dir-toggle {
+  display: flex;
+  gap: 0;
+  align-self: flex-start;
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-sm);
+  overflow: hidden;
+}
+.ipsec-dir-btn {
+  font-size: var(--kp-text-xs);
+  font-family: var(--kp-font-mono);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 5px 14px;
+  color: var(--kp-fg-3);
+  background: transparent;
+  border-right: 1px solid var(--kp-border);
+  transition: background var(--kp-dur-fast) var(--kp-ease), color var(--kp-dur-fast) var(--kp-ease);
+}
+.ipsec-dir-btn:last-child { border-right: none; }
+.ipsec-dir-btn:hover { background: var(--kp-hover-bg); color: var(--kp-fg); }
+.ipsec-dir-btn.active { background: var(--kp-fg); color: var(--kp-bg); }
+
+/* ESP packet frame */
+.ipsec-packet-wrap { display: flex; flex-direction: column; gap: var(--kp-space-2); }
+.ipsec-packet-title {
+  font-size: 11px;
+  font-family: var(--kp-font-mono);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--kp-fg-3);
+  text-transform: uppercase;
+}
+.ipsec-packet {
+  display: flex;
+  height: 60px;
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-sm);
+  overflow: hidden;
+  font-family: var(--kp-font-mono);
+}
+.ipsec-seg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 8px;
+  border-right: 1px solid var(--kp-border);
+  flex-shrink: 0;
+  min-width: 0;
+  transition: outline var(--kp-dur-fast) var(--kp-ease), background var(--kp-dur-base) var(--kp-ease);
+}
+.ipsec-seg:last-child { border-right: none; }
+.ipsec-seg-grow { flex: 1; }
+.ipsec-seg-hi {
+  outline: 2px solid var(--kp-fg);
+  outline-offset: -2px;
+  position: relative;
+  z-index: 1;
+}
+.ipsec-seg-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: inherit;
+  white-space: nowrap;
+}
+.ipsec-seg-sub {
+  font-size: 9px;
+  font-weight: 400;
+  color: inherit;
+  opacity: 0.65;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.ipsec-seg-outer   { background: var(--kp-bg-muted);          color: var(--kp-fg-3);  width: 78px; }
+.ipsec-seg-esp     { background: rgba(146,64,14,.07);          color: #92400e;          width: 66px; }
+.ipsec-seg-iv      { background: rgba(146,64,14,.04);          color: #92400e;          width: 56px; }
+.ipsec-seg-inner   { background: var(--kp-bg-subtle);          color: var(--kp-fg-2);  width: 78px; }
+.ipsec-seg-payload { background: var(--kp-bg);                 color: var(--kp-fg); }
+.ipsec-seg-enc     { background: var(--kp-bg-muted);           color: var(--kp-fg-3); }
+.ipsec-seg-auth    { background: rgba(31,122,58,.07);          color: #1f7a3a;          width: 72px; }
+
+[data-theme="dark"] .ipsec-seg-esp  { background: rgba(146,64,14,.12); }
+[data-theme="dark"] .ipsec-seg-iv   { background: rgba(146,64,14,.08); }
+[data-theme="dark"] .ipsec-seg-auth { background: rgba(31,122,58,.12); }

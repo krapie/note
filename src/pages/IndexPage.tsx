@@ -4,6 +4,14 @@ import Footer from '../components/Footer'
 
 const NOTES = [
   {
+    id: 'ipsec',
+    title: 'IPSec: IKEv2 negotiation and ESP tunnel',
+    date: '2026-06-21',
+    read: '8 min',
+    tags: ['networking', 'ipsec', 'security', 'vpn'],
+    blurb: 'How two gateways negotiate a secure tunnel via IKEv2 — DH key exchange, authentication, SA creation — then how every packet is ESP-encapsulated. Covers IKE_SA_INIT, IKE_AUTH, SPD/SAD setup, and step-by-step outbound/inbound packet transformation.',
+  },
+  {
     id: 'bgp',
     title: 'BGP peering and route exchange',
     date: '2026-06-21',

@@ -6,6 +6,7 @@ import ClosPage from './pages/ClosPage'
 import VpcPage from './pages/VpcPage'
 import MtrPage from './pages/MtrPage'
 import BgpPage from './pages/BgpPage'
+import IpsecPage from './pages/IpsecPage'
 
 type Theme = 'light' | 'dark'
 
@@ -56,6 +57,7 @@ export default function App() {
           <Route path="/vpc" element={<VpcPage />} />
           <Route path="/mtr" element={<MtrPage />} />
           <Route path="/bgp" element={<BgpPage />} />
+          <Route path="/ipsec" element={<IpsecPage />} />
         </Routes>
       </BrowserRouter>
     </ThemeCtx.Provider>
