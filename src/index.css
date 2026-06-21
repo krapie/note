@@ -1545,4 +1545,275 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   .mtr-toggle-btn { flex: 1; font-size: 13px; padding: 6px 8px; }
   .mtr-cheat-row { grid-template-columns: 1fr; }
   .mtr-cheat-pattern { border-right: none; border-bottom: 1px solid var(--kp-border-faint); }
+  .bgp-rib-panels { flex-direction: column; }
+  .bgp-rib-arrow { display: none; }
+  .bgp-ibgp-layout { flex-direction: column; align-items: flex-start; }
+  .bgp-ibgp-right { width: 100%; }
 }
+
+/* ── BGP Explorer ──────────────────────────────────────────────── */
+.bgp-root { display: flex; flex-direction: column; gap: var(--kp-space-6); }
+.bgp-sep { height: 1px; background: var(--kp-border-faint); }
+.bgp-explorer { display: flex; flex-direction: column; gap: var(--kp-space-4); }
+.bgp-section-label {
+  font-size: 11px;
+  font-family: var(--kp-font-mono);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kp-fg-4);
+}
+.bgp-asn {
+  font-family: var(--kp-font-mono);
+  font-size: 10px;
+  color: var(--kp-fg-3);
+  letter-spacing: var(--kp-tracking-mono);
+}
+.bgp-dir-label {
+  font-family: var(--kp-font-mono);
+  font-size: var(--kp-text-xs);
+  color: var(--kp-fg-3);
+  align-self: center;
+}
+
+/* BGP state badge colors (extend .tcp-state-badge base) */
+.bgp-st-idle     { color: var(--kp-fg-4); border-color: var(--kp-border-faint); background: transparent; }
+.bgp-st-transit  { color: #92400e; border-color: rgba(146,64,14,.3); background: rgba(146,64,14,.06); }
+.bgp-st-est      { color: #1f7a3a; border-color: rgba(31,122,58,.3); background: rgba(31,122,58,.06); }
+
+/* BGP message type tags */
+.bgp-msg-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-family: var(--kp-font-mono);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border: 1px solid;
+}
+.bgp-tag-tcp    { color: var(--kp-fg-2); border-color: var(--kp-border); background: var(--kp-bg-muted); }
+.bgp-tag-open   { color: #1f7a3a; border-color: rgba(31,122,58,.35); background: rgba(31,122,58,.07); }
+.bgp-tag-ka     { color: var(--kp-fg-3); border-color: var(--kp-border); background: var(--kp-bg-muted); }
+.bgp-tag-update { color: var(--kp-bg); background: var(--kp-fg); border-color: var(--kp-fg); }
+
+/* RIB/FIB panels */
+.bgp-rib-panels {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-md);
+  overflow: hidden;
+  background: var(--kp-surface);
+}
+.bgp-rib-arrow {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--kp-space-2);
+  color: var(--kp-fg-4);
+  font-size: 14px;
+  background: var(--kp-bg-muted);
+  border-left: 1px solid var(--kp-border-faint);
+  border-right: 1px solid var(--kp-border-faint);
+  flex-shrink: 0;
+}
+.bgp-rib-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  transition: background var(--kp-dur-base) var(--kp-ease);
+}
+.bgp-rib-col + .bgp-rib-col { border-left: 1px solid var(--kp-border-faint); }
+.bgp-rib-active { background: var(--kp-bg-subtle); }
+.bgp-rib-head {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: var(--kp-space-2) var(--kp-space-3);
+  border-bottom: 1px solid var(--kp-border-faint);
+  background: var(--kp-bg-muted);
+}
+.bgp-rib-title {
+  font-size: 11px;
+  font-family: var(--kp-font-mono);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--kp-fg-2);
+}
+.bgp-rib-sub {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+  letter-spacing: var(--kp-tracking-mono);
+}
+.bgp-rib-body {
+  padding: var(--kp-space-3);
+  flex: 1;
+  min-height: 52px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--kp-space-2);
+}
+.bgp-rib-empty {
+  font-size: var(--kp-text-xs);
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+}
+.bgp-rib-row { display: flex; flex-direction: column; gap: 2px; }
+.bgp-rib-prefix {
+  font-family: var(--kp-font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--kp-fg);
+  letter-spacing: var(--kp-tracking-mono);
+}
+.bgp-rib-attrs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kp-space-3);
+  font-family: var(--kp-font-mono);
+  font-size: 10px;
+  color: var(--kp-fg-2);
+  letter-spacing: var(--kp-tracking-mono);
+}
+.bgp-k {
+  color: var(--kp-fg-4);
+  margin-right: 3px;
+}
+
+/* iBGP propagation layout */
+.bgp-ibgp-layout {
+  display: flex;
+  align-items: center;
+  gap: var(--kp-space-5);
+  padding: var(--kp-space-5);
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-md);
+  background: var(--kp-surface);
+  overflow-x: auto;
+}
+.bgp-ibgp-source { flex-shrink: 0; }
+.bgp-ibgp-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--kp-space-3) var(--kp-space-4);
+  border: 1px solid var(--kp-border-strong);
+  border-radius: var(--kp-radius-md);
+  background: var(--kp-bg-muted);
+  min-width: 96px;
+}
+.bgp-ibgp-name {
+  font-size: var(--kp-text-sm);
+  font-weight: var(--kp-weight-semi);
+  color: var(--kp-fg);
+}
+.bgp-ibgp-role {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+  letter-spacing: 0.02em;
+}
+.bgp-ibgp-route {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  color: #1f7a3a;
+  margin-top: 2px;
+}
+.bgp-ibgp-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--kp-space-4);
+}
+.bgp-ibgp-pair {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.bgp-ibgp-link {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--kp-space-2);
+  min-width: 60px;
+}
+.bgp-ibgp-link-line {
+  flex: 1;
+  height: 1px;
+  background: var(--kp-border-strong);
+  position: relative;
+  overflow: hidden;
+}
+.bgp-ibgp-link-active .bgp-ibgp-link-line { background: var(--kp-fg-2); }
+.bgp-ibgp-dot {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--kp-fg);
+  animation: bgp-dot-ltr 0.65s ease-in-out forwards;
+}
+@keyframes bgp-dot-ltr { from { left: 0; } to { left: calc(100% - 8px); } }
+.bgp-ibgp-link-tag {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.bgp-ibgp-link-active .bgp-ibgp-link-tag { color: var(--kp-fg-2); }
+
+/* Router status cards (iBGP targets) */
+.bgp-rs-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: var(--kp-space-3) var(--kp-space-4);
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-md);
+  background: var(--kp-surface);
+  min-width: 96px;
+  flex-shrink: 0;
+  transition: border-color var(--kp-dur-base) var(--kp-ease), background var(--kp-dur-base) var(--kp-ease);
+}
+.bgp-rs-inst { border-color: rgba(31,122,58,.35); background: rgba(31,122,58,.04); }
+.bgp-rs-recv { border-color: rgba(146,64,14,.35); background: rgba(146,64,14,.04); }
+.bgp-rs-name {
+  font-size: var(--kp-text-sm);
+  font-weight: var(--kp-weight-semi);
+  color: var(--kp-fg);
+}
+.bgp-rs-role {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+}
+.bgp-rs-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 3px;
+}
+.bgp-rs-icon {
+  font-size: 12px;
+  color: var(--kp-fg-4);
+  line-height: 1;
+}
+.bgp-rs-inst .bgp-rs-icon { color: #1f7a3a; }
+.bgp-rs-recv .bgp-rs-icon { color: #92400e; }
+.bgp-rs-label {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-3);
+  letter-spacing: var(--kp-tracking-mono);
+}
+.bgp-rs-inst .bgp-rs-label { color: #1f7a3a; }

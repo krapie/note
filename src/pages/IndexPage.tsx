@@ -4,6 +4,14 @@ import Footer from '../components/Footer'
 
 const NOTES = [
   {
+    id: 'bgp',
+    title: 'BGP peering and route exchange',
+    date: '2026-06-21',
+    read: '7 min',
+    tags: ['networking', 'bgp', 'routing'],
+    blurb: 'How two BGP routers establish a session, exchange routes, and install them — then how those routes propagate through the AS via iBGP. Three interactive walkthroughs covering session states, the RIB/FIB pipeline, and convergence.',
+  },
+  {
     id: 'mtr',
     title: 'Reading MTR output',
     date: '2026-06-13',
