@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import NoteLayout from '../components/NoteLayout'
-import { useTheme } from '../App'
+import { useTheme, useLang } from '../App'
 
 interface Step {
   title: string
@@ -55,6 +55,45 @@ const SCENARIOS: Record<string, Scenario> = {
   },
 }
 
+const SCENARIOS_KO: Record<string, Scenario> = {
+  'vm-vm': {
+    desc: 'EC2-A에서 동일 VPC 내 EC2-B로 전송되는 패킷입니다. Nitro 카드가 모든 아웃바운드 프레임을 가로채고, Mapping Service에 조회하여 목적지의 물리적 호스트 주소를 확인한 후, 원본 패킷에 외부 IP 헤더를 감싸 AWS 물리 네트워크를 통해 전달합니다 — 게스트 OS에는 완전히 투명합니다.',
+    steps: [
+      { title: 'EC2-A가 패킷을 전송합니다', detail: 'EC2-A의 게스트 OS가 일반적인 전송을 실행합니다. 앱은 VPC 사설 IP만 볼 수 있으며 물리 기반 레이어에 대한 인식이 없습니다.', packet: SCENARIOS['vm-vm'].steps[0].packet, highlight: SCENARIOS['vm-vm'].steps[0].highlight, pos: SCENARIOS['vm-vm'].steps[0].pos },
+      { title: 'Nitro Card가 가로챕니다', detail: 'VM에서 나가는 모든 프레임은 와이어에 도달하기 전에 Nitro Card에 캡처됩니다. 게스트 OS는 이를 우회할 수 없습니다 — 캡슐화는 하드웨어에서 발생합니다.', packet: SCENARIOS['vm-vm'].steps[1].packet, highlight: SCENARIOS['vm-vm'].steps[1].highlight, pos: SCENARIOS['vm-vm'].steps[1].pos },
+      { title: 'Mapping Service 조회', detail: 'Nitro가 Mapping Service에 조회합니다: "10.0.0.20을 소유하는 물리 호스트는?" 응답이 마이크로초 단위로 로컬에 캐시됩니다. 캐시 미스 시 분산 컨트롤 플레인에 도달합니다.', packet: SCENARIOS['vm-vm'].steps[2].packet, highlight: SCENARIOS['vm-vm'].steps[2].highlight, pos: SCENARIOS['vm-vm'].steps[2].pos },
+      { title: '응답: 캡슐화된 패킷 구성', detail: 'Nitro가 외부 IP 헤더를 추가하며 목적지는 물리 호스트(172.16.2.20)입니다. 물리 라우터는 이 외부 헤더만 봅니다 — VPC 주소에 대한 지식이 없습니다.', packet: SCENARIOS['vm-vm'].steps[3].packet, highlight: SCENARIOS['vm-vm'].steps[3].highlight, pos: SCENARIOS['vm-vm'].steps[3].pos },
+      { title: 'AWS 물리 네트워크 경유', detail: '캡슐화된 패킷이 외부 IP 주소를 사용해 홉별로 포워딩됩니다. VPC 격리가 유지됩니다 — 물리 라우터가 내부 패킷을 검사하지 않습니다.', packet: SCENARIOS['vm-vm'].steps[4].packet, highlight: SCENARIOS['vm-vm'].steps[4].highlight, waypoints: SCENARIOS['vm-vm'].steps[4].waypoints },
+      { title: 'Nitro Card B가 역캡슐화합니다', detail: '도착 시 Nitro Card B가 외부 헤더를 제거하고 내부 VPC 목적지를 검증합니다. 원본 패킷이 발신자가 생성한 그대로 재구성됩니다.', packet: SCENARIOS['vm-vm'].steps[5].packet, highlight: SCENARIOS['vm-vm'].steps[5].highlight, pos: SCENARIOS['vm-vm'].steps[5].pos },
+      { title: 'EC2-B로 전달됩니다', detail: 'EC2-B가 10.0.0.10으로부터 일반 TCP 세그먼트를 수신합니다. 캡슐화 왕복 전체가 양쪽 엔드포인트에 보이지 않습니다.', packet: SCENARIOS['vm-vm'].steps[6].packet, highlight: SCENARIOS['vm-vm'].steps[6].highlight, pos: SCENARIOS['vm-vm'].steps[6].pos },
+    ],
+  },
+  'vm-inet': {
+    desc: '인터넷으로 향하는 EC2-A 패킷입니다. Nitro가 가로채고 Mapping Service가 Internet Gateway 경로를 Blackfoot 엣지 장치로 해석한 후, VPC 오버레이 네트워크와 외부 인터넷을 연결하는 Blackfoot으로 패킷을 전달합니다.',
+    steps: [
+      { title: 'EC2-A가 인터넷으로 전송합니다', detail: '게스트 OS가 공인 IP로 전송합니다. VPC 서브넷 라우팅 테이블이 Internet Gateway(IGW)를 기본 경로로 지정합니다.', packet: SCENARIOS['vm-inet'].steps[0].packet, highlight: SCENARIOS['vm-inet'].steps[0].highlight, pos: SCENARIOS['vm-inet'].steps[0].pos },
+      { title: 'Nitro Card가 가로챕니다', detail: 'VPC 내부 트래픽과 동일 — 모든 프레임이 호스트를 떠나기 전에 Nitro Card에 캡처됩니다.', packet: SCENARIOS['vm-inet'].steps[1].packet, highlight: SCENARIOS['vm-inet'].steps[1].highlight, pos: SCENARIOS['vm-inet'].steps[1].pos },
+      { title: 'Mapping Service 조회: IGW → Blackfoot', detail: 'Mapping Service가 IGW 대상을 Blackfoot 엣지 장치로 해석합니다. Blackfoot은 VPC 오버레이를 외부 네트워크에 연결하는 AWS 컴포넌트입니다.', packet: SCENARIOS['vm-inet'].steps[2].packet, highlight: SCENARIOS['vm-inet'].steps[2].highlight, pos: SCENARIOS['vm-inet'].steps[2].pos },
+      { title: 'Blackfoot 방향으로 캡슐화', detail: 'Nitro가 Blackfoot의 물리 주소를 외부 목적지로 사용해 패킷을 캡슐화합니다. 내부 패킷은 사설 소스 IP를 그대로 유지합니다 — NAT는 엣지에서 발생합니다.', packet: SCENARIOS['vm-inet'].steps[3].packet, highlight: SCENARIOS['vm-inet'].steps[3].highlight, pos: SCENARIOS['vm-inet'].steps[3].pos },
+      { title: 'Blackfoot으로 경유', detail: '캡슐화된 패킷이 AWS 물리 네트워크를 통해 AZ 경계의 Blackfoot 엣지 장치로 이동합니다.', packet: SCENARIOS['vm-inet'].steps[4].packet, highlight: SCENARIOS['vm-inet'].steps[4].highlight, waypoints: SCENARIOS['vm-inet'].steps[4].waypoints },
+      { title: 'Blackfoot: 역캡슐화 및 NAT', detail: 'Blackfoot이 외부 헤더를 제거하고, 사설 IP를 인스턴스에 할당된 Elastic IP/공인 IP로 소스 NAT를 적용한 후 공인 인터넷으로 패킷을 전달할 준비를 합니다.', packet: SCENARIOS['vm-inet'].steps[5].packet, highlight: SCENARIOS['vm-inet'].steps[5].highlight, pos: SCENARIOS['vm-inet'].steps[5].pos },
+      { title: '인터넷으로 포워딩', detail: '이제 공인 패킷이 Blackfoot 엣지 장치를 통해 AWS에서 공인 인터넷으로 나갑니다. 반환 트래픽은 역방향 경로를 따르며, Blackfoot이 DNAT를 수행하여 사설 IP를 복원합니다.', packet: SCENARIOS['vm-inet'].steps[6].packet, highlight: SCENARIOS['vm-inet'].steps[6].highlight, pos: SCENARIOS['vm-inet'].steps[6].pos },
+    ],
+  },
+  'vm-nlb': {
+    desc: 'NLB(Network Load Balancer)에 도달하는 EC2-A 패킷입니다. Hyperplane — AWS 내부 분산 패킷 포워딩 시스템 — 이 NLB를 구동합니다. 5-tuple의 일관된 해싱을 통해 각 흐름을 단일 Hyperplane 노드에 고정시킨 후, 정상 대상을 선택하여 재캡슐화합니다.',
+    steps: [
+      { title: 'EC2-A가 NLB에 연결합니다', detail: '앱이 NLB의 VIP(10.0.1.100)로 TCP 연결을 엽니다. 게스트 관점에서는 다른 VPC 목적지와 동일하게 보입니다.', packet: SCENARIOS['vm-nlb'].steps[0].packet, highlight: SCENARIOS['vm-nlb'].steps[0].highlight, pos: SCENARIOS['vm-nlb'].steps[0].pos },
+      { title: 'Nitro Card가 가로챕니다', detail: 'Nitro Card가 패킷을 캡처합니다. 목적지가 NLB VIP이므로 Mapping Service는 단일 호스트가 아닌 Hyperplane 플릿 엔드포인트로 해석합니다.', packet: SCENARIOS['vm-nlb'].steps[1].packet, highlight: SCENARIOS['vm-nlb'].steps[1].highlight, pos: SCENARIOS['vm-nlb'].steps[1].pos },
+      { title: 'Mapping Service: VIP → Hyperplane 해석', detail: 'Mapping Service가 10.0.1.100을 NLB VIP로 식별하고 Hyperplane 플릿 엔드포인트를 반환합니다. Hyperplane은 단일 ENI처럼 보이지만 내부적으로 이중화된 플릿으로 구성됩니다.', packet: SCENARIOS['vm-nlb'].steps[2].packet, highlight: SCENARIOS['vm-nlb'].steps[2].highlight, pos: SCENARIOS['vm-nlb'].steps[2].pos },
+      { title: 'Hyperplane으로 캡슐화', detail: 'Nitro가 Hyperplane을 외부 목적지로 하여 패킷을 감쌉니다. 내부 패킷은 그대로 유지됩니다 — Hyperplane이 나중에 실제 대상을 결정합니다.', packet: SCENARIOS['vm-nlb'].steps[3].packet, highlight: SCENARIOS['vm-nlb'].steps[3].highlight, pos: SCENARIOS['vm-nlb'].steps[3].pos },
+      { title: 'Hyperplane: 흐름 해시 및 대상 선택', detail: 'Hyperplane이 5-tuple(src IP, src port, dst IP, dst port, proto)을 해시하여 흐름 친화성을 일관되게 유지합니다 — 이 연결의 모든 패킷이 동일한 Hyperplane 노드에 도달합니다. 등록된 대상 그룹에서 정상 대상(EC2-B)을 선택합니다.', packet: SCENARIOS['vm-nlb'].steps[4].packet, highlight: SCENARIOS['vm-nlb'].steps[4].highlight, waypoints: SCENARIOS['vm-nlb'].steps[4].waypoints },
+      { title: '대상으로 재캡슐화 및 포워딩', detail: 'Hyperplane이 EC2-B의 물리 호스트(Nitro B)를 외부 목적지로 하여 패킷을 재캡슐화합니다. NLB VIP는 내부 헤더에 유지됩니다 — 대상이 원본 dst IP를 보고 자체 라우팅을 수행합니다.', packet: SCENARIOS['vm-nlb'].steps[5].packet, highlight: SCENARIOS['vm-nlb'].steps[5].highlight, waypoints: SCENARIOS['vm-nlb'].steps[5].waypoints },
+      { title: 'EC2-B로 전달됩니다', detail: 'Nitro Card B가 역캡슐화하고 EC2-B로 전달합니다. NLB 대상 그룹 리스너가 연결을 처리합니다. 전체 흐름이 마이크로초 내에 완료됩니다.', packet: SCENARIOS['vm-nlb'].steps[6].packet, highlight: SCENARIOS['vm-nlb'].steps[6].highlight, pos: SCENARIOS['vm-nlb'].steps[6].pos },
+    ],
+  },
+}
+
 const TABS = [
   { id: 'vm-vm',   label: 'VM → VM' },
   { id: 'vm-inet', label: 'VM → Internet' },
@@ -75,6 +114,8 @@ const NODE_COLOR = {
 
 export default function VpcPage() {
   const { theme } = useTheme()
+  const { lang } = useLang()
+  const scenariosMap = lang === 'ko' ? SCENARIOS_KO : SCENARIOS
   const [scenario, setScenario] = useState('vm-vm')
   const [step, setStep] = useState(0)
   const [auto, setAuto] = useState(false)
@@ -83,7 +124,7 @@ export default function VpcPage() {
   const packetRef = useRef<SVGGElement | null>(null)
   const svgRef = useRef<SVGSVGElement | null>(null)
 
-  const currentScenario = SCENARIOS[scenario]
+  const currentScenario = scenariosMap[scenario]
   const currentStep = currentScenario.steps[step]
   const totalSteps = currentScenario.steps.length
 
@@ -141,7 +182,7 @@ export default function VpcPage() {
     setScenario(id)
     setStep(0)
     setPacketPos(0, 0, false)
-    updateHighlights(SCENARIOS[id].steps[0].highlight)
+    updateHighlights(scenariosMap[id].steps[0].highlight)
   }
 
   function stopAuto() {
@@ -154,8 +195,9 @@ export default function VpcPage() {
     autoRef.current = setInterval(() => {
       setStep(s => {
         const next = s + 1
-        if (next >= currentScenario.steps.length) { stopAuto(); return s }
-        const st = currentScenario.steps[next]
+        const scen = scenariosMap[scenario]
+        if (next >= scen.steps.length) { stopAuto(); return s }
+        const st = scen.steps[next]
         updateHighlights(st.highlight)
         if (st.pos) setPacketPos(st.pos[0], st.pos[1], true)
         else if (st.waypoints) {
@@ -181,11 +223,13 @@ export default function VpcPage() {
 
   return (
     <NoteLayout
-      title="VPC packet flow"
+      title={lang === 'ko' ? 'VPC 패킷 흐름' : 'VPC packet flow'}
       date="2026-06-01"
-      readTime="5 min"
+      readTime={lang === 'ko' ? '5분' : '5 min'}
       tags={['aws', 'networking', 'vpc']}
-      intro="How packets move inside AWS VPC — Nitro cards, Mapping Service, Hyperplane, and Blackfoot. Step through three scenarios: VM-to-VM, VM-to-Internet, and VM-to-NLB, and see what actually happens at each hop."
+      intro={lang === 'ko'
+        ? 'AWS VPC 내에서 패킷이 이동하는 방법 — Nitro 카드, Mapping Service, Hyperplane, Blackfoot. VM-to-VM, VM-to-Internet, VM-to-NLB 세 가지 시나리오를 단계별로 살펴보며 각 홉에서 실제로 일어나는 일을 확인합니다.'
+        : 'How packets move inside AWS VPC — Nitro cards, Mapping Service, Hyperplane, and Blackfoot. Step through three scenarios: VM-to-VM, VM-to-Internet, and VM-to-NLB, and see what actually happens at each hop.'}
     >
       <div className="vpc-tabs" role="tablist">
         {TABS.map(t => (
@@ -274,7 +318,7 @@ export default function VpcPage() {
 
       <div className="vpc-step-panel">
         <div className="vpc-step-header">
-          <span className="vpc-step-badge">step {step + 1} / {totalSteps}</span>
+          <span className="vpc-step-badge">{lang === 'ko' ? '단계' : 'step'} {step + 1} / {totalSteps}</span>
           <span className="vpc-step-title">{currentStep.title}</span>
         </div>
         <div className="vpc-step-detail">{currentStep.detail}</div>
@@ -286,21 +330,21 @@ export default function VpcPage() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
           </svg>
-          Prev
+          {lang === 'ko' ? '이전' : 'Prev'}
         </button>
         <button className="vpc-ctrl-btn primary" onClick={handleAuto}>
           {auto ? (
             <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 14, height: 14 }}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5"/>
-            </svg> Pause</>
+            </svg> {lang === 'ko' ? '일시정지' : 'Pause'}</>
           ) : (
             <><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: 14, height: 14 }}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z"/>
-            </svg> Auto</>
+            </svg> {lang === 'ko' ? '자동' : 'Auto'}</>
           )}
         </button>
         <button className="vpc-ctrl-btn" onClick={() => { stopAuto(); if (step < totalSteps - 1) goToStep(step + 1, true) }} disabled={step === totalSteps - 1}>
-          Next
+          {lang === 'ko' ? '다음' : 'Next'}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
           </svg>
@@ -309,8 +353,10 @@ export default function VpcPage() {
       </div>
 
       <div className="vpc-disclaimer">
-        <div className="vpc-disclaimer-header">Disclaimer</div>
-        <p>This demonstration is based entirely on publicly available information from AWS re:Invent conference sessions and official AWS blog posts. It does not represent, contain, or disclose any AWS confidential, proprietary, or internal information.</p>
+        <div className="vpc-disclaimer-header">{lang === 'ko' ? '고지사항' : 'Disclaimer'}</div>
+        <p>{lang === 'ko'
+          ? '이 데모는 AWS re:Invent 컨퍼런스 세션 및 공식 AWS 블로그 포스트의 공개 정보만을 기반으로 합니다. AWS의 기밀, 독점 또는 내부 정보를 포함하거나 공개하지 않습니다.'
+          : 'This demonstration is based entirely on publicly available information from AWS re:Invent conference sessions and official AWS blog posts. It does not represent, contain, or disclose any AWS confidential, proprietary, or internal information.'}</p>
         <p className="sources">Sources: CPN401 (re:Invent 2013) · NET403 (2015) · NET401 (2016) · NET405 (2017) · NET334 (2025) · AWS Networking blog</p>
       </div>
     </NoteLayout>

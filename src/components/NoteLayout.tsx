@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import Header from './Header'
 import Footer from './Footer'
+import { useLang } from '../App'
 
 interface NoteLayoutProps {
   title: string
@@ -12,6 +13,7 @@ interface NoteLayoutProps {
 }
 
 export default function NoteLayout({ title, date, readTime, tags, intro, children }: NoteLayoutProps) {
+  const { lang } = useLang()
   return (
     <div className="app">
       <Header backLabel="Note" backHref="/" title={title} />
@@ -20,7 +22,7 @@ export default function NoteLayout({ title, date, readTime, tags, intro, childre
           <h1 className="note-page-title">{title}</h1>
           <div className="note-page-meta">
             <span>{date}</span>
-            <span>{readTime} read</span>
+            <span>{readTime} {lang === 'ko' ? '읽기' : 'read'}</span>
             <div className="note-page-tags">
               {tags.map(t => (
                 <span key={t} className="note-tag">{t}</span>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import NoteLayout from '../components/NoteLayout'
+import { useLang } from '../App'
 
 type Dir = 'c2s' | 's2c'
 type Phase = 'handshake' | 'data' | 'teardown'
@@ -169,8 +170,94 @@ const FLAG_CLS: Record<string, string> = {
   PSH: 'tcp-flag-psh', RST: 'tcp-flag-rst', URG: 'tcp-flag-urg',
 }
 
-const PHASE_LABEL: Record<Phase, string> = {
+const PHASE_LABEL_EN: Record<Phase, string> = {
   handshake: 'Handshake', data: 'Data Transfer', teardown: 'Teardown',
+}
+const PHASE_LABEL_KO: Record<Phase, string> = {
+  handshake: '핸드셰이크', data: '데이터 전송', teardown: '종료',
+}
+
+const TCP_T = {
+  en: {
+    title: 'The TCP three-way handshake',
+    readTime: '4 min',
+    intro: 'What SYN, SYN-ACK, and ACK actually do — stepped through, packet by packet. Covers the full lifecycle: handshake, data transfer, and four-way teardown. Includes state machine visualization, MTU/MSS reference, and conntrack.',
+    clientFsm: 'Client', serverFsm: 'Server',
+    stateMachine: 'TCP State Machine',
+    speed: 'Speed',
+    dirCS: 'Client → Server', dirSC: 'Server → Client',
+    mtuSection: 'MTU / MSS / MRU',
+    mtuComingSoon: 'Interactive path MTU discovery demo — coming soon',
+    ctSection: 'Connection Tracking (conntrack)',
+    ctComingSoon: 'Live conntrack table viewer — coming soon',
+    frames: [
+      { annotation: '3-Way Handshake' },
+      { note: 'Client picks a random ISN and sets SYN. No data yet — just synchronizing sequence numbers.' },
+      { note: 'Server picks its own ISN and acknowledges the client\'s SYN. ack = client_seq + 1 (SYN consumes one sequence number).' },
+      { note: 'Client acknowledges the server\'s SYN. Both sides now agree on ISNs — connection is ESTABLISHED.' },
+      { annotation: 'Data Transfer' },
+      { note: 'PSH tells the receiver to push this data to the application immediately, without buffering.' },
+      { note: 'Server acknowledges all bytes up to seq 1040. The ack number is the next byte the server expects.' },
+      { note: 'Server sends the HTTP response. In a real transfer, large responses are segmented into MSS-sized chunks.' },
+      { note: 'Client acknowledges the response. Window size in the header controls how much more the server can send.' },
+      { annotation: '4-Way Teardown' },
+      { note: 'Client initiates a half-close: it won\'t send more data, but can still receive. FIN consumes one seq number.' },
+      { note: 'Server acknowledges the FIN. The server may still send remaining data before closing its own side.' },
+      { note: 'Server finishes and sends its own FIN. TCP teardown is asymmetric — each direction closes independently.' },
+      { note: 'Client sends final ACK and enters TIME_WAIT for 2×MSL (~120s) to ensure the server received it.' },
+      { annotation: 'Connection closed (after 2×MSL)' },
+    ],
+    eduFacts: {
+      mtu: 'Max L3 packet size per link. Ethernet default: 1500 B. Jumbo frames: up to 9000 B.',
+      mssFull: <>Max TCP payload per segment. <code>MSS = MTU − IP_hdr − TCP_hdr = 1500 − 20 − 20 = <strong>1460 B</strong></code>. Each side advertises its MSS in the SYN.</>,
+      mru: 'Max receive unit — the largest packet the local interface will reassemble. Usually equals MTU on the same link.',
+      pmtud: 'Path MTU Discovery: sender starts at local MTU; routers with smaller MTUs reply ICMP \'Fragmentation Needed\', letting the sender reduce MSS hop-by-hop.',
+      new: 'First packet seen; no reply yet. Firewall can accept or drop before state is established.',
+      established: 'Bidirectional traffic confirmed. Timeout: TCP 5 days, UDP 3 min. Most firewall rules allow this by default.',
+      related: 'New flow spawned by an existing tracked one — e.g., FTP data channel opened by the FTP control connection.',
+      timeWait: 'Connection closed; entry lingers 120 s to absorb delayed or duplicate packets still in flight.',
+    },
+  },
+  ko: {
+    title: 'TCP 완전 해설',
+    readTime: '4분',
+    intro: 'SYN, SYN-ACK, ACK가 실제로 무엇을 하는지 — 패킷 하나씩 단계적으로. 핸드셰이크, 데이터 전송, 4-way 종료의 전체 생명주기를 다룹니다. 상태 머신 시각화, MTU/MSS 참조, conntrack 포함.',
+    clientFsm: '클라이언트', serverFsm: '서버',
+    stateMachine: 'TCP 상태 머신',
+    speed: '속도',
+    dirCS: '클라이언트 → 서버', dirSC: '서버 → 클라이언트',
+    mtuSection: 'MTU / MSS / MRU',
+    mtuComingSoon: '인터랙티브 경로 MTU 탐색 데모 — 준비 중',
+    ctSection: '연결 추적 (conntrack)',
+    ctComingSoon: '라이브 conntrack 테이블 뷰어 — 준비 중',
+    frames: [
+      { annotation: '3-Way 핸드셰이크' },
+      { note: '클라이언트가 랜덤 ISN을 선택하고 SYN을 설정합니다. 아직 데이터 없음 — 시퀀스 번호 동기화만 수행합니다.' },
+      { note: '서버가 자체 ISN을 선택하고 클라이언트의 SYN을 확인합니다. ack = client_seq + 1 (SYN은 시퀀스 번호 하나를 소비합니다).' },
+      { note: '클라이언트가 서버의 SYN을 확인합니다. 양측이 이제 ISN에 합의했습니다 — 연결이 ESTABLISHED.' },
+      { annotation: '데이터 전송' },
+      { note: 'PSH는 수신측에게 이 데이터를 버퍼링 없이 즉시 애플리케이션으로 전달하라고 지시합니다.' },
+      { note: '서버가 seq 1040까지 모든 바이트를 확인합니다. ack 번호는 서버가 기대하는 다음 바이트입니다.' },
+      { note: '서버가 HTTP 응답을 전송합니다. 실제 전송에서 대용량 응답은 MSS 크기 청크로 분할됩니다.' },
+      { note: '클라이언트가 응답을 확인합니다. 헤더의 윈도우 크기가 서버가 추가로 전송할 수 있는 양을 제어합니다.' },
+      { annotation: '4-Way 종료' },
+      { note: '클라이언트가 half-close 시작: 더 이상 데이터를 보내지 않지만 수신은 가능합니다. FIN은 시퀀스 번호 하나를 소비합니다.' },
+      { note: '서버가 FIN을 확인합니다. 서버는 자체 측을 닫기 전에 남은 데이터를 더 보낼 수 있습니다.' },
+      { note: '서버가 전송을 마치고 자체 FIN을 전송합니다. TCP 종료는 비대칭적 — 각 방향이 독립적으로 닫힙니다.' },
+      { note: '클라이언트가 최종 ACK를 전송하고 서버가 수신했는지 확인하기 위해 2×MSL(약 120초) 동안 TIME_WAIT 상태에 머뭅니다.' },
+      { annotation: '연결 종료 (2×MSL 후)' },
+    ],
+    eduFacts: {
+      mtu: '링크당 최대 L3 패킷 크기. 이더넷 기본값: 1500B. 점보 프레임: 최대 9000B.',
+      mssFull: <>세그먼트당 최대 TCP 페이로드. <code>MSS = MTU − IP_hdr − TCP_hdr = 1500 − 20 − 20 = <strong>1460 B</strong></code>. 각 측이 SYN에서 자체 MSS를 광고합니다.</>,
+      mru: '최대 수신 단위 — 로컬 인터페이스가 재조립할 가장 큰 패킷. 일반적으로 동일 링크에서 MTU와 같습니다.',
+      pmtud: '경로 MTU 탐색: 발신자가 로컬 MTU에서 시작; MTU가 더 작은 라우터가 ICMP \'단편화 필요\'로 응답하여 발신자가 홉별로 MSS를 줄이도록 합니다.',
+      new: '첫 번째 패킷 수신; 아직 응답 없음. 상태 수립 전에 방화벽이 허용 또는 차단할 수 있습니다.',
+      established: '양방향 트래픽 확인됨. 타임아웃: TCP 5일, UDP 3분. 대부분의 방화벽 규칙이 기본적으로 허용합니다.',
+      related: '기존 추적 연결에서 파생된 새 흐름 — 예: FTP 제어 연결이 개시한 FTP 데이터 채널.',
+      timeWait: '연결 종료됨; 항목이 120초 동안 유지되어 아직 전송 중인 지연 또는 중복 패킷을 흡수합니다.',
+    },
+  },
 }
 
 const CONNTRACK_ROWS = [
@@ -208,6 +295,9 @@ function serverFsmIdx(step: number): number {
 }
 
 function TcpExplorer() {
+  const { lang } = useLang()
+  const t = TCP_T[lang]
+  const phaseLabel = lang === 'ko' ? PHASE_LABEL_KO : PHASE_LABEL_EN
   const [step, setStep] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(1.0)
@@ -215,6 +305,7 @@ function TcpExplorer() {
   const seqRef = useRef<HTMLDivElement>(null)
 
   const frame = FRAMES[step]
+  const frameText = t.frames[step]
   const isLast = step >= FRAMES.length - 1
 
   useEffect(() => {
@@ -254,7 +345,7 @@ function TcpExplorer() {
       <div className="tcp-phases">
         {(['handshake', 'data', 'teardown'] as Phase[]).map(p => (
           <span key={p} className={`tcp-phase-pill${frame.phase === p ? ' active' : ''}`}>
-            {PHASE_LABEL[p]}
+            {phaseLabel[p]}
           </span>
         ))}
       </div>
@@ -293,30 +384,32 @@ function TcpExplorer() {
               </div>
             )
           })}
-          {frame.annotation && <div className="tcp-annotation">{frame.annotation}</div>}
+          {'annotation' in frameText && frameText.annotation
+            ? <div className="tcp-annotation">{frameText.annotation}</div>
+            : null}
           <div className="tcp-seq-pad" />
         </div>
       </div>
 
       <div className="tcp-fsm">
-        <div className="tcp-fsm-header">TCP State Machine</div>
+        <div className="tcp-fsm-header">{t.stateMachine}</div>
         <div className="tcp-fsm-body">
-          <FsmColumn items={CLIENT_FSM} curIdx={clientFsmIdx(step)} title="Client" />
+          <FsmColumn items={CLIENT_FSM} curIdx={clientFsmIdx(step)} title={t.clientFsm} />
           <div className="tcp-fsm-divider" />
-          <FsmColumn items={SERVER_FSM} curIdx={serverFsmIdx(step)} title="Server" />
+          <FsmColumn items={SERVER_FSM} curIdx={serverFsmIdx(step)} title={t.serverFsm} />
         </div>
       </div>
 
       <div className="tcp-controls">
-        <button className="btn-secondary" onClick={reset}>Reset</button>
+        <button className="btn-secondary" onClick={reset}>{lang === 'ko' ? '초기화' : 'Reset'}</button>
         <button className="btn-primary" onClick={handlePlay}>
-          {playing ? 'Pause' : isLast ? 'Replay' : step === 0 ? 'Play' : 'Resume'}
+          {playing ? (lang === 'ko' ? '일시정지' : 'Pause') : isLast ? (lang === 'ko' ? '다시 보기' : 'Replay') : step === 0 ? (lang === 'ko' ? '재생' : 'Play') : (lang === 'ko' ? '계속' : 'Resume')}
         </button>
         <button className="btn-secondary" onClick={stepFwd} disabled={playing || isLast}>
-          Step →
+          {lang === 'ko' ? '다음 →' : 'Step →'}
         </button>
         <label className="tcp-speed-wrap">
-          <span className="tcp-speed-lbl">Speed</span>
+          <span className="tcp-speed-lbl">{t.speed}</span>
           <input type="range" min="0.4" max="3" step="0.2" value={speed}
             onChange={e => setSpeed(Number(e.target.value))} />
           <span className="tcp-speed-val">{speed.toFixed(1)}×</span>
@@ -340,7 +433,7 @@ function TcpExplorer() {
               <div className="tcp-df"><span className="k">ack</span><span className="v">{frame.packet.ack}</span></div>
               <div className="tcp-df">
                 <span className="k">dir</span>
-                <span className="v">{frame.packet.dir === 'c2s' ? 'Client → Server' : 'Server → Client'}</span>
+                <span className="v">{frame.packet.dir === 'c2s' ? t.dirCS : t.dirSC}</span>
               </div>
             </div>
           </div>
@@ -350,17 +443,17 @@ function TcpExplorer() {
               <code className="tcp-detail-payload-val">{frame.packet.payload}</code>
             </div>
           )}
-          <p className="tcp-detail-note">{frame.packet.note}</p>
+          <p className="tcp-detail-note">{'note' in frameText ? frameText.note : ''}</p>
         </div>
       ) : (
         <div className="tcp-detail tcp-detail-ann">
-          <span>{frame.annotation ?? ''}</span>
+          <span>{'annotation' in frameText ? frameText.annotation : ''}</span>
           <span className="tcp-step-counter">{step + 1} / {FRAMES.length}</span>
         </div>
       )}
 
       <div className="tcp-edu-section">
-        <div className="tcp-edu-title">MTU / MSS / MRU</div>
+        <div className="tcp-edu-title">{t.mtuSection}</div>
         <div className="tcp-frame-diagram">
           <div className="tcp-frame-bar">
             <div className="tcp-frame-seg tcp-seg-eth"><span>Eth</span><span className="tcp-seg-sz">14 B</span></div>
@@ -378,16 +471,16 @@ function TcpExplorer() {
           </div>
         </div>
         <div className="tcp-edu-facts">
-          <EduFact k="MTU" v="Max L3 packet size per link. Ethernet default: 1500 B. Jumbo frames: up to 9000 B." />
-          <EduFact k="MSS" v={<>Max TCP payload per segment. <code>MSS = MTU − IP_hdr − TCP_hdr = 1500 − 20 − 20 = <strong>1460 B</strong></code>. Each side advertises its MSS in the SYN.</>} />
-          <EduFact k="MRU" v="Max receive unit — the largest packet the local interface will reassemble. Usually equals MTU on the same link." />
-          <EduFact k="PMTUD" v="Path MTU Discovery: sender starts at local MTU; routers with smaller MTUs reply ICMP 'Fragmentation Needed', letting the sender reduce MSS hop-by-hop." />
+          <EduFact k="MTU" v={t.eduFacts.mtu} />
+          <EduFact k="MSS" v={t.eduFacts.mssFull} />
+          <EduFact k="MRU" v={t.eduFacts.mru} />
+          <EduFact k="PMTUD" v={t.eduFacts.pmtud} />
         </div>
-        <div className="tcp-coming-soon">Interactive path MTU discovery demo — coming soon</div>
+        <div className="tcp-coming-soon">{t.mtuComingSoon}</div>
       </div>
 
       <div className="tcp-edu-section">
-        <div className="tcp-edu-title">Connection Tracking (conntrack)</div>
+        <div className="tcp-edu-title">{t.ctSection}</div>
         <div className="tcp-ct-table">
           <div className="tcp-ct-header">
             <span>proto</span><span>source</span><span>destination</span><span>state</span><span>ttl</span>
@@ -406,25 +499,27 @@ function TcpExplorer() {
           })}
         </div>
         <div className="tcp-edu-facts">
-          <EduFact k="NEW"         v="First packet seen; no reply yet. Firewall can accept or drop before state is established." />
-          <EduFact k="ESTABLISHED" v="Bidirectional traffic confirmed. Timeout: TCP 5 days, UDP 3 min. Most firewall rules allow this by default." />
-          <EduFact k="RELATED"     v="New flow spawned by an existing tracked one — e.g., FTP data channel opened by the FTP control connection." />
-          <EduFact k="TIME_WAIT"   v="Connection closed; entry lingers 120 s to absorb delayed or duplicate packets still in flight." />
+          <EduFact k="NEW"         v={t.eduFacts.new} />
+          <EduFact k="ESTABLISHED" v={t.eduFacts.established} />
+          <EduFact k="RELATED"     v={t.eduFacts.related} />
+          <EduFact k="TIME_WAIT"   v={t.eduFacts.timeWait} />
         </div>
-        <div className="tcp-coming-soon">Live conntrack table viewer — coming soon</div>
+        <div className="tcp-coming-soon">{t.ctComingSoon}</div>
       </div>
     </div>
   )
 }
 
 export default function TcpPage() {
+  const { lang } = useLang()
+  const t = TCP_T[lang]
   return (
     <NoteLayout
-      title="The TCP three-way handshake"
+      title={t.title}
       date="2026-05-20"
-      readTime="4 min"
+      readTime={t.readTime}
       tags={['networking', 'tcp']}
-      intro="What SYN, SYN-ACK, and ACK actually do — stepped through, packet by packet. Covers the full lifecycle: handshake, data transfer, and four-way teardown. Includes state machine visualization, MTU/MSS reference, and conntrack."
+      intro={t.intro}
     >
       <TcpExplorer />
     </NoteLayout>

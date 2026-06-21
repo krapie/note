@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import NoteLayout from '../components/NoteLayout'
+import { useLang } from '../App'
 
 type HopKind = 'normal' | 'deprio' | 'loss-start' | 'loss-cont'
 type Scenario = 'deprio' | 'real-loss'
@@ -23,6 +24,7 @@ interface ScenarioDef {
   verdict: string
   verdictKind: 'warn' | 'bad'
 }
+
 
 const SCENARIOS: Record<Scenario, ScenarioDef> = {
   deprio: {
@@ -104,6 +106,76 @@ const CHEAT: Array<{ pattern: string; verdict: string; cls: string }> = [
   },
 ]
 
+const MTR_T = {
+  en: {
+    title: 'Reading MTR output',
+    readTime: '3 min',
+    intro: 'MTR combines ping and traceroute into a continuous per-hop view of the path to a destination. The key skill is distinguishing ICMP deprioritization — a router rate-limiting its own probe replies — from real end-to-end packet loss.',
+    realLoss: 'Real Loss', falseAlarm: 'False Alarm',
+    hint: 'Click any row for an explanation · Click a column header to see what it measures',
+    cheatTitle: 'Quick reference',
+    scenarioLabels: {
+      deprio: 'Case A — ICMP Deprioritization',
+      'real-loss': 'Case B — Real Packet Loss',
+    } as Record<Scenario, string>,
+    scenarioVerdicts: {
+      deprio: 'Not real loss — hop 3 is rate-limiting its own ICMP TTL-exceeded replies',
+      'real-loss': 'Real loss — starts at hop 4 and persists to the destination',
+    } as Record<Scenario, string>,
+    colDesc: COL_DESC,
+    kindNote: KIND_NOTE,
+    cheat: CHEAT,
+  },
+  ko: {
+    title: 'MTR 출력 읽기',
+    readTime: '3분',
+    intro: 'MTR은 ping과 traceroute를 결합하여 목적지까지의 경로를 홉별로 지속적으로 보여줍니다. 핵심 기술은 ICMP 역우선화 — 라우터가 자체 프로브 응답을 속도 제한하는 것 — 와 실제 종단 간 패킷 손실을 구별하는 것입니다.',
+    realLoss: '실제 손실', falseAlarm: '오탐',
+    hint: '행을 클릭하면 설명이 표시됩니다 · 열 헤더를 클릭하면 측정값을 확인할 수 있습니다',
+    cheatTitle: '빠른 참조',
+    scenarioLabels: {
+      deprio: '케이스 A — ICMP 역우선화',
+      'real-loss': '케이스 B — 실제 패킷 손실',
+    } as Record<Scenario, string>,
+    scenarioVerdicts: {
+      deprio: '실제 손실 아님 — 홉 3이 자체 ICMP TTL 초과 응답을 속도 제한하고 있습니다',
+      'real-loss': '실제 손실 — 홉 4에서 시작되어 목적지까지 지속됩니다',
+    } as Record<Scenario, string>,
+    colDesc: {
+      'Loss%': '응답이 없는 프로브 비율. 주요 신호 — 이 열을 먼저 확인하세요.',
+      'Snt':   '이 홉에 전송된 총 프로브 수. 샘플이 많을수록 통계가 더 신뢰할 수 있습니다.',
+      'Last':  '가장 최근 프로브의 RTT(ms). 노이즈가 많은 단일 샘플 — 추세 분석에는 Avg를 사용하세요.',
+      'Avg':   '수신된 모든 프로브의 평균 왕복 시간. 주요 레이턴시 신호.',
+      'Best':  '관찰된 가장 낮은 RTT. 이 경로 세그먼트의 이론적 최소 레이턴시를 근사합니다.',
+      'Wrst':  '관찰된 가장 높은 RTT. Best↔Wrst 차이가 크면 혼잡이나 경로 변동을 나타냅니다.',
+      'StDev': 'RTT의 표준편차. StDev가 높으면 지터를 의미합니다. Loss%와 함께 분석하세요 — 높은 StDev만으로는 드롭이 아닌 지터입니다.',
+    } as Record<string, string>,
+    kindNote: {
+      normal: (h: Hop) =>
+        `홉 ${h.num}가 정상적으로 응답했습니다. Loss%는 0%이고 레이턴시가 안정적입니다. 조치 불필요.`,
+      deprio: (h: Hop) =>
+        `홉 ${h.num}에서 ${h.loss}% 손실이 표시되지만 다운스트림 홉이 모두 0%입니다. ` +
+        `이 라우터가 MTR 측정에 사용하는 ICMP TTL 초과 응답을 역우선화하고 있습니다. ` +
+        `이는 CPU 보호를 위한 의도적 동작으로 백본 및 트랜짓 라우터에서 매우 일반적입니다. ` +
+        `전달 트래픽은 영향 없이 통과합니다. 0% 손실로 처리하세요.`,
+      'loss-start': (h: Hop) =>
+        `홉 ${h.num}에서 손실이 시작됩니다. ${h.loss}%가 목적지까지 모든 다운스트림 홉에 지속됩니다 — ` +
+        `실제 패킷 손실의 명확한 신호입니다. 이 홉이나 이에 연결된 링크에서 패킷이 드롭됩니다. ` +
+        `다운스트림 홉이 독립적으로 드롭하는 것이 아니라 단순히 해당 패킷을 수신하지 못합니다.`,
+      'loss-cont': (h: Hop) =>
+        `홉 ${h.num}에서 ${h.loss}% 손실이 표시되지만 업스트림에서 상속된 것입니다. ` +
+        `이 홉에 도달하기 전에 패킷이 이미 드롭되었으므로 독립적인 장애가 아닙니다. ` +
+        `손실이 처음 나타난 홉으로 거슬러 올라가세요 — 그곳이 조사할 지점입니다.`,
+    } as Record<HopKind, (hop: Hop) => string>,
+    cheat: [
+      { pattern: '홉 N에서 손실, N+1 이후 홉 모두 0%', verdict: 'ICMP 역우선화 — 실제 손실 아님, 무시', cls: 'mtr-cv-warn' },
+      { pattern: '홉 N에서 손실 시작, 목적지까지 지속', verdict: '실제 손실 — 홉 N 또는 업스트림 링크 조사', cls: 'mtr-cv-bad' },
+      { pattern: '최종 목적지 홉만 손실', verdict: '목적지가 ICMP 속도 제한 — TCP 프로브로 확인 (curl, nc)', cls: 'mtr-cv-warn' },
+      { pattern: '높은 Wrst / StDev, Loss% = 0%', verdict: '지터 또는 일시적 혼잡, 패킷 손실 아님', cls: 'mtr-cv-ok' },
+    ],
+  },
+}
+
 function fmt(n: number | null) {
   return n === null ? '—' : n.toFixed(1)
 }
@@ -114,6 +186,8 @@ function MtrExplorer() {
   const [scenario, setScenario] = useState<Scenario>('deprio')
   const [activeHop, setActiveHop] = useState<number | null>(null)
   const [activeCol, setActiveCol] = useState<string | null>(null)
+  const { lang } = useLang()
+  const t = MTR_T[lang]
 
   const s = SCENARIOS[scenario]
   const hopDetail = activeHop !== null ? (s.hops.find(h => h.num === activeHop) ?? null) : null
@@ -147,16 +221,16 @@ function MtrExplorer() {
             className={`mtr-toggle-btn${scenario === sc ? ' active' : ''}`}
             onClick={() => switchScenario(sc)}
           >
-            {SCENARIOS[sc].label}
+            {t.scenarioLabels[sc]}
           </button>
         ))}
       </div>
 
       <div className={`mtr-verdict mtr-verdict-${s.verdictKind}`}>
         <span className="mtr-verdict-label">
-          {s.verdictKind === 'bad' ? 'Real Loss' : 'False Alarm'}
+          {s.verdictKind === 'bad' ? t.realLoss : t.falseAlarm}
         </span>
-        <span className="mtr-verdict-text">{s.verdict}</span>
+        <span className="mtr-verdict-text">{t.scenarioVerdicts[scenario]}</span>
       </div>
 
       <div className="mtr-table-wrap">
@@ -203,24 +277,24 @@ function MtrExplorer() {
       {activeCol ? (
         <div className="mtr-detail">
           <span className="mtr-detail-key">{activeCol}</span>
-          <span className="mtr-detail-text">{COL_DESC[activeCol]}</span>
+          <span className="mtr-detail-text">{t.colDesc[activeCol]}</span>
           <button className="mtr-detail-close" onClick={() => setActiveCol(null)}>×</button>
         </div>
       ) : hopDetail ? (
         <div className={`mtr-detail mtr-detail-${hopDetail.kind}`}>
           <span className="mtr-detail-key">hop {hopDetail.num}</span>
-          <span className="mtr-detail-text">{KIND_NOTE[hopDetail.kind](hopDetail)}</span>
+          <span className="mtr-detail-text">{t.kindNote[hopDetail.kind](hopDetail)}</span>
           <button className="mtr-detail-close" onClick={() => setActiveHop(null)}>×</button>
         </div>
       ) : (
         <div className="mtr-detail mtr-detail-hint">
-          Click any row for an explanation · Click a column header to see what it measures
+          {t.hint}
         </div>
       )}
 
       <div className="mtr-cheatsheet">
-        <div className="mtr-cheat-title">Quick reference</div>
-        {CHEAT.map((row, i) => (
+        <div className="mtr-cheat-title">{t.cheatTitle}</div>
+        {t.cheat.map((row, i) => (
           <div key={i} className="mtr-cheat-row">
             <div className="mtr-cheat-pattern">{row.pattern}</div>
             <div className={`mtr-cheat-verdict ${row.cls}`}>{row.verdict}</div>
@@ -232,13 +306,15 @@ function MtrExplorer() {
 }
 
 export default function MtrPage() {
+  const { lang } = useLang()
+  const t = MTR_T[lang]
   return (
     <NoteLayout
-      title="Reading MTR output"
+      title={t.title}
       date="2026-06-13"
-      readTime="3 min"
+      readTime={t.readTime}
       tags={['networking', 'troubleshooting']}
-      intro="MTR combines ping and traceroute into a continuous per-hop view of the path to a destination. The key skill is distinguishing ICMP deprioritization — a router rate-limiting its own probe replies — from real end-to-end packet loss."
+      intro={t.intro}
     >
       <MtrExplorer />
     </NoteLayout>

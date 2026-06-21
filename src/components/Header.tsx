@@ -1,4 +1,4 @@
-import { useTheme } from '../App'
+import { useTheme, useLang } from '../App'
 
 interface HeaderProps {
   backLabel?: string
@@ -8,6 +8,7 @@ interface HeaderProps {
 
 export default function Header({ backLabel, backHref, title }: HeaderProps) {
   const { theme, toggle, embed } = useTheme()
+  const { lang, toggleLang } = useLang()
   if (embed) return null
 
   return (
@@ -35,6 +36,9 @@ export default function Header({ backLabel, backHref, title }: HeaderProps) {
           </a>
         )}
         <div className="kp-header-spacer" />
+        <button className="kp-lang-toggle" onClick={toggleLang} aria-label="toggle language">
+          {lang === 'en' ? '한' : 'EN'}
+        </button>
         <button className="kp-theme-toggle" onClick={toggle} aria-label="toggle theme">
           {theme === 'dark' ? (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
