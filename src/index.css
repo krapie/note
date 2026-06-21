@@ -2036,6 +2036,288 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 [data-theme="dark"] .ipsec-seg-iv   { background: rgba(146,64,14,.08); }
 [data-theme="dark"] .ipsec-seg-auth { background: rgba(31,122,58,.12); }
 
+/* ── BGP v2 Explorer (dual-router cards) ──────────────────────── */
+.bgp2-phases {
+  display: flex;
+  align-items: center;
+  gap: var(--kp-space-2);
+}
+.bgp2-phase-pill {
+  font-size: 11px;
+  font-family: var(--kp-font-mono);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1.5px solid var(--kp-border);
+  color: var(--kp-fg-4);
+  transition: border-color var(--kp-dur-fast) var(--kp-ease), color var(--kp-dur-fast) var(--kp-ease), background var(--kp-dur-fast) var(--kp-ease);
+}
+.bgp2-phase-pill.active {
+  border-color: var(--kp-fg-2);
+  color: var(--kp-fg);
+  background: var(--kp-bg-subtle);
+}
+.bgp2-phase-sep {
+  font-size: 12px;
+  color: var(--kp-fg-4);
+}
+
+/* Shared router card */
+.bgp2-router {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.bgp2-router-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--kp-space-2);
+  flex-wrap: wrap;
+  padding: var(--kp-space-2) var(--kp-space-3);
+  background: var(--kp-bg-muted);
+  border-bottom: 1px solid var(--kp-border-faint);
+}
+.bgp2-router-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--kp-fg);
+}
+.bgp2-router-asn {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-3);
+  letter-spacing: var(--kp-tracking-mono);
+}
+.bgp2-router-role {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+  margin-left: auto;
+  letter-spacing: 0.03em;
+}
+
+/* Individual routing table inside a router card */
+.bgp2-table {
+  border-bottom: 1px solid var(--kp-border-faint);
+  transition: background var(--kp-dur-base) var(--kp-ease);
+}
+.bgp2-table:last-child { border-bottom: none; }
+.bgp2-table-hi { background: var(--kp-bg-subtle); }
+.bgp2-table-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--kp-space-2);
+  padding: 3px var(--kp-space-3);
+  background: var(--kp-bg-muted);
+  border-bottom: 1px solid var(--kp-border-faint);
+}
+.bgp2-table-name {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--kp-fg-2);
+}
+.bgp2-table-sub {
+  font-size: 9px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+}
+.bgp2-table-body {
+  padding: 5px var(--kp-space-3);
+  min-height: 38px;
+}
+.bgp2-table-empty {
+  font-size: 11px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+  letter-spacing: var(--kp-tracking-mono);
+}
+.bgp2-table-row { padding: 2px 0; }
+.bgp2-prefix {
+  display: block;
+  font-family: var(--kp-font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--kp-fg);
+  letter-spacing: var(--kp-tracking-mono);
+}
+.bgp2-attrs {
+  display: block;
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-3);
+  letter-spacing: var(--kp-tracking-mono);
+}
+
+/* eBGP dual-router layout */
+.bgp2-ebgp-layout {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-md);
+  overflow: hidden;
+  background: var(--kp-surface);
+}
+.bgp2-ebgp-layout > .bgp2-router { flex: 1; }
+.bgp2-ebgp-layout > .bgp2-router + .bgp2-router { border-left: 1px solid var(--kp-border-faint); }
+
+/* Message lane between eBGP routers */
+.bgp2-msg-lane {
+  flex: 0 0 112px;
+  border-left: 1px solid var(--kp-border-faint);
+  border-right: 1px solid var(--kp-border-faint);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--kp-space-2);
+  padding: var(--kp-space-3) var(--kp-space-2);
+  background: var(--kp-bg-muted);
+}
+.bgp2-session-tag {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--kp-fg-4);
+}
+.bgp2-session-line { width: 100%; height: 1px; background: var(--kp-border); }
+.bgp2-msg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: 100%;
+  animation: bgp2-pop 0.3s ease;
+}
+@keyframes bgp2-pop {
+  from { opacity: 0; transform: scale(0.92) translateY(-3px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.bgp2-msg-pill {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  font-weight: 600;
+  color: var(--kp-fg);
+  border: 1.5px solid var(--kp-fg-2);
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+  text-align: center;
+  background: var(--kp-bg);
+}
+
+/* Detail card */
+.bgp2-detail {
+  background: var(--kp-bg-subtle);
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-md);
+  padding: var(--kp-space-4) var(--kp-space-5);
+}
+.bgp2-detail-title {
+  font-size: var(--kp-text-sm);
+  font-weight: var(--kp-weight-semi);
+  color: var(--kp-fg);
+  margin-bottom: 4px;
+}
+.bgp2-detail-body {
+  font-size: var(--kp-text-sm);
+  color: var(--kp-fg-2);
+  line-height: var(--kp-leading-relaxed);
+  margin: 0 0 var(--kp-space-2);
+}
+
+/* iBGP layout */
+.bgp2-ibgp-layout {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-md);
+  overflow: hidden;
+  background: var(--kp-surface);
+}
+.bgp2-router-border { flex: 0 0 200px; border-right: 1px solid var(--kp-border-faint); }
+
+.bgp2-ibgp-lanes {
+  flex: 0 0 80px;
+  border-right: 1px solid var(--kp-border-faint);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-around;
+  background: var(--kp-bg-muted);
+  padding: var(--kp-space-4) var(--kp-space-2);
+  gap: var(--kp-space-4);
+}
+.bgp2-ibgp-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.bgp2-ibgp-link-line {
+  flex: 1;
+  height: 1px;
+  background: var(--kp-border);
+  position: relative;
+  overflow: hidden;
+}
+.bgp2-ibgp-link-active .bgp2-ibgp-link-line { background: var(--kp-fg-2); }
+.bgp2-ibgp-tag {
+  font-size: 9px;
+  font-family: var(--kp-font-mono);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--kp-fg-4);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.bgp2-ibgp-link-active .bgp2-ibgp-tag { color: var(--kp-fg-2); }
+
+.bgp2-ibgp-targets {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.bgp2-ibgp-target {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--kp-border-faint);
+}
+.bgp2-ibgp-target:last-child { border-bottom: none; }
+
+@media (max-width: 640px) {
+  .bgp2-ebgp-layout { flex-direction: column; }
+  .bgp2-msg-lane {
+    flex: none;
+    width: 100%;
+    min-height: 52px;
+    flex-direction: row;
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid var(--kp-border-faint);
+    border-bottom: 1px solid var(--kp-border-faint);
+  }
+  .bgp2-ibgp-layout { flex-direction: column; }
+  .bgp2-router-border { flex: none; width: 100%; border-right: none; border-bottom: 1px solid var(--kp-border-faint); }
+  .bgp2-ibgp-lanes {
+    flex: none;
+    width: 100%;
+    flex-direction: row;
+    min-height: 40px;
+    border-right: none;
+    border-top: 1px solid var(--kp-border-faint);
+    border-bottom: 1px solid var(--kp-border-faint);
+    padding: var(--kp-space-2) var(--kp-space-4);
+  }
+}
+
 /* ── MTU / PMTUD Explorer ──────────────────────────────────────── */
 .mtu-root { display: flex; flex-direction: column; gap: var(--kp-space-4); }
 
