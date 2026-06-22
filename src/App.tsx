@@ -31,6 +31,7 @@ export default function App() {
   const params = new URLSearchParams(window.location.search)
   const embed = params.get('embed') === '1'
   const themeParam = params.get('theme')
+  const langParam  = params.get('lang')
 
   const [theme, setTheme] = useState<Theme>(() => {
     if (themeParam === 'light' || themeParam === 'dark') return themeParam
@@ -40,6 +41,7 @@ export default function App() {
   })
 
   const [lang, setLang] = useState<Lang>(() => {
+    if (langParam === 'en' || langParam === 'ko') return langParam
     const stored = localStorage.getItem('kp-lang')
     return stored === 'ko' ? 'ko' : 'en'
   })
@@ -55,6 +57,9 @@ export default function App() {
     const handler = (e: MessageEvent) => {
       if (e.data?.type === 'kp-theme' && (e.data.theme === 'light' || e.data.theme === 'dark')) {
         setTheme(e.data.theme as Theme)
+      }
+      if (e.data?.type === 'kp-lang' && (e.data.lang === 'en' || e.data.lang === 'ko')) {
+        setLang(e.data.lang as Lang)
       }
     }
     window.addEventListener('message', handler)
