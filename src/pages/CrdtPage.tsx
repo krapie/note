@@ -117,7 +117,7 @@ const T = {
       { title: 'Init — document "ab" with unique character IDs',
         note:  'RGA (Replicated Growable Array) assigns every character a unique ID: (Lamport timestamp, actor ID). Replica A created this document — both characters carry actor A. Insertions reference a left-neighbor\'s ID, not an integer index. This eliminates the position-shift problem that makes OT transformation functions complex.' },
       { title: 'A inserts \'x\' between \'a\' and \'b\'',
-        note:  'Replica A inserts \'x\' with ID (3,A) after the character with ID (1,A). The local document becomes "axb". Replica B is unaware of this change. Note that A references the neighbor\'s ID — if other characters are inserted before 'b' concurrently, the relative position of \'x\' stays correct.' },
+        note:  'Replica A inserts \'x\' with ID (3,A) after the character with ID (1,A). The local document becomes "axb". Replica B is unaware of this change. Note that A references the neighbor\'s ID — if other characters are inserted before \'b\' concurrently, the relative position of \'x\' stays correct.' },
       { title: 'B inserts \'y\' concurrently — same left neighbor',
         note:  'Replica B also inserts after the character with ID (1,A) — the same left neighbor as A used. B\'s character gets ID (3,B). Locally B has "ayb", A has "axb". Both are valid locally, but the replicas have diverged. RGA must place both characters after (1,A) in a deterministic order.' },
       { title: 'A → B sync — ticket (3,B) > (3,A), y placed first',
