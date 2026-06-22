@@ -14,6 +14,14 @@ interface NoteEntry {
 
 const NOTES_EN: NoteEntry[] = [
   {
+    id: 'inet',
+    title: 'The Internet: a network of networks',
+    date: '2026-06-22',
+    read: '5 min',
+    tags: ['networking', 'internet', 'bgp', 'routing', 'isp'],
+    blurb: 'How ~80,000 Autonomous Systems (ISPs, IXPs, cloud providers, and end clients) interconnect via BGP transit and peering — traced step by step from a home client to AWS.',
+  },
+  {
     id: 'ipsec',
     title: 'IPSec: ESP encapsulation and decapsulation',
     date: '2026-06-21',
@@ -80,6 +88,14 @@ const NOTES_EN: NoteEntry[] = [
 ]
 
 const NOTES_KO: NoteEntry[] = [
+  {
+    id: 'inet',
+    title: '인터넷: 네트워크들의 네트워크',
+    date: '2026-06-22',
+    read: '5분',
+    tags: ['networking', 'internet', 'bgp', 'routing', 'isp'],
+    blurb: '약 8만 개의 자율 시스템(ISP, IXP, 클라우드 제공자, 엔드 클라이언트)이 BGP transit과 peering으로 연결되는 방식 — 홈 클라이언트에서 AWS까지 단계별 추적.',
+  },
   {
     id: 'ipsec',
     title: 'IPSec: ESP 캡슐화와 역캡슐화',
