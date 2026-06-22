@@ -14,6 +14,14 @@ interface NoteEntry {
 
 const NOTES_EN: NoteEntry[] = [
   {
+    id: 'crdt',
+    title: 'CRDT — conflict-free collaborative editing',
+    date: '2026-06-22',
+    read: '6 min',
+    tags: ['distributed-systems', 'crdt', 'collaboration', 'yorkie'],
+    blurb: 'How Conflict-free Replicated Data Types let multiple users edit the same document without a central server. Covers OT vs CRDT, LWW-Register with Lamport timestamps, and RGA — the sequence CRDT powering Yorkie.',
+  },
+  {
     id: 'dns',
     title: 'DNS — how a query is resolved',
     date: '2026-06-22',
@@ -104,6 +112,14 @@ const NOTES_EN: NoteEntry[] = [
 ]
 
 const NOTES_KO: NoteEntry[] = [
+  {
+    id: 'crdt',
+    title: 'CRDT — 충돌 없는 분산 협업 편집',
+    date: '2026-06-22',
+    read: '6분',
+    tags: ['distributed-systems', 'crdt', 'collaboration', 'yorkie'],
+    blurb: 'CRDT가 중앙 서버 없이 여러 사용자의 동시 편집을 병합하는 방법. OT vs CRDT 비교, Lamport 타임스탬프를 사용한 LWW-Register, 그리고 Yorkie의 핵심인 RGA까지 다룹니다.',
+  },
   {
     id: 'dns',
     title: 'DNS — 쿼리가 해석되는 방법',
