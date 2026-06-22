@@ -242,17 +242,19 @@ export default function IndexPage() {
               : 'Interactive technical notes — each one is a working demo you can step through, not just text.'}
           </p>
         </div>
-        <div className="note-filter-bar">
-          {allTags.map(tag => (
-            <button
-              key={tag}
-              className={`note-filter-tag${selectedTags.has(tag) ? ' active' : ''}`}
-              onClick={() => toggleTag(tag)}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
+        {allTags.length > 2 && (
+          <div className="note-filter-bar">
+            {allTags.map(tag => (
+              <button
+                key={tag}
+                className={`note-filter-tag${selectedTags.has(tag) ? ' active' : ''}`}
+                onClick={() => toggleTag(tag)}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="note-list">
           {filtered.length === 0 && (
             <p className="note-empty-state">
