@@ -243,6 +243,114 @@ function ExplorerControls({ ex }: { ex: ReturnType<typeof useExplorer> }) {
   )
 }
 
+// ── BGP Graph canvas ───────────────────────────────────────────────────────────
+
+const BGP_EGW = 400; const BGP_EGH = 140
+const BGP_IGW = 400; const BGP_IGH = 180
+
+// eBGP node pixel positions
+const EBGP_RA: [number, number] = [72,  70]
+const EBGP_RB: [number, number] = [328, 70]
+
+// iBGP node pixel positions
+const IBGP_RB: [number, number] = [120, 90]
+const IBGP_RC: [number, number] = [328, 36]
+const IBGP_RD: [number, number] = [328, 144]
+
+const HI_LABEL: Record<string, string> = {
+  adjOut: 'Adj-RIB-Out', adjIn: 'Adj-RIB-In', locRib: 'Loc-RIB', fib: 'FIB',
+}
+
+function GNode({ x, y, gw, gh, name, asn, hi, active }: {
+  x: number; y: number; gw: number; gh: number
+  name: string; asn: string; hi?: string; active?: boolean
+}) {
+  return (
+    <div
+      className={`bgp-gnode${active ? ' bgp-gnode-active' : ''}`}
+      style={{ left: `${(x / gw) * 100}%`, top: `${(y / gh) * 100}%` }}
+    >
+      <span className="bgp-gnode-name">{name}</span>
+      <code className="bgp-gnode-asn">{asn}</code>
+      {hi && <span className="bgp-gnode-hi">{HI_LABEL[hi] ?? hi}</span>}
+    </div>
+  )
+}
+
+function BgpEbgpGraph({ frame, animKey }: { frame: BgpFrame; animKey: number }) {
+  const [x1, y1] = EBGP_RA
+  const [x2, y2] = EBGP_RB
+  const hasMsg = !!frame.msg
+  const dir    = frame.msg?.dir
+  return (
+    <div className="bgp-graph-canvas" style={{ height: `${BGP_EGH}px` }}>
+      <svg viewBox={`0 0 ${BGP_EGW} ${BGP_EGH}`} className="bgp-graph-svg" preserveAspectRatio="none">
+        <defs>
+          <path id="bgp-ep-a2b" d={`M ${x1} ${y1} L ${x2} ${y2}`} fill="none" />
+          <path id="bgp-ep-b2a" d={`M ${x2} ${y2} L ${x1} ${y1}`} fill="none" />
+        </defs>
+        <line x1={x1} y1={y1} x2={x2} y2={y2} className="bgp-gline bgp-gline-ebgp" strokeWidth="2" />
+        <text x={(x1+x2)/2} y={y1 - 10} textAnchor="middle" className="bgp-glabel">eBGP</text>
+        {hasMsg && (
+          <circle r="6" className="bgp-gdot" fill="currentColor" key={`emsg-${animKey}`}>
+            <animateMotion dur="0.9s" repeatCount="indefinite">
+              <mpath href={dir === 'a2b' ? '#bgp-ep-a2b' : '#bgp-ep-b2a'} />
+            </animateMotion>
+          </circle>
+        )}
+      </svg>
+      <GNode x={x1} y={y1} gw={BGP_EGW} gh={BGP_EGH} name="R-A" asn="AS65001"
+        hi={frame.raHi} active={!!frame.raHi} />
+      <GNode x={x2} y={y2} gw={BGP_EGW} gh={BGP_EGH} name="R-B" asn="AS65002"
+        hi={frame.rbHi} active={!!frame.rbHi} />
+    </div>
+  )
+}
+
+function BgpIbgpGraph({ frame, animKey }: { frame: BgpFrame; animKey: number }) {
+  const [bx, by] = IBGP_RB
+  const [cx, cy] = IBGP_RC
+  const [dx, dy] = IBGP_RD
+  const rcActive = frame.ibgpLink === 'rc'
+  const rdActive = frame.ibgpLink === 'rd'
+  return (
+    <div className="bgp-graph-canvas" style={{ height: `${BGP_IGH}px` }}>
+      <svg viewBox={`0 0 ${BGP_IGW} ${BGP_IGH}`} className="bgp-graph-svg" preserveAspectRatio="none">
+        <defs>
+          <path id="bgp-ip-rc" d={`M ${bx} ${by} L ${cx} ${cy}`} fill="none" />
+          <path id="bgp-ip-rd" d={`M ${bx} ${by} L ${dx} ${dy}`} fill="none" />
+        </defs>
+        <line x1={bx} y1={by} x2={cx} y2={cy}
+          className={`bgp-gline${rcActive ? ' bgp-gline-ibgp-active' : ' bgp-gline-ibgp'}`} strokeWidth="2" />
+        <line x1={bx} y1={by} x2={dx} y2={dy}
+          className={`bgp-gline${rdActive ? ' bgp-gline-ibgp-active' : ' bgp-gline-ibgp'}`} strokeWidth="2" />
+        <text x={(bx+cx)/2 - 18} y={(by+cy)/2 - 6} textAnchor="middle" className="bgp-glabel">iBGP</text>
+        <text x={(bx+dx)/2 - 18} y={(by+dy)/2 + 12} textAnchor="middle" className="bgp-glabel">iBGP</text>
+        {rcActive && (
+          <circle r="6" className="bgp-gdot" fill="currentColor" key={`rc-${animKey}`}>
+            <animateMotion dur="0.9s" repeatCount="indefinite">
+              <mpath href="#bgp-ip-rc" />
+            </animateMotion>
+          </circle>
+        )}
+        {rdActive && (
+          <circle r="6" className="bgp-gdot" fill="currentColor" key={`rd-${animKey}`}>
+            <animateMotion dur="0.9s" repeatCount="indefinite">
+              <mpath href="#bgp-ip-rd" />
+            </animateMotion>
+          </circle>
+        )}
+      </svg>
+      <GNode x={bx} y={by} gw={BGP_IGW} gh={BGP_IGH} name="R-B" asn="AS65002"
+        hi={frame.rbHi} active={!!frame.rbHi} />
+      <GNode x={cx} y={cy} gw={BGP_IGW} gh={BGP_IGH} name="R-C" asn="AS65002"
+        hi={frame.rcHi} active={!!frame.rcHi} />
+      <GNode x={dx} y={dy} gw={BGP_IGW} gh={BGP_IGH} name="R-D" asn="AS65002"
+        hi={frame.rdHi} active={!!frame.rdHi} />
+    </div>
+  )
+}
+
 // ── eBGP layout ────────────────────────────────────────────────────────────────
 
 function EbgpLayout({ frame, animKey, t }: { frame: BgpFrame; animKey: number; t: typeof T['en'] }) {
@@ -347,6 +455,13 @@ function BgpExplorer() {
         <span className={`bgp2-phase-pill${isIbgp ? ' active' : ''}`}>iBGP</span>
       </div>
 
+      {/* Graph map */}
+      {isIbgp
+        ? <BgpIbgpGraph frame={frame} animKey={animKey} />
+        : <BgpEbgpGraph frame={frame} animKey={animKey} />
+      }
+
+      {/* Tables panel */}
       {isIbgp
         ? <IbgpLayout frame={frame} animKey={animKey} t={t} />
         : <EbgpLayout frame={frame} animKey={animKey} t={t} />

@@ -256,6 +256,73 @@ function PacketView({ segs, title }: { segs: PktSeg[]; title: string }) {
   )
 }
 
+// ── IPSec Graph canvas ─────────────────────────────────────────────────────────
+
+const IPG_W = 400; const IPG_H = 130
+const IP_PA: [number, number] = [72,  65]
+const IP_PB: [number, number] = [328, 65]
+
+function IpsecGraph({ frame, animKey }: { frame: IpsecFrame; animKey: number }) {
+  const [ax, ay] = IP_PA
+  const [bx, by] = IP_PB
+  const isIke = frame.phase === 'ike'
+  const hasMsg = !!frame.msg
+  const dir    = frame.msg?.dir
+  return (
+    <div className="bgp-graph-canvas" style={{ height: `${IPG_H}px` }}>
+      <svg viewBox={`0 0 ${IPG_W} ${IPG_H}`} className="bgp-graph-svg" preserveAspectRatio="none">
+        <defs>
+          <path id="ipsec-p-a2b" d={`M ${ax} ${ay} L ${bx} ${by}`} fill="none" />
+          <path id="ipsec-p-b2a" d={`M ${bx} ${by} L ${ax} ${ay}`} fill="none" />
+          <path id="ipsec-p-mid" d={`M ${ax} ${ay} L ${bx} ${by}`} fill="none" />
+        </defs>
+        {/* Tunnel line */}
+        <line x1={ax} y1={ay} x2={bx} y2={by}
+          className={`bgp-gline${isIke ? ' bgp-gline-ike' : ' bgp-gline-esp'}`}
+          strokeWidth="2.5"
+          strokeDasharray={isIke ? '7 4' : undefined}
+        />
+        {/* Phase label */}
+        <text x={(ax+bx)/2} y={ay - 12} textAnchor="middle" className="bgp-glabel">
+          {isIke ? 'IKEv2' : 'ESP tunnel'}
+        </text>
+        {/* Animated packet dot */}
+        {hasMsg && (
+          <>
+            {(dir === 'a2b' || dir === 'both') && (
+              <circle r="6" className="bgp-gdot" fill="currentColor" key={`a2b-${animKey}`}>
+                <animateMotion dur="0.9s" repeatCount="indefinite">
+                  <mpath href="#ipsec-p-a2b" />
+                </animateMotion>
+              </circle>
+            )}
+            {(dir === 'b2a' || dir === 'both') && (
+              <circle r="6" className="bgp-gdot" fill="currentColor" key={`b2a-${animKey}`} style={{ animationDelay: '0.45s' }}>
+                <animateMotion dur="0.9s" begin="0.45s" repeatCount="indefinite">
+                  <mpath href="#ipsec-p-b2a" />
+                </animateMotion>
+              </circle>
+            )}
+          </>
+        )}
+      </svg>
+      {/* Peer nodes */}
+      <div className={`bgp-gnode${frame.peerA.spdHi || frame.peerA.sadHi ? ' bgp-gnode-active' : ''}`}
+        style={{ left: `${(ax/IPG_W)*100}%`, top: `${(ay/IPG_H)*100}%` }}>
+        <span className="bgp-gnode-name">Peer A</span>
+        <code className="bgp-gnode-asn">10.0.1.1</code>
+        {frame.peerA.sadHi && <span className="bgp-gnode-hi">SAD {frame.peerA.sadHi.toUpperCase()}</span>}
+      </div>
+      <div className={`bgp-gnode${frame.peerB.spdHi || frame.peerB.sadHi ? ' bgp-gnode-active' : ''}`}
+        style={{ left: `${(bx/IPG_W)*100}%`, top: `${(by/IPG_H)*100}%` }}>
+        <span className="bgp-gnode-name">Peer B</span>
+        <code className="bgp-gnode-asn">10.0.2.1</code>
+        {frame.peerB.sadHi && <span className="bgp-gnode-hi">SAD {frame.peerB.sadHi.toUpperCase()}</span>}
+      </div>
+    </div>
+  )
+}
+
 // ── Explorer ───────────────────────────────────────────────────────────────────
 
 function IpsecExplorer() {
@@ -304,6 +371,9 @@ function IpsecExplorer() {
         <span className="bgp2-phase-sep">→</span>
         <span className={`bgp2-phase-pill${!isIke ? ' active' : ''}`}>ESP</span>
       </div>
+
+      {/* Graph map */}
+      <IpsecGraph frame={frame} animKey={animKey} />
 
       {/* Two-peer layout */}
       <div className="ipsec2-peers">
