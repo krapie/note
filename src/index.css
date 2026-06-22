@@ -2794,16 +2794,23 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .bgp-gline-ike  { stroke: var(--kp-fg-3); }
 .bgp-gline-esp  { stroke: var(--kp-fg); }
 
-/* SVG text labels */
-.inet-glabel,
-.bgp-glabel {
-  font-size: 11px;
-  font-family: var(--kp-font-mono, monospace);
-  fill: var(--kp-fg-4);
-  letter-spacing: 0.03em;
+/* HTML link labels — positioned on canvas, immune to SVG scale distortion */
+.graph-linklabel {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--kp-fg-4);
   pointer-events: none;
+  white-space: nowrap;
+  background: var(--kp-bg-subtle);
+  padding: 1px 4px;
+  border-radius: 2px;
 }
-.inet-glabel-on { fill: var(--kp-fg-2); }
+.graph-linklabel-on { color: var(--kp-fg-2); }
 
 /* Animated dot */
 .inet-gdot,

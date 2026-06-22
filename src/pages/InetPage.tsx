@@ -221,14 +221,29 @@ function InetGraph({ frame, focus, onFocus, linkLabels, nodeLabels }: {
                   </animateMotion>
                 </circle>
               )}
-              <text x={mx + ox} y={my + oy} textAnchor="middle" dominantBaseline="central"
-                className={`inet-glabel${status !== 'idle' ? ' inet-glabel-on' : ''}`}>
-                {linkLabels[id]}
-              </text>
             </g>
           )
         })}
       </svg>
+
+      {/* Link labels — HTML to avoid SVG scale distortion */}
+      {GLINKS.map(({ id, from, to }) => {
+        const [x1, y1] = NODE_PX[from]
+        const [x2, y2] = NODE_PX[to]
+        const mx = (x1 + x2) / 2
+        const my = (y1 + y2) / 2
+        const [ox, oy] = perpOffset(x1, y1, x2, y2, 16)
+        const status = frame.links[id]
+        return (
+          <span
+            key={`lbl-${id}`}
+            className={`graph-linklabel${status !== 'idle' ? ' graph-linklabel-on' : ''}`}
+            style={{ left: `${((mx + ox) / GW) * 100}%`, top: `${((my + oy) / GH) * 100}%` }}
+          >
+            {linkLabels[id]}
+          </span>
+        )
+      })}
 
       {/* HTML node boxes */}
       {NODE_IDS.map(nid => {

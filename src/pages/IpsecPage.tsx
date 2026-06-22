@@ -282,10 +282,6 @@ function IpsecGraph({ frame, animKey }: { frame: IpsecFrame; animKey: number }) 
           strokeWidth="2.5"
           strokeDasharray={isIke ? '7 4' : undefined}
         />
-        {/* Phase label */}
-        <text x={(ax+bx)/2} y={ay - 12} textAnchor="middle" className="bgp-glabel">
-          {isIke ? 'IKEv2' : 'ESP tunnel'}
-        </text>
         {/* Animated packet dot */}
         {hasMsg && (
           <>
@@ -306,6 +302,9 @@ function IpsecGraph({ frame, animKey }: { frame: IpsecFrame; animKey: number }) 
           </>
         )}
       </svg>
+      <span className="graph-linklabel graph-linklabel-on" style={{ left: '50%', top: '28%' }}>
+        {isIke ? 'IKEv2' : 'ESP tunnel'}
+      </span>
       {/* Peer nodes */}
       <div className={`bgp-gnode${frame.peerA.spdHi || frame.peerA.sadHi ? ' bgp-gnode-active' : ''}`}
         style={{ left: `${(ax/IPG_W)*100}%`, top: `${(ay/IPG_H)*100}%` }}>
