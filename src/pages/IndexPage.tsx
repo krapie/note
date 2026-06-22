@@ -14,6 +14,14 @@ interface NoteEntry {
 
 const NOTES_EN: NoteEntry[] = [
   {
+    id: 'dns',
+    title: 'DNS — how a query is resolved',
+    date: '2026-06-22',
+    read: '5 min',
+    tags: ['networking', 'dns', 'resolvers', 'infrastructure'],
+    blurb: 'How a hostname becomes an IP address — traced from stub resolver to recursive resolver, through root, TLD, and authoritative nameservers. Covers caching, TTL, and all common record types.',
+  },
+  {
     id: 'overlay',
     title: 'Overlay and underlay networks',
     date: '2026-06-22',
@@ -96,6 +104,14 @@ const NOTES_EN: NoteEntry[] = [
 ]
 
 const NOTES_KO: NoteEntry[] = [
+  {
+    id: 'dns',
+    title: 'DNS — 쿼리가 해석되는 방법',
+    date: '2026-06-22',
+    read: '5분',
+    tags: ['networking', 'dns', 'resolvers', 'infrastructure'],
+    blurb: '호스트명이 IP 주소가 되는 과정 — 스텁 리졸버에서 재귀 리졸버, 루트, TLD, 권위 네임서버까지 단계별 추적. 캐싱, TTL, 주요 레코드 타입 포함.',
+  },
   {
     id: 'overlay',
     title: '오버레이와 언더레이 네트워크',

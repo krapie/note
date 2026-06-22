@@ -3121,3 +3121,82 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   .ov-proto-table th:nth-child(3),
   .ov-proto-table td:nth-child(3) { display: none; }
 }
+
+/* ==========================================================================
+   DNS page
+   ========================================================================== */
+
+.dns-graph-canvas {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  margin-bottom: 8px;
+}
+.dns-graph-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Lines */
+.dns-sline        { stroke: var(--kp-border); }
+.dns-sline-idle   { stroke: var(--kp-border); }
+.dns-sline-active { stroke: var(--kp-fg-2); }
+.dns-sline-done   { stroke: var(--kp-fg-4); }
+
+/* Animated dots */
+.dns-gdot        { color: var(--kp-fg-2); }
+.dns-gdot-answer { color: var(--kp-fg-2); }
+
+/* Node boxes */
+.dns-gnode {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  border-radius: var(--kp-radius-sm);
+  border: 1px solid var(--kp-border);
+  background: var(--kp-bg);
+  min-width: 80px;
+  text-align: center;
+  pointer-events: none;
+}
+.dns-gnode-idle   { border-color: var(--kp-border); opacity: 0.65; }
+.dns-gnode-active { border-color: var(--kp-fg-2); opacity: 1; }
+.dns-gnode-done   { border-color: var(--kp-fg-4); opacity: 0.8; }
+.dns-gnode-cached { border-color: var(--kp-fg-3); opacity: 1; }
+.dns-gnode-label  { font-size: 11px; font-weight: 600; color: var(--kp-fg-1); font-family: var(--kp-font-mono); }
+.dns-gnode-sub    { font-size: 10px; color: var(--kp-fg-4); font-family: var(--kp-font-mono); }
+
+.dns-cached-badge {
+  font-size: 8px;
+  font-family: var(--kp-font-mono);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--kp-fg-3);
+  background: var(--kp-bg-muted);
+  padding: 1px 4px;
+  border-radius: 2px;
+  margin-top: 1px;
+}
+
+/* Record table — extends .ov-proto-table */
+.dns-record-table td:nth-child(3) { color: var(--kp-fg-3); }
+.dns-ex {
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-3);
+  word-break: break-all;
+}
+
+@media (max-width: 640px) {
+  .dns-graph-canvas { height: 220px; }
+  .dns-record-table th:nth-child(3),
+  .dns-record-table td:nth-child(3) { display: none; }
+}
