@@ -2964,3 +2964,160 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   .inet-detail-row { flex-direction: column; gap: 2px; }
   .inet-detail-key { flex: none; }
 }
+
+/* ==========================================================================
+   Overlay / Underlay page
+   ========================================================================== */
+
+.ov-graph-canvas {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  margin-bottom: 8px;
+}
+.ov-graph-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Straight lines */
+.ov-sline         { stroke: var(--kp-border); }
+.ov-sline-idle    { stroke: var(--kp-border); }
+.ov-sline-active  { stroke: var(--kp-fg-2); }
+.ov-sline-done    { stroke: var(--kp-fg-3); }
+
+/* Tunnel arc */
+.ov-tunnel        { stroke: var(--kp-border); stroke-dasharray: 8 4; }
+.ov-tunnel-done   { stroke: var(--kp-fg-4); stroke-dasharray: 8 4; }
+.ov-tunnel-active { stroke: var(--kp-fg-2); stroke-dasharray: 8 4; }
+
+/* Animated packet dot */
+.ov-gdot { color: var(--kp-fg-2); }
+
+/* Node boxes */
+.ov-gnode {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  border-radius: var(--kp-radius-sm);
+  border: 1px solid var(--kp-border);
+  background: var(--kp-bg);
+  min-width: 72px;
+  text-align: center;
+  pointer-events: none;
+}
+.ov-gnode-idle   { border-color: var(--kp-border); opacity: 0.65; }
+.ov-gnode-active { border-color: var(--kp-fg-2); opacity: 1; }
+.ov-gnode-vtep   { border-color: var(--kp-fg-3); opacity: 1; }
+.ov-gnode-label  { font-size: 11px; font-weight: 600; color: var(--kp-fg-1); font-family: var(--kp-font-mono); }
+.ov-gnode-sub    { font-size: 10px; color: var(--kp-fg-4); font-family: var(--kp-font-mono); }
+.ov-vtep-badge {
+  font-size: 8px;
+  font-family: var(--kp-font-mono);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--kp-fg-3);
+  background: var(--kp-bg-muted);
+  padding: 1px 4px;
+  border-radius: 2px;
+  margin-top: 1px;
+}
+
+/* Encapsulation panel */
+.ov-encap { margin: 12px 0; }
+
+.ov-encap-outer {
+  border: 1px solid var(--kp-border-strong);
+  border-radius: var(--kp-radius-sm);
+  padding: 10px 12px;
+  background: var(--kp-bg-subtle);
+}
+.ov-encap-tun {
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-sm);
+  padding: 8px 10px;
+  margin-top: 8px;
+  background: var(--kp-bg);
+}
+.ov-encap-inner {
+  border: 1px solid var(--kp-border-faint);
+  border-radius: var(--kp-radius-sm);
+  padding: 7px 9px;
+  margin-top: 8px;
+  background: var(--kp-bg-subtle);
+}
+.ov-encap-solo {
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-sm);
+  padding: 10px 12px;
+  background: var(--kp-bg-subtle);
+}
+.ov-encap-label {
+  display: block;
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--kp-fg-4);
+  margin-bottom: 5px;
+}
+.ov-encap-fields {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 11px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-2);
+  letter-spacing: var(--kp-tracking-mono);
+}
+.ov-encap-arrow  { color: var(--kp-fg-4); }
+.ov-encap-payload { color: var(--kp-fg-4); font-style: italic; }
+
+/* Protocol table */
+.ov-proto-section { margin-top: 28px; }
+.ov-proto-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 10px;
+}
+.ov-proto-table th {
+  text-align: left;
+  padding: 6px 10px;
+  font-size: 10px;
+  font-family: var(--kp-font-mono);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--kp-fg-4);
+  border-bottom: 1px solid var(--kp-border);
+}
+.ov-proto-table td {
+  padding: 7px 10px;
+  font-size: 11px;
+  color: var(--kp-fg-2);
+  border-bottom: 1px solid var(--kp-border-faint);
+  vertical-align: top;
+}
+.ov-proto-table td code {
+  font-family: var(--kp-font-mono);
+  font-size: 11px;
+  color: var(--kp-fg-2);
+}
+.ov-proto-table tbody tr:last-child td { border-bottom: none; }
+
+@media (max-width: 640px) {
+  .ov-graph-canvas { height: 190px; }
+  .ov-proto-table th:nth-child(3),
+  .ov-proto-table td:nth-child(3) { display: none; }
+}

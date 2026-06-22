@@ -14,6 +14,14 @@ interface NoteEntry {
 
 const NOTES_EN: NoteEntry[] = [
   {
+    id: 'overlay',
+    title: 'Overlay and underlay networks',
+    date: '2026-06-22',
+    read: '5 min',
+    tags: ['networking', 'overlay', 'vxlan', 'tunneling', 'virtualization'],
+    blurb: 'How a virtual network rides on top of a physical one — encapsulation, VTEPs, and why transit routers need zero reconfiguration. Covers VXLAN, GRE, IPsec, and WireGuard through a six-frame interactive demo.',
+  },
+  {
     id: 'inet',
     title: 'The Internet: a network of networks',
     date: '2026-06-22',
@@ -88,6 +96,14 @@ const NOTES_EN: NoteEntry[] = [
 ]
 
 const NOTES_KO: NoteEntry[] = [
+  {
+    id: 'overlay',
+    title: '오버레이와 언더레이 네트워크',
+    date: '2026-06-22',
+    read: '5분',
+    tags: ['networking', 'overlay', 'vxlan', 'tunneling', 'virtualization'],
+    blurb: '가상 네트워크가 물리 네트워크 위에서 동작하는 방법 — 캡슐화, VTEP, 중간 라우터가 설정 변경 없이 동작하는 이유. 6단계 인터랙티브 데모로 VXLAN, GRE, IPsec, WireGuard를 다룹니다.',
+  },
   {
     id: 'inet',
     title: '인터넷: 네트워크들의 네트워크',
