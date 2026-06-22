@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -213,6 +214,22 @@ const NOTES_KO: NoteEntry[] = [
 export default function IndexPage() {
   const { lang } = useLang()
   const notes = lang === 'ko' ? NOTES_KO : NOTES_EN
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
+
+  const allTags = Array.from(new Set(NOTES_EN.flatMap(n => n.tags))).sort()
+
+  function toggleTag(tag: string) {
+    setSelectedTags(prev => {
+      const next = new Set(prev)
+      next.has(tag) ? next.delete(tag) : next.add(tag)
+      return next
+    })
+  }
+
+  const filtered = selectedTags.size === 0
+    ? notes
+    : notes.filter(n => n.tags.some(t => selectedTags.has(t)))
+
   return (
     <div className="app">
       <Header />
@@ -225,15 +242,37 @@ export default function IndexPage() {
               : 'Interactive technical notes — each one is a working demo you can step through, not just text.'}
           </p>
         </div>
+        <div className="note-filter-bar">
+          {allTags.map(tag => (
+            <button
+              key={tag}
+              className={`note-filter-tag${selectedTags.has(tag) ? ' active' : ''}`}
+              onClick={() => toggleTag(tag)}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
         <div className="note-list">
-          {notes.map(note => (
+          {filtered.length === 0 && (
+            <p className="note-empty-state">
+              {lang === 'ko' ? '선택한 태그에 해당하는 노트가 없습니다.' : 'No notes match the selected tags.'}
+            </p>
+          )}
+          {filtered.map(note => (
             <Link key={note.id} to={`/${note.id}`} className="note-row">
               <div className="note-row-main">
                 <div className="note-row-title">{note.title}</div>
                 <div className="note-row-blurb">{note.blurb}</div>
                 <div className="note-row-tags">
                   {note.tags.map(t => (
-                    <span key={t} className="note-tag">{t}</span>
+                    <button
+                      key={t}
+                      className={`note-tag note-tag-btn${selectedTags.has(t) ? ' active' : ''}`}
+                      onClick={e => { e.preventDefault(); toggleTag(t) }}
+                    >
+                      {t}
+                    </button>
                   ))}
                 </div>
               </div>
