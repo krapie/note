@@ -2040,18 +2040,18 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .ipsec2-peers {
   display: flex;
   align-items: stretch;
-  border: 1px solid var(--kp-border);
-  border-radius: var(--kp-radius-md);
-  overflow: hidden;
-  background: var(--kp-surface);
+  gap: var(--kp-space-3);
 }
 .ipsec2-peer {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-md);
+  overflow: hidden;
+  background: var(--kp-surface);
 }
-.ipsec2-peer + .ipsec2-peer { border-left: 1px solid var(--kp-border-faint); }
 .ipsec2-peer-head {
   display: flex;
   align-items: baseline;
@@ -2187,7 +2187,6 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 
 @media (max-width: 640px) {
   .ipsec2-peers { flex-direction: column; }
-  .ipsec2-peer + .ipsec2-peer { border-left: none; border-top: 1px solid var(--kp-border-faint); }
   .ipsec2-lane {
     flex: none;
     width: 100%;
@@ -2233,6 +2232,10 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   display: flex;
   flex-direction: column;
   min-width: 0;
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-md);
+  overflow: hidden;
+  background: var(--kp-surface);
 }
 .bgp2-router-head {
   display: flex;
@@ -2321,26 +2324,19 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .bgp2-ebgp-layout {
   display: flex;
   align-items: stretch;
-  border: 1px solid var(--kp-border);
-  border-radius: var(--kp-radius-md);
-  overflow: hidden;
-  background: var(--kp-surface);
+  gap: var(--kp-space-3);
 }
 .bgp2-ebgp-layout > .bgp2-router { flex: 1; }
-.bgp2-ebgp-layout > .bgp2-router + .bgp2-router { border-left: 1px solid var(--kp-border-faint); }
 
 /* Message lane between eBGP routers */
 .bgp2-msg-lane {
   flex: 0 0 112px;
-  border-left: 1px solid var(--kp-border-faint);
-  border-right: 1px solid var(--kp-border-faint);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--kp-space-2);
   padding: var(--kp-space-3) var(--kp-space-2);
-  background: var(--kp-bg-muted);
 }
 .bgp2-session-tag {
   font-size: 10px;
@@ -2400,21 +2396,16 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .bgp2-ibgp-layout {
   display: flex;
   align-items: stretch;
-  border: 1px solid var(--kp-border);
-  border-radius: var(--kp-radius-md);
-  overflow: hidden;
-  background: var(--kp-surface);
+  gap: var(--kp-space-3);
 }
-.bgp2-router-border { flex: 0 0 200px; border-right: 1px solid var(--kp-border-faint); }
+.bgp2-router-border { flex: 0 0 200px; }
 
 .bgp2-ibgp-lanes {
   flex: 0 0 80px;
-  border-right: 1px solid var(--kp-border-faint);
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: space-around;
-  background: var(--kp-bg-muted);
   padding: var(--kp-space-4) var(--kp-space-2);
   gap: var(--kp-space-4);
 }
@@ -2447,14 +2438,17 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   display: flex;
   flex-direction: column;
   min-width: 0;
+  gap: var(--kp-space-2);
 }
 .bgp2-ibgp-target {
   flex: 1;
   display: flex;
   flex-direction: column;
-  border-bottom: 1px solid var(--kp-border-faint);
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-md);
+  overflow: hidden;
+  background: var(--kp-surface);
 }
-.bgp2-ibgp-target:last-child { border-bottom: none; }
 
 @media (max-width: 640px) {
   .bgp2-ebgp-layout { flex-direction: column; }
@@ -2463,21 +2457,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
     width: 100%;
     min-height: 52px;
     flex-direction: row;
-    border-left: none;
-    border-right: none;
-    border-top: 1px solid var(--kp-border-faint);
-    border-bottom: 1px solid var(--kp-border-faint);
   }
   .bgp2-ibgp-layout { flex-direction: column; }
-  .bgp2-router-border { flex: none; width: 100%; border-right: none; border-bottom: 1px solid var(--kp-border-faint); }
+  .bgp2-router-border { flex: none; width: 100%; }
   .bgp2-ibgp-lanes {
     flex: none;
     width: 100%;
     flex-direction: row;
     min-height: 40px;
-    border-right: none;
-    border-top: 1px solid var(--kp-border-faint);
-    border-bottom: 1px solid var(--kp-border-faint);
     padding: var(--kp-space-2) var(--kp-space-4);
   }
 }
