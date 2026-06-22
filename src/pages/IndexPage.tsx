@@ -246,7 +246,7 @@ export default function IndexPage() {
               : 'Interactive technical notes — each one is a working demo you can step through, not just text.'}
           </p>
         </div>
-        {allTags.length > 2 && (
+        {allTags.length > 0 && (
           <div className="note-filter-bar">
             {allTags.map(tag => (
               <button
