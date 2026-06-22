@@ -216,7 +216,11 @@ export default function IndexPage() {
   const notes = lang === 'ko' ? NOTES_KO : NOTES_EN
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
 
-  const allTags = Array.from(new Set(NOTES_EN.flatMap(n => n.tags))).sort()
+  const tagCounts = NOTES_EN.flatMap(n => n.tags).reduce<Record<string, number>>((acc, t) => {
+    acc[t] = (acc[t] ?? 0) + 1
+    return acc
+  }, {})
+  const allTags = Object.keys(tagCounts).filter(t => tagCounts[t] > 2).sort()
 
   function toggleTag(tag: string) {
     setSelectedTags(prev => {
