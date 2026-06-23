@@ -3370,3 +3370,127 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   .crdt-gnode { min-width: 60px; }
   .crdt-gnode-doc { font-size: 9px; }
 }
+
+/* Cast page */
+.cast-graph-canvas {
+  position: relative;
+  width: 100%;
+  height: 185px;
+  margin-bottom: 8px;
+}
+.cast-graph-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Lines */
+.cast-sline {
+  stroke: var(--kp-border);
+  transition: stroke 0.25s;
+}
+.cast-sline-idle  { stroke: var(--kp-border); }
+.cast-sline-active { stroke: var(--kp-fg-2); }
+.cast-sline-done  { stroke: var(--kp-fg-3); }
+
+/* Animated dot */
+.cast-gdot {
+  fill: var(--kp-fg-1);
+}
+
+/* Node boxes */
+.cast-gnode {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 5px 10px;
+  min-width: 72px;
+  border: 1.5px solid var(--kp-border);
+  border-radius: var(--kp-radius-sm);
+  background: var(--kp-bg);
+  transition: border-color 0.25s, background 0.25s;
+  text-align: center;
+}
+.cast-gnode-idle    { border-color: var(--kp-border); background: var(--kp-bg); }
+.cast-gnode-active  { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); }
+.cast-gnode-done    { border-color: var(--kp-fg-3); background: var(--kp-bg-muted); }
+.cast-gnode-nearest { border-color: var(--kp-fg-1); background: var(--kp-bg-muted); box-shadow: 0 0 0 2px var(--kp-fg-1); }
+
+.cast-gnode-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--kp-fg-1);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.cast-gnode-sub {
+  font-size: 9px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+  white-space: nowrap;
+}
+
+/* Mode badge */
+.cast-mode-badge {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--kp-font-mono);
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
+  border-radius: 3px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.cast-mode-unicast  { background: var(--kp-bg-muted); color: var(--kp-fg-2); border: 1px solid var(--kp-border); }
+.cast-mode-multicast { background: var(--kp-bg-muted); color: var(--kp-fg-2); border: 1px solid var(--kp-border); }
+.cast-mode-anycast  { background: var(--kp-bg-muted); color: var(--kp-fg-1); border: 1px solid var(--kp-fg-2); }
+
+/* Nearest / member badges */
+.cast-near-badge {
+  font-size: 8px;
+  font-weight: 700;
+  font-family: var(--kp-font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--kp-fg-1);
+  padding: 1px 5px;
+  border: 1px solid var(--kp-fg-1);
+  border-radius: 2px;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.cast-member-badge {
+  font-size: 8px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-3);
+  padding: 1px 5px;
+  border: 1px solid var(--kp-border);
+  border-radius: 2px;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+/* Mode table — address code column */
+.cast-addr-code {
+  font-size: 11px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-2);
+  white-space: nowrap;
+}
+.cast-mode-table { table-layout: auto; }
+
+@media (max-width: 640px) {
+  .cast-gnode { min-width: 56px; padding: 4px 6px; }
+  .cast-gnode-label { font-size: 9px; }
+  .cast-gnode-sub { font-size: 8px; }
+  .cast-addr-code { font-size: 10px; white-space: normal; }
+}

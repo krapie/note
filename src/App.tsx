@@ -13,6 +13,7 @@ import InetPage from './pages/InetPage'
 import OverlayPage from './pages/OverlayPage'
 import DnsPage from './pages/DnsPage'
 import CrdtPage from './pages/CrdtPage'
+import CastPage from './pages/CastPage'
 
 type Theme = 'light' | 'dark'
 export type Lang = 'en' | 'ko'
@@ -90,6 +91,7 @@ export default function App() {
             <Route path="/overlay" element={<OverlayPage />} />
             <Route path="/dns" element={<DnsPage />} />
             <Route path="/crdt" element={<CrdtPage />} />
+            <Route path="/cast" element={<CastPage />} />
           </Routes>
         </BrowserRouter>
       </ThemeCtx.Provider>

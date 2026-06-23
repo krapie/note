@@ -15,6 +15,14 @@ interface NoteEntry {
 
 const NOTES_EN: NoteEntry[] = [
   {
+    id: 'cast',
+    title: 'Unicast, multicast, and anycast',
+    date: '2026-06-22',
+    read: '5 min',
+    tags: ['networking', 'routing', 'multicast', 'anycast'],
+    blurb: `How the same destination address can mean one receiver, all group members, or the nearest of many — and how ECMP distributes flows across parallel equal-cost paths using a per-flow 5-tuple hash.`,
+  },
+  {
     id: 'crdt',
     title: 'CRDT — conflict-free collaborative editing',
     date: '2026-06-22',
@@ -113,6 +121,14 @@ const NOTES_EN: NoteEntry[] = [
 ]
 
 const NOTES_KO: NoteEntry[] = [
+  {
+    id: 'cast',
+    title: '유니캐스트, 멀티캐스트, 애니캐스트',
+    date: '2026-06-22',
+    read: '5분',
+    tags: ['networking', 'routing', 'multicast', 'anycast'],
+    blurb: `동일한 목적지 주소가 수신자 하나, 모든 그룹 멤버, 또는 가장 가까운 호스트를 의미할 수 있는 방법 — 그리고 ECMP가 플로우별 5-튜플 해시를 사용해 트래픽을 여러 동일 비용 경로에 분산하는 방식.`,
+  },
   {
     id: 'crdt',
     title: 'CRDT — 충돌 없는 분산 협업 편집',
