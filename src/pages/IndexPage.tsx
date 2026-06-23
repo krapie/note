@@ -15,6 +15,14 @@ interface NoteEntry {
 
 const NOTES_EN: NoteEntry[] = [
   {
+    id: 'ecmp',
+    title: 'ECMP — equal-cost multi-path routing',
+    date: '2026-06-23',
+    read: '4 min',
+    tags: ['networking', 'routing', 'ecmp', 'datacenter'],
+    blurb: `How a router distributes traffic across two equal-cost paths using a per-flow 5-tuple hash — and what happens to all those flows when one path goes down.`,
+  },
+  {
     id: 'cast',
     title: 'Unicast, multicast, and anycast',
     date: '2026-06-22',
@@ -121,6 +129,14 @@ const NOTES_EN: NoteEntry[] = [
 ]
 
 const NOTES_KO: NoteEntry[] = [
+  {
+    id: 'ecmp',
+    title: 'ECMP — 동일 비용 다중 경로 라우팅',
+    date: '2026-06-23',
+    read: '4분',
+    tags: ['networking', 'routing', 'ecmp', 'datacenter'],
+    blurb: `라우터가 플로우별 5-튜플 해시로 두 개의 동일 비용 경로에 트래픽을 분산하는 방법 — 그리고 경로 하나가 다운되었을 때 모든 플로우에 어떤 일이 일어나는지.`,
+  },
   {
     id: 'cast',
     title: '유니캐스트, 멀티캐스트, 애니캐스트',
