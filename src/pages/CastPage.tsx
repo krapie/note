@@ -17,6 +17,14 @@ interface CastFrame {
   members: CastNodeId[]
 }
 
+type AnyNodeSt = 'idle' | 'active' | 'done' | 'nearest' | 'failed'
+type AnyLinkSt = 'idle' | 'active' | 'failed'
+
+interface AnyFrame {
+  nodes: Record<CastNodeId, AnyNodeSt>
+  links: Record<CastLinkId, AnyLinkSt>
+}
+
 // ── Graph geometry ───────────────────────────────────────────────────────────────
 
 const CGW = 500
@@ -45,7 +53,7 @@ const CAST_LINK_PATHS: Record<CastLinkId, string> = {
   rtr_svc: `M ${CAST_PX.rtr[0]} ${CAST_PX.rtr[1]} L ${CAST_PX.svc[0]} ${CAST_PX.svc[1]}`,
 }
 
-// ── Frame data ───────────────────────────────────────────────────────────────────
+// ── Cast frame data ───────────────────────────────────────────────────────────────
 
 const CN0: Record<CastNodeId, CastNodeSt> = { src: 'idle', rtr: 'idle', sva: 'idle', svb: 'idle', svc: 'idle' }
 const CL0: Record<CastLinkId, CastLinkSt> = { src_rtr: 'idle', rtr_sva: 'idle', rtr_svb: 'idle', rtr_svc: 'idle' }
@@ -69,20 +77,43 @@ const CAST_FRAMES: CastFrame[] = [
   },
 ]
 
+// ── Anycast frame data ────────────────────────────────────────────────────────────
+
+const AN0: Record<CastNodeId, AnyNodeSt> = { src: 'idle', rtr: 'idle', sva: 'idle', svb: 'idle', svc: 'idle' }
+const AL0: Record<CastLinkId, AnyLinkSt> = { src_rtr: 'idle', rtr_sva: 'idle', rtr_svb: 'idle', rtr_svc: 'idle' }
+
+const ANY_FRAMES: AnyFrame[] = [
+  {
+    nodes: { ...AN0, rtr: 'active', sva: 'done', svb: 'done', svc: 'done' },
+    links: AL0,
+  },
+  {
+    nodes: { ...AN0, src: 'active', rtr: 'active', sva: 'nearest', svb: 'done', svc: 'done' },
+    links: { ...AL0, src_rtr: 'active', rtr_sva: 'active' },
+  },
+  {
+    nodes: { ...AN0, src: 'active', rtr: 'active', sva: 'failed', svb: 'nearest', svc: 'done' },
+    links: { ...AL0, src_rtr: 'active', rtr_sva: 'failed', rtr_svb: 'active' },
+  },
+]
+
 // ── Translations ─────────────────────────────────────────────────────────────────
 
 const T = {
   en: {
     title:    'Unicast, multicast, and anycast',
-    readTime: '5 min',
+    readTime: '6 min',
     intro:    `Every packet needs a destination address — but not all addresses work the same way. Unicast sends to one specific host. Multicast sends to every host that joined a group. Anycast sends to the nearest of several hosts that all share the same IP. These three models cover most of what happens on the internet — from a direct HTTP request to a DNS query that lands at the closest root server.`,
-    sectionCast: 'Addressing modes',
+    sectionCast:    'Addressing modes',
+    sectionAnycast: 'Anycast deep-dive — BGP selection and failover',
     castNodeLabel: { src: 'Sender', rtr: 'Router', sva: 'Server A', svb: 'Server B', svc: 'Server C' } as Record<CastNodeId, string>,
     castNodeSub:        { src: '10.0.0.1', rtr: 'core-rtr', sva: '10.0.1.1', svb: '10.0.1.2', svc: '10.0.1.3' } as Record<CastNodeId, string>,
     castNodeSubAnycast: { src: '10.0.0.1', rtr: 'core-rtr', sva: '1.1.1.1 · PoP A', svb: '1.1.1.1 · PoP B', svc: '1.1.1.1 · PoP C' } as Record<CastNodeId, string>,
+    anyNodeSub: { src: '10.0.0.1', rtr: 'core-rtr', sva: '1.1.1.1 · AS-path 2', svb: '1.1.1.1 · AS-path 3', svc: '1.1.1.1 · AS-path 4' } as Record<CastNodeId, string>,
     modeBadge:    { unicast: 'UNICAST', multicast: 'MULTICAST', anycast: 'ANYCAST' } as Record<string, string>,
     nearestBadge: 'nearest',
     memberBadge:  'group member',
+    failBadge:    'down',
     castFrames: [
       {
         title: 'Topology — one sender, one router, three servers',
@@ -101,6 +132,20 @@ const T = {
         note:  `All three servers advertise the same IP (1.1.1.1) into BGP. The router selects the route with the shortest BGP path — Server A is topologically nearest. The sender's packet is forwarded there without knowing the other servers exist. Cloudflare's 1.1.1.1 and all 13 DNS root server clusters work this way: the IP is fixed, but which datacenter answers depends on where in the world you are.`,
       },
     ],
+    anyFrames: [
+      {
+        title: 'Three PoPs, one IP — all advertising 1.1.1.1 via BGP',
+        note:  `All three servers (PoP A, B, C) announce the prefix 1.1.1.1/32 into BGP with different AS-path lengths: A at 2 hops, B at 3, C at 4. The router's BGP table holds three routes to 1.1.1.1, each with a different next-hop and AS-path length. No packet has arrived yet — the router is simply holding all three routes, ready to forward to whichever is best.`,
+      },
+      {
+        title: 'Router selects PoP A — shortest BGP AS-path',
+        note:  `A packet arrives destined for 1.1.1.1. The router runs BGP best-path selection: all three routes have equal local preference and MED, so the tie-breaker is AS-path length. PoP A wins with AS-path 2. "Nearest" in anycast means topologically closest in BGP terms — not geographic distance. A user in Tokyo and a user in London can both request 1.1.1.1, but each router along the way picks the PoP with the shortest BGP path from that vantage point, so they each land at a different datacenter.`,
+      },
+      {
+        title: 'PoP A goes down — BGP withdraws the route, B takes over',
+        note:  `PoP A fails. It sends a BGP WITHDRAW for 1.1.1.1/32 to all its peers, removing the route from their tables. The router now has two routes remaining: B (AS-path 3) and C (AS-path 4). It re-runs best-path selection and installs B as the new next-hop. Traffic resumes automatically — no DNS change, no client reconfiguration, no change to the destination IP. This is the core operational advantage of anycast over DNS-based failover: rerouting happens at the routing layer in seconds, not the minutes or hours it takes a DNS TTL to expire.`,
+      },
+    ],
     tableTitle:   'Addressing mode comparison',
     tableHeaders: ['Mode', 'Destination address', 'Receivers', 'Typical use'],
     tableRows: [
@@ -112,15 +157,18 @@ const T = {
   },
   ko: {
     title:    '유니캐스트, 멀티캐스트, 애니캐스트',
-    readTime: '5분',
+    readTime: '6분',
     intro:    `모든 패킷에는 목적지 주소가 필요하지만 주소가 모두 같은 방식으로 동작하지는 않습니다. 유니캐스트는 특정 호스트 하나에 전송하고, 멀티캐스트는 그룹에 가입한 모든 호스트에 전송하며, 애니캐스트는 동일한 IP를 공유하는 여러 호스트 중 가장 가까운 곳에 전송합니다. 이 세 가지 모델이 인터넷에서 일어나는 대부분의 통신을 담당합니다 — 직접적인 HTTP 요청부터 가장 가까운 루트 서버에 도달하는 DNS 쿼리까지.`,
-    sectionCast: '주소 지정 모드',
+    sectionCast:    '주소 지정 모드',
+    sectionAnycast: '애니캐스트 심화 — BGP 선택과 장애 복구',
     castNodeLabel: { src: '송신자', rtr: '라우터', sva: '서버 A', svb: '서버 B', svc: '서버 C' } as Record<CastNodeId, string>,
     castNodeSub:        { src: '10.0.0.1', rtr: 'core-rtr', sva: '10.0.1.1', svb: '10.0.1.2', svc: '10.0.1.3' } as Record<CastNodeId, string>,
     castNodeSubAnycast: { src: '10.0.0.1', rtr: 'core-rtr', sva: '1.1.1.1 · PoP A', svb: '1.1.1.1 · PoP B', svc: '1.1.1.1 · PoP C' } as Record<CastNodeId, string>,
+    anyNodeSub: { src: '10.0.0.1', rtr: 'core-rtr', sva: '1.1.1.1 · AS-path 2', svb: '1.1.1.1 · AS-path 3', svc: '1.1.1.1 · AS-path 4' } as Record<CastNodeId, string>,
     modeBadge:    { unicast: 'UNICAST', multicast: 'MULTICAST', anycast: 'ANYCAST' } as Record<string, string>,
     nearestBadge: '가장 가까운',
     memberBadge:  '그룹 멤버',
+    failBadge:    '다운',
     castFrames: [
       {
         title: '토폴로지 — 송신자 1개, 라우터 1개, 서버 3개',
@@ -137,6 +185,20 @@ const T = {
       {
         title: '애니캐스트 — 여러 서버가 같은 IP, 가장 가까운 서버가 응답',
         note:  `세 서버 모두 동일한 IP(1.1.1.1)를 BGP에 광고합니다. 라우터는 BGP 경로가 가장 짧은 경로를 선택합니다 — 서버 A가 위상적으로 가장 가깝습니다. 송신자의 패킷은 다른 서버들의 존재를 알지 못한 채 그곳으로 전달됩니다. Cloudflare의 1.1.1.1과 13개 DNS 루트 서버 클러스터가 이 방식으로 동작합니다: IP는 고정되어 있지만, 어느 데이터센터가 응답하는지는 위치에 따라 달라집니다.`,
+      },
+    ],
+    anyFrames: [
+      {
+        title: '세 PoP, 하나의 IP — 모두 BGP로 1.1.1.1 광고 중',
+        note:  `세 서버(PoP A, B, C) 모두 1.1.1.1/32 프리픽스를 서로 다른 AS-path 길이로 BGP에 광고합니다: A는 2홉, B는 3홉, C는 4홉. 라우터의 BGP 테이블에는 1.1.1.1로 향하는 세 개의 경로가 있으며 각각 다른 넥스트홉과 AS-path 길이를 가집니다. 아직 패킷은 도착하지 않았습니다 — 라우터는 세 경로를 모두 유지하며 포워딩을 준비하고 있습니다.`,
+      },
+      {
+        title: '라우터가 PoP A 선택 — 가장 짧은 BGP AS-path',
+        note:  `1.1.1.1로 향하는 패킷이 도착합니다. 라우터는 BGP best-path 선택 알고리즘을 실행합니다: 세 경로 모두 local preference와 MED가 동일하므로 AS-path 길이가 타이브레이커가 됩니다. PoP A가 AS-path 2로 선택됩니다. 애니캐스트에서 "가장 가까운"이란 지리적 거리가 아니라 BGP 관점의 위상적 근접성을 의미합니다. 도쿄와 런던의 사용자가 모두 1.1.1.1을 요청하더라도, 각 라우터는 자신의 관점에서 가장 짧은 BGP 경로를 가진 PoP을 선택하므로 서로 다른 데이터센터에 연결됩니다.`,
+      },
+      {
+        title: 'PoP A 장애 — BGP WITHDRAW, B가 자동으로 인계',
+        note:  `PoP A가 다운됩니다. 모든 BGP 피어에게 1.1.1.1/32 WITHDRAW 메시지를 보내 라우팅 테이블에서 경로를 제거합니다. 라우터에는 B(AS-path 3)와 C(AS-path 4) 두 경로만 남습니다. best-path 선택을 다시 실행하여 B를 새 넥스트홉으로 설치합니다. 트래픽이 자동으로 재개됩니다 — DNS 변경 없음, 클라이언트 재설정 없음, 목적지 IP 변경 없음. 이것이 DNS 기반 페일오버 대비 애니캐스트의 핵심 운영 장점입니다: 재라우팅은 DNS TTL이 만료되는 데 걸리는 수분~수시간이 아니라 라우팅 레이어에서 수 초 안에 이루어집니다.`,
       },
     ],
     tableTitle:   '주소 지정 모드 비교',
@@ -267,6 +329,115 @@ function CastExplorer() {
   )
 }
 
+// ── AnyGraph ──────────────────────────────────────────────────────────────────────
+
+function AnyGraph({ frame, t }: { frame: AnyFrame; t: typeof T['en'] }) {
+  return (
+    <div className="cast-graph-canvas">
+      <svg viewBox={`0 0 ${CGW} ${CGH}`} className="cast-graph-svg" preserveAspectRatio="none">
+        <defs>
+          {CAST_LINKS.map(({ id }) => (
+            <path key={id} id={`anyp-${id}`} d={CAST_LINK_PATHS[id]} fill="none" />
+          ))}
+        </defs>
+
+        {CAST_LINKS.map(({ id, from, to }) => {
+          const [x1, y1] = CAST_PX[from]
+          const [x2, y2] = CAST_PX[to]
+          return (
+            <line key={id} x1={x1} y1={y1} x2={x2} y2={y2}
+              className={`cast-sline cast-sline-${frame.links[id]}`} strokeWidth="2" />
+          )
+        })}
+
+        {CAST_LINKS.map(({ id }) => {
+          if (frame.links[id] !== 'active') return null
+          return (
+            <circle key={`dot-${id}`} r="5" className="cast-gdot">
+              <animateMotion dur="0.9s" repeatCount="indefinite">
+                <mpath href={`#anyp-${id}`} />
+              </animateMotion>
+            </circle>
+          )
+        })}
+      </svg>
+
+      {CAST_NODE_IDS.map(nid => {
+        const [px, py] = CAST_PX[nid]
+        const st = frame.nodes[nid]
+        return (
+          <div key={nid}
+            className={`cast-gnode cast-gnode-${st}`}
+            style={{ left: `${(px / CGW) * 100}%`, top: `${(py / CGH) * 100}%` }}
+          >
+            <span className="cast-gnode-label">{t.castNodeLabel[nid]}</span>
+            <span className="cast-gnode-sub">{t.anyNodeSub[nid]}</span>
+            {st === 'nearest' && <span className="cast-near-badge">{t.nearestBadge}</span>}
+            {st === 'failed'  && <span className="cast-fail-badge">{t.failBadge}</span>}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+// ── AnyExplorer ───────────────────────────────────────────────────────────────────
+
+function AnyExplorer() {
+  const { lang } = useLang()
+  const t     = T[lang]
+  const total = ANY_FRAMES.length
+  const [step, setStep]       = useState(0)
+  const [playing, setPlaying] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isLast   = step >= total - 1
+
+  useEffect(() => {
+    if (!playing) return
+    if (isLast) { setPlaying(false); return }
+    timerRef.current = setTimeout(() => setStep(s => s + 1), 1400)
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+  }, [playing, step, isLast])
+
+  function reset()   { setPlaying(false); setStep(0) }
+  function stepFwd() { if (!isLast) setStep(s => s + 1) }
+  function handlePlay() {
+    if (isLast) { reset(); setTimeout(() => setPlaying(true), 50); return }
+    setPlaying(p => !p)
+  }
+
+  const lbl = {
+    reset:  lang === 'ko' ? '초기화'   : 'Reset',
+    play:   lang === 'ko' ? '재생'     : 'Play',
+    pause:  lang === 'ko' ? '일시정지' : 'Pause',
+    resume: lang === 'ko' ? '계속'     : 'Resume',
+    replay: lang === 'ko' ? '다시보기' : 'Replay',
+    step:   lang === 'ko' ? '다음 →'  : 'Step →',
+  }
+  const ft = t.anyFrames[step]
+
+  return (
+    <div className="inet-root">
+      <AnyGraph frame={ANY_FRAMES[step]} t={t} />
+      <div className="tcp-controls">
+        <button className="btn-secondary" onClick={reset}>{lbl.reset}</button>
+        <button className="btn-primary" onClick={handlePlay}>
+          {playing ? lbl.pause : isLast ? lbl.replay : step === 0 ? lbl.play : lbl.resume}
+        </button>
+        <button className="btn-secondary" onClick={stepFwd} disabled={playing || isLast}>{lbl.step}</button>
+      </div>
+      <div className="tcp-progress">
+        <div className="tcp-progress-fill" style={{ width: `${(step / (total - 1)) * 100}%` }} />
+      </div>
+      <div className="bgp2-detail">
+        <div className="bgp2-detail-title">{ft.title}</div>
+        <p className="bgp2-detail-body">{ft.note}</p>
+        <span className="tcp-step-counter">{step + 1} / {total}</span>
+      </div>
+    </div>
+  )
+}
+
 // ── Mode table ────────────────────────────────────────────────────────────────────
 
 function ModeTable() {
@@ -309,6 +480,8 @@ export default function CastPage() {
     >
       <div className="bgp2-section-title">{t.sectionCast}</div>
       <CastExplorer />
+      <div className="bgp2-section-title" style={{ marginTop: 28 }}>{t.sectionAnycast}</div>
+      <AnyExplorer />
       <ModeTable />
     </NoteLayout>
   )

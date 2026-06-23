@@ -3588,3 +3588,20 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   .ecmp-gnode-label { font-size: 9px; }
   .ecmp-gnode-sub { font-size: 8px; }
 }
+
+/* Cast page — anycast deep-dive additions */
+.cast-gnode-failed  { border-color: var(--kp-border); background: var(--kp-bg); opacity: 0.35; }
+.cast-sline-failed  { stroke: var(--kp-border); stroke-dasharray: 4 3; opacity: 0.35; }
+.cast-fail-badge {
+  font-size: 8px;
+  font-weight: 700;
+  font-family: var(--kp-font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--kp-fg-3);
+  padding: 1px 5px;
+  border: 1px solid var(--kp-border);
+  border-radius: 2px;
+  white-space: nowrap;
+  margin-top: 2px;
+}
