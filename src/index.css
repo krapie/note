@@ -3605,3 +3605,136 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   white-space: nowrap;
   margin-top: 2px;
 }
+
+/* Retry/Backoff page */
+.rb-graph-canvas {
+  position: relative;
+  width: 100%;
+  height: 210px;
+  margin-bottom: 8px;
+}
+.rb-graph-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Lines */
+.rb-sline         { stroke: var(--kp-border); transition: stroke 0.25s, opacity 0.25s; }
+.rb-sline-idle    { stroke: var(--kp-border); }
+.rb-sline-active  { stroke: var(--kp-fg-2); }
+.rb-sline-failed  { stroke: var(--kp-border); stroke-dasharray: 4 3; opacity: 0.5; }
+.rb-sline-success { stroke: var(--kp-fg-1); }
+
+/* Dots */
+.rb-gdot      { fill: var(--kp-fg-1); }
+.rb-gdot-fail { fill: var(--kp-fg-3); }
+
+/* Node boxes */
+.rb-gnode {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 5px 10px;
+  min-width: 72px;
+  border: 1.5px solid var(--kp-border);
+  border-radius: var(--kp-radius-sm);
+  background: var(--kp-bg);
+  transition: border-color 0.25s, background 0.25s, opacity 0.25s;
+  text-align: center;
+}
+.rb-gnode-idle    { border-color: var(--kp-border); background: var(--kp-bg); }
+.rb-gnode-sending { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); }
+.rb-gnode-waiting { border-color: var(--kp-border); background: var(--kp-bg); opacity: 0.6; }
+.rb-gnode-done    { border-color: var(--kp-fg-3); background: var(--kp-bg-muted); }
+.rb-gnode-busy    { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); }
+.rb-gnode-ok      { border-color: var(--kp-fg-1); background: var(--kp-bg-muted); box-shadow: 0 0 0 2px var(--kp-fg-1); }
+
+.rb-gnode-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--kp-fg-1);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.rb-gnode-sub {
+  font-size: 9px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+  white-space: nowrap;
+}
+
+/* Strategy badge */
+.rb-strategy-badge {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--kp-font-mono);
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
+  border-radius: 3px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.rb-strategy-plain   { background: var(--kp-bg-muted); color: var(--kp-fg-2); border: 1px solid var(--kp-border); }
+.rb-strategy-backoff { background: var(--kp-bg-muted); color: var(--kp-fg-2); border: 1px solid var(--kp-border); }
+.rb-strategy-jitter  { background: var(--kp-bg-muted); color: var(--kp-fg-1); border: 1px solid var(--kp-fg-2); }
+
+/* Status badges */
+.rb-busy-badge {
+  font-size: 8px;
+  font-weight: 700;
+  font-family: var(--kp-font-mono);
+  letter-spacing: 0.06em;
+  color: var(--kp-fg-3);
+  padding: 1px 5px;
+  border: 1px solid var(--kp-border);
+  border-radius: 2px;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.rb-ok-badge {
+  font-size: 8px;
+  font-weight: 700;
+  font-family: var(--kp-font-mono);
+  letter-spacing: 0.06em;
+  color: var(--kp-fg-1);
+  padding: 1px 5px;
+  border: 1px solid var(--kp-fg-2);
+  border-radius: 2px;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.rb-wait-badge {
+  font-size: 8px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-3);
+  padding: 1px 5px;
+  border: 1px solid var(--kp-border);
+  border-radius: 2px;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+/* Strategy table */
+.rb-formula-code {
+  font-size: 11px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-2);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .rb-gnode { min-width: 56px; padding: 4px 6px; }
+  .rb-gnode-label { font-size: 9px; }
+  .rb-gnode-sub { font-size: 8px; }
+  .rb-formula-code { white-space: normal; font-size: 10px; }
+}

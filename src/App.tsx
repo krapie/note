@@ -15,6 +15,7 @@ import DnsPage from './pages/DnsPage'
 import CrdtPage from './pages/CrdtPage'
 import CastPage from './pages/CastPage'
 import EcmpPage from './pages/EcmpPage'
+import RetryPage from './pages/RetryPage'
 
 type Theme = 'light' | 'dark'
 export type Lang = 'en' | 'ko'
@@ -94,6 +95,7 @@ export default function App() {
             <Route path="/crdt" element={<CrdtPage />} />
             <Route path="/cast" element={<CastPage />} />
             <Route path="/ecmp" element={<EcmpPage />} />
+            <Route path="/retry" element={<RetryPage />} />
           </Routes>
         </BrowserRouter>
       </ThemeCtx.Provider>

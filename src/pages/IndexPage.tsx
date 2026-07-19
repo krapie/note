@@ -15,6 +15,14 @@ interface NoteEntry {
 
 const NOTES_EN: NoteEntry[] = [
   {
+    id: 'retry',
+    title: 'Retry and exponential backoff',
+    date: '2026-07-19',
+    read: '5 min',
+    tags: ['distributed-systems', 'reliability', 'backoff', 'resilience'],
+    blurb: `Why immediate retry makes overloaded servers worse, how exponential backoff gives the server time to recover, and why adding jitter is the key step that breaks the thundering herd.`,
+  },
+  {
     id: 'ecmp',
     title: 'ECMP — equal-cost multi-path routing',
     date: '2026-06-23',
@@ -129,6 +137,14 @@ const NOTES_EN: NoteEntry[] = [
 ]
 
 const NOTES_KO: NoteEntry[] = [
+  {
+    id: 'retry',
+    title: '재시도와 지수 백오프',
+    date: '2026-07-19',
+    read: '5분',
+    tags: ['distributed-systems', 'reliability', 'backoff', 'resilience'],
+    blurb: `즉시 재시도가 과부하된 서버를 더 악화시키는 이유, 지수 백오프가 서버 복구 시간을 주는 방법, 그리고 지터(jitter)가 천둥 무리 문제를 해결하는 핵심인 이유.`,
+  },
   {
     id: 'ecmp',
     title: 'ECMP — 동일 비용 다중 경로 라우팅',
