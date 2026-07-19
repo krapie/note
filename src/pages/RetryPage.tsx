@@ -82,7 +82,14 @@ const FRAMES: RbFrame[] = [
     strategy: 'backoff',
     wait: { ca: 'wait: 8s', cb: 'wait: 8s', cc: 'wait: 8s' },
   },
-  // 5: full jitter — clients staggered
+  // 5: backoff expires — all retry simultaneously (still synchronized)
+  {
+    nodes: { ca: 'sending', cb: 'sending', cc: 'sending', srv: 'busy' },
+    links: { ca_srv: 'active', cb_srv: 'active', cc_srv: 'active' },
+    strategy: 'backoff',
+    wait: W0,
+  },
+  // 6: full jitter — clients staggered
   {
     nodes: { ca: 'done', cb: 'waiting', cc: 'sending', srv: 'ok' },
     links: { ca_srv: 'success', cb_srv: 'idle', cc_srv: 'active' },
@@ -131,8 +138,12 @@ const T = {
         note:  `With no backoff, all three clients retry immediately after receiving the error. The server, which was struggling to recover, receives another burst of three simultaneous requests — the same spike that caused the failure. This is the thundering herd problem: each retry wave prevents the server from recovering.`,
       },
       {
-        title: `Exponential backoff — same wait time, still synchronized`,
-        note:  `Exponential backoff: wait = min(cap, base × 2ⁿ). After 3 failures with base=1s and cap=30s, each client waits min(30, 8) = 8 seconds. This gives the server a quiet window to recover — but all three clients wait exactly 8 seconds and retry at the exact same moment. The spike is delayed, not eliminated.`,
+        title: `Exponential backoff — each client waits min(cap, base × 2ⁿ)`,
+        note:  `Exponential backoff: wait = min(cap, base × 2ⁿ). After 3 failures with base=1s and cap=30s, each client computes min(30, 1×2³) = 8 seconds and starts a timer. The server gets a quiet window to recover. But notice: all three clients computed the exact same value. Their timers will all expire at the exact same moment.`,
+      },
+      {
+        title: `Backoff expires — all three retry at t+8s simultaneously`,
+        note:  `Eight seconds later, every timer fires at once. All three clients send their retry requests simultaneously — and the server sees the exact same spike it saw at t=0. Exponential backoff reduces the frequency of retry waves and gives the server breathing room between them, but it does not stagger the wave itself. The synchronized burst is the problem that remains.`,
       },
       {
         title: 'Full jitter — spread across the retry window',
@@ -177,8 +188,12 @@ const T = {
         note:  `백오프 없이 세 클라이언트 모두 오류를 받은 직후 즉시 재시도합니다. 복구를 시도하던 서버는 또다시 세 개의 동시 요청을 받습니다 — 장애를 일으킨 것과 동일한 스파이크입니다. 이것이 천둥 무리(thundering herd) 문제입니다. 각 재시도 파동이 서버의 복구를 방해합니다.`,
       },
       {
-        title: `지수 백오프 — 같은 대기 시간, 여전히 동기화`,
-        note:  `지수 백오프: wait = min(cap, base × 2ⁿ). 3회 실패 후 base=1s, cap=30s로 계산하면 min(30, 8) = 8초입니다. 서버에 조용한 복구 시간을 주지만, 세 클라이언트 모두 정확히 8초를 기다리고 동시에 재시도합니다. 스파이크가 지연될 뿐 제거되지 않습니다.`,
+        title: `지수 백오프 — 각 클라이언트가 min(cap, base × 2ⁿ) 대기`,
+        note:  `지수 백오프: wait = min(cap, base × 2ⁿ). 3회 실패 후 base=1s, cap=30s로 계산하면 min(30, 1×2³) = 8초입니다. 각 클라이언트가 타이머를 시작하고, 서버는 복구할 조용한 시간을 얻습니다. 그런데 세 클라이언트 모두 정확히 같은 값 8초를 계산했습니다. 타이머는 정확히 같은 순간에 만료됩니다.`,
+      },
+      {
+        title: `백오프 만료 — t+8s에 세 클라이언트가 동시에 재시도`,
+        note:  `8초 후 모든 타이머가 동시에 만료됩니다. 세 클라이언트가 동시에 재시도 요청을 보내고, 서버는 t=0에 보았던 것과 동일한 스파이크를 받습니다. 지수 백오프는 재시도 파동의 빈도를 줄이고 파동 사이에 서버 복구 시간을 주지만, 파동 자체를 분산시키지는 못합니다. 동기화된 버스트가 아직 해결되지 않은 문제입니다.`,
       },
       {
         title: '풀 지터 — 재시도 윈도우 전체에 분산',
