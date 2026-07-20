@@ -16,6 +16,7 @@ import CrdtPage from './pages/CrdtPage'
 import CastPage from './pages/CastPage'
 import EcmpPage from './pages/EcmpPage'
 import RetryPage from './pages/RetryPage'
+import SnmpPage from './pages/SnmpPage'
 
 type Theme = 'light' | 'dark'
 export type Lang = 'en' | 'ko'
@@ -96,6 +97,7 @@ export default function App() {
             <Route path="/cast" element={<CastPage />} />
             <Route path="/ecmp" element={<EcmpPage />} />
             <Route path="/retry" element={<RetryPage />} />
+            <Route path="/snmp" element={<SnmpPage />} />
           </Routes>
         </BrowserRouter>
       </ThemeCtx.Provider>

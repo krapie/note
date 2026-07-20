@@ -3738,3 +3738,122 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   .rb-gnode-sub { font-size: 8px; }
   .rb-formula-code { white-space: normal; font-size: 10px; }
 }
+
+/* SNMP page */
+.snmp-graph-canvas {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  margin-bottom: 8px;
+}
+.snmp-graph-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Lines */
+.snmp-sline          { transition: stroke 0.25s, opacity 0.25s, stroke-dasharray 0.25s; }
+.snmp-sline-idle     { stroke: var(--kp-border); }
+.snmp-sline-request  { stroke: var(--kp-fg-2); }
+.snmp-sline-response { stroke: var(--kp-fg-1); }
+.snmp-sline-trap     { stroke: var(--kp-fg-3); stroke-dasharray: 5 3; }
+.snmp-sline-inform   { stroke: var(--kp-fg-2); }
+.snmp-sline-lookup   { stroke: var(--kp-fg-3); }
+
+/* Dots */
+.snmp-gdot      { fill: var(--kp-fg-1); }
+.snmp-gdot-rev  { fill: var(--kp-fg-2); }
+.snmp-gdot-trap { fill: var(--kp-fg-3); }
+
+/* Node boxes */
+.snmp-gnode {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 5px 10px;
+  min-width: 72px;
+  border: 1.5px solid var(--kp-border);
+  border-radius: var(--kp-radius-sm);
+  background: var(--kp-bg);
+  transition: border-color 0.25s, background 0.25s;
+  text-align: center;
+}
+.snmp-gnode-idle       { border-color: var(--kp-border); background: var(--kp-bg); }
+.snmp-gnode-polling    { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); }
+.snmp-gnode-done       { border-color: var(--kp-fg-1); background: var(--kp-bg-muted); }
+.snmp-gnode-processing { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); }
+.snmp-gnode-trapping   { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); }
+.snmp-gnode-active     { border-color: var(--kp-fg-3); background: var(--kp-bg-muted); }
+
+.snmp-gnode-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--kp-fg-1);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.snmp-gnode-sub {
+  font-size: 9px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+  white-space: nowrap;
+}
+
+/* PDU badge */
+.snmp-pdu-badge {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--kp-font-mono);
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
+  border-radius: 3px;
+  pointer-events: none;
+  white-space: nowrap;
+  background: var(--kp-bg-muted);
+  border: 1px solid var(--kp-border);
+  color: var(--kp-fg-2);
+}
+.snmp-pdu-get      { color: var(--kp-fg-2); border-color: var(--kp-border); }
+.snmp-pdu-response { color: var(--kp-fg-1); border-color: var(--kp-fg-2); }
+.snmp-pdu-trap     { color: var(--kp-fg-3); border-color: var(--kp-border); stroke-dasharray: 4 3; }
+.snmp-pdu-inform   { color: var(--kp-fg-2); border-color: var(--kp-border); }
+
+/* MIB tree */
+.snmp-mib-tree {
+  font-family: var(--kp-font-mono);
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--kp-fg-2);
+  background: var(--kp-bg-muted);
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-sm);
+  padding: 12px 16px;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 12px 0;
+}
+
+/* Version table code */
+.snmp-ver-code {
+  font-size: 11px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-1);
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .snmp-gnode { min-width: 56px; padding: 4px 6px; }
+  .snmp-gnode-label { font-size: 9px; }
+  .snmp-gnode-sub { font-size: 8px; }
+  .snmp-mib-tree { font-size: 9px; padding: 8px 10px; }
+}

@@ -15,6 +15,14 @@ interface NoteEntry {
 
 const NOTES_EN: NoteEntry[] = [
   {
+    id: 'snmp',
+    title: 'SNMP — polling, traps, and the MIB',
+    date: '2026-07-20',
+    read: '6 min',
+    tags: ['networking', 'monitoring', 'snmp', 'infrastructure'],
+    blurb: `How network managers poll thousands of devices without logging into each one — and how devices proactively push notifications when something changes. Covers GetRequest, GetResponse, TRAP, InformRequest, and the OID hierarchy inside the MIB.`,
+  },
+  {
     id: 'retry',
     title: 'Retry and exponential backoff',
     date: '2026-07-19',
@@ -137,6 +145,14 @@ const NOTES_EN: NoteEntry[] = [
 ]
 
 const NOTES_KO: NoteEntry[] = [
+  {
+    id: 'snmp',
+    title: 'SNMP — 폴링, 트랩, MIB',
+    date: '2026-07-20',
+    read: '6분',
+    tags: ['networking', 'monitoring', 'snmp', 'infrastructure'],
+    blurb: `네트워크 매니저가 일일이 접속하지 않고 수천 대의 기기를 폴링하는 방법 — 그리고 기기가 변화 발생 시 매니저에게 능동적으로 알리는 방법. GetRequest, GetResponse, TRAP, InformRequest, MIB 내부의 OID 계층 구조를 다룹니다.`,
+  },
   {
     id: 'retry',
     title: '재시도와 지수 백오프',
