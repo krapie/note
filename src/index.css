@@ -1589,6 +1589,9 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   .kp-header-inner { padding: 0 var(--kp-page-pad-mobile); }
   .kp-main { padding: var(--kp-space-5) var(--kp-page-pad-mobile) var(--kp-space-7); }
   .note-page { padding: var(--kp-space-5) var(--kp-page-pad-mobile) var(--kp-space-7); }
+  .note-page-title { font-size: var(--kp-text-xl); }
+  .note-page-meta { flex-wrap: wrap; gap: var(--kp-space-2); }
+  .note-page-tags { flex-wrap: wrap; }
   .kp-footer { padding: var(--kp-space-4) var(--kp-page-pad-mobile); }
   .vpc-tabs { width: 100%; }
   .vpc-tab-btn { flex: 1; text-align: center; padding: 6px 8px; font-size: 12px; }
@@ -2995,7 +2998,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 
 @media (max-width: 640px) {
-  .inet-graph-canvas { height: 200px; }
+  .inet-graph-canvas { height: unset; aspect-ratio: 600 / 240; }
   .inet-detail-row { flex-direction: column; gap: 2px; }
   .inet-detail-key { flex: none; }
 }
@@ -3152,7 +3155,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .ov-proto-table tbody tr:last-child td { border-bottom: none; }
 
 @media (max-width: 640px) {
-  .ov-graph-canvas { height: 190px; }
+  .ov-graph-canvas { height: unset; aspect-ratio: 560 / 220; }
   .ov-proto-table th:nth-child(3),
   .ov-proto-table td:nth-child(3) { display: none; }
 }
@@ -3231,7 +3234,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 
 @media (max-width: 640px) {
-  .dns-graph-canvas { height: 220px; }
+  .dns-graph-canvas { height: unset; aspect-ratio: 560 / 260; }
   .dns-record-table th:nth-child(3),
   .dns-record-table td:nth-child(3) { display: none; }
 }
@@ -3584,6 +3587,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 
 @media (max-width: 640px) {
+  .ecmp-graph-canvas { height: unset; aspect-ratio: 500 / 165; }
   .ecmp-gnode { min-width: 56px; padding: 4px 6px; }
   .ecmp-gnode-label { font-size: 9px; }
   .ecmp-gnode-sub { font-size: 8px; }
@@ -3733,6 +3737,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 
 @media (max-width: 640px) {
+  .rb-graph-canvas { height: unset; aspect-ratio: 500 / 210; }
   .rb-gnode { min-width: 56px; padding: 4px 6px; }
   .rb-gnode-label { font-size: 9px; }
   .rb-gnode-sub { font-size: 8px; }
@@ -3743,8 +3748,8 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .snmp-graph-canvas {
   position: relative;
   width: 100%;
-  height: 200px;
-  margin-bottom: 8px;
+  height: 160px;
+  margin-bottom: 4px;
 }
 .snmp-graph-svg {
   position: absolute;
@@ -3758,15 +3763,21 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .snmp-sline          { transition: stroke 0.25s, opacity 0.25s, stroke-dasharray 0.25s; }
 .snmp-sline-idle     { stroke: var(--kp-border); }
 .snmp-sline-request  { stroke: var(--kp-fg-2); }
+.snmp-sline-bulk     { stroke: var(--kp-fg-2); stroke-dasharray: 6 3; }
 .snmp-sline-response { stroke: var(--kp-fg-1); }
 .snmp-sline-trap     { stroke: var(--kp-fg-3); stroke-dasharray: 5 3; }
 .snmp-sline-inform   { stroke: var(--kp-fg-2); }
-.snmp-sline-lookup   { stroke: var(--kp-fg-3); }
 
 /* Dots */
 .snmp-gdot      { fill: var(--kp-fg-1); }
 .snmp-gdot-rev  { fill: var(--kp-fg-2); }
 .snmp-gdot-trap { fill: var(--kp-fg-3); }
+
+/* Port label — centered below the link line */
+.snmp-port-label {
+  left: 50%;
+  top: 61.25%;
+}
 
 /* Node boxes */
 .snmp-gnode {
@@ -3776,8 +3787,8 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding: 5px 10px;
-  min-width: 72px;
+  padding: 6px 14px;
+  min-width: 80px;
   border: 1.5px solid var(--kp-border);
   border-radius: var(--kp-radius-sm);
   background: var(--kp-bg);
@@ -3789,10 +3800,9 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .snmp-gnode-done       { border-color: var(--kp-fg-1); background: var(--kp-bg-muted); }
 .snmp-gnode-processing { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); }
 .snmp-gnode-trapping   { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); }
-.snmp-gnode-active     { border-color: var(--kp-fg-3); background: var(--kp-bg-muted); }
 
 .snmp-gnode-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--kp-fg-1);
   line-height: 1.2;
@@ -3805,7 +3815,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   white-space: nowrap;
 }
 
-/* PDU badge */
+/* PDU badge — top center of canvas */
 .snmp-pdu-badge {
   position: absolute;
   top: 6px;
@@ -3824,24 +3834,114 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   color: var(--kp-fg-2);
 }
 .snmp-pdu-get      { color: var(--kp-fg-2); border-color: var(--kp-border); }
+.snmp-pdu-bulk     { color: var(--kp-fg-2); border-color: var(--kp-border); }
 .snmp-pdu-response { color: var(--kp-fg-1); border-color: var(--kp-fg-2); }
-.snmp-pdu-trap     { color: var(--kp-fg-3); border-color: var(--kp-border); stroke-dasharray: 4 3; }
-.snmp-pdu-inform   { color: var(--kp-fg-2); border-color: var(--kp-border); }
+.snmp-pdu-trap     { color: var(--kp-fg-3); border-color: var(--kp-border); }
+.snmp-pdu-inform   { color: var(--kp-fg-2); border-color: var(--kp-fg-3); }
 
-/* MIB tree */
-.snmp-mib-tree {
-  font-family: var(--kp-font-mono);
-  font-size: 11px;
-  line-height: 1.7;
-  color: var(--kp-fg-2);
-  background: var(--kp-bg-muted);
+/* NMS Dashboard */
+.snmp-dash-panel {
   border: 1px solid var(--kp-border);
   border-radius: var(--kp-radius-sm);
-  padding: 12px 16px;
-  overflow-x: auto;
-  white-space: pre;
-  margin: 12px 0;
+  overflow: hidden;
+  font-family: var(--kp-font-mono);
 }
+.snmp-dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 12px;
+  background: var(--kp-bg-muted);
+  border-bottom: 1px solid var(--kp-border);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--kp-fg-3);
+}
+.snmp-dash-device {
+  font-weight: 400;
+  color: var(--kp-fg-4);
+}
+.snmp-dash-body {
+  padding: 8px 12px;
+}
+.snmp-dash-section-title {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--kp-fg-4);
+  margin-bottom: 5px;
+}
+.snmp-dash-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.snmp-dash-row { transition: opacity 0.3s; }
+.snmp-dash-row-hidden   { opacity: 0.25; }
+.snmp-dash-row-querying { opacity: 0.7; }
+.snmp-dash-row-ok       { opacity: 1; }
+.snmp-dash-row td { padding: 2px 0; border-bottom: 1px solid var(--kp-border-faint); }
+.snmp-dash-row:last-child td { border-bottom: none; }
+.snmp-dash-label {
+  font-size: 10px;
+  color: var(--kp-fg-2);
+  padding-right: 8px;
+  white-space: nowrap;
+  width: 38%;
+}
+.snmp-dash-oid {
+  font-size: 9px;
+  color: var(--kp-fg-4);
+  padding-right: 8px;
+  white-space: nowrap;
+  width: 44%;
+}
+.snmp-dash-val {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--kp-fg-1);
+  white-space: nowrap;
+  text-align: right;
+}
+.snmp-dash-val-querying {
+  color: var(--kp-fg-4);
+  font-weight: 400;
+  animation: snmp-blink 1s step-end infinite;
+}
+@keyframes snmp-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.25; }
+}
+.snmp-dash-divider {
+  height: 1px;
+  background: var(--kp-border);
+  border: none;
+  margin: 8px 0;
+}
+.snmp-dash-event {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  padding: 2px 0;
+}
+.snmp-dash-event-badge {
+  font-size: 8px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 2px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.snmp-dash-event-trap   { background: var(--kp-bg-muted); color: var(--kp-fg-3); border: 1px solid var(--kp-border); }
+.snmp-dash-event-inform { background: var(--kp-bg-muted); color: var(--kp-fg-2); border: 1px solid var(--kp-fg-3); }
+.snmp-dash-event-ack    { background: var(--kp-bg-muted); color: var(--kp-fg-1); border: 1px solid var(--kp-fg-2); font-size: 7px; }
+.snmp-dash-event-time { color: var(--kp-fg-4); }
+.snmp-dash-event-msg  { color: var(--kp-fg-2); }
+.snmp-dash-no-events  { font-size: 10px; color: var(--kp-fg-4); padding: 2px 0; }
 
 /* Version table code */
 .snmp-ver-code {
@@ -3852,8 +3952,10 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 
 @media (max-width: 640px) {
-  .snmp-gnode { min-width: 56px; padding: 4px 6px; }
-  .snmp-gnode-label { font-size: 9px; }
+  .snmp-graph-canvas { height: unset; aspect-ratio: 500 / 160; }
+  .snmp-gnode { min-width: 60px; padding: 4px 8px; }
+  .snmp-gnode-label { font-size: 10px; }
   .snmp-gnode-sub { font-size: 8px; }
-  .snmp-mib-tree { font-size: 9px; padding: 8px 10px; }
+  .snmp-dash-oid { display: none; }
+  .snmp-dash-label { width: 55%; }
 }
