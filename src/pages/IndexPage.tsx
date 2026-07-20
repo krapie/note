@@ -15,6 +15,14 @@ interface NoteEntry {
 
 const NOTES_EN: NoteEntry[] = [
   {
+    id: 'backbone',
+    title: 'Backbone networks — how packets cross the internet',
+    date: '2026-07-20',
+    read: '6 min',
+    tags: ['networking', 'backbone', 'isp', 'bgp', 'infrastructure'],
+    blurb: `How packets travel from a home user through Tier 3, Tier 2, and Tier 1 ISPs to reach a destination on the other side of the internet — covering transit economics, settlement-free peering, IXPs, and the backbone links that carry the world's traffic.`,
+  },
+  {
     id: 'snmp',
     title: 'SNMP — polling, traps, and the MIB',
     date: '2026-07-20',
@@ -145,6 +153,14 @@ const NOTES_EN: NoteEntry[] = [
 ]
 
 const NOTES_KO: NoteEntry[] = [
+  {
+    id: 'backbone',
+    title: '백본 네트워크 — 패킷이 인터넷을 건너는 방법',
+    date: '2026-07-20',
+    read: '6분',
+    tags: ['networking', 'backbone', 'isp', 'bgp', 'infrastructure'],
+    blurb: `가정 사용자의 패킷이 Tier 3, Tier 2, Tier 1 ISP를 거쳐 인터넷 반대편 목적지에 도달하는 방법 — 트랜짓 경제, 정산 없는 피어링, IXP, 그리고 전 세계 트래픽을 운반하는 백본 링크를 다룹니다.`,
+  },
   {
     id: 'snmp',
     title: 'SNMP — 폴링, 트랩, MIB',

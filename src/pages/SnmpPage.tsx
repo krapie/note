@@ -104,23 +104,17 @@ const T = {
       { title: 'InformRequest — reliable push notification (v2c+, UDP 162)',
         note:  `InformRequest solves the fire-and-forget problem of plain Traps. The NMS must reply with a Response PDU using the same request ID — if the agent times out without receiving an ack, it retransmits. The dashboard shows the event with an ACK badge, confirming the NMS received it.` },
     ],
-    pduTitle:   'SNMP PDU types',
-    pduHeaders: ['PDU', 'Direction', 'Port', 'Description'],
-    pdus: [
-      { pdu: 'GetRequest',     dir: 'Manager → Agent', port: 'UDP 161', desc: 'Retrieve the value of one or more OIDs.' },
-      { pdu: 'GetNextRequest', dir: 'Manager → Agent', port: 'UDP 161', desc: 'Retrieve the next OID in the MIB tree — used to walk the MIB.' },
-      { pdu: 'GetBulkRequest', dir: 'Manager → Agent', port: 'UDP 161', desc: 'Retrieve large blocks of OID data in one round-trip (v2c+).' },
-      { pdu: 'SetRequest',     dir: 'Manager → Agent', port: 'UDP 161', desc: 'Write a value to a writable OID (e.g. set ifAdminStatus to take a port down).' },
-      { pdu: 'Response',       dir: 'Agent → Manager', port: 'UDP 161', desc: 'Return OID-value pairs or an error code in reply to any Request.' },
-      { pdu: 'Trap-PDU',      dir: 'Agent → Manager', port: 'UDP 162', desc: 'Unsolicited event notification — no acknowledgment, fire and forget.' },
-      { pdu: 'InformRequest',  dir: 'Agent → Manager', port: 'UDP 162', desc: 'Reliable notification — agent retransmits until manager responds (v2c+).' },
-    ],
-    verTitle:   'SNMP versions',
-    verHeaders: ['Version', 'Authentication', 'Encryption', 'Notes'],
-    versions: [
-      { ver: 'v1',  auth: 'Community string',   enc: 'None',    note: 'Original RFC 1157 (1988). Community string sent in plaintext.' },
-      { ver: 'v2c', auth: 'Community string',   enc: 'None',    note: 'Adds GetBulk, 64-bit counters, InformRequest. Still plaintext community.' },
-      { ver: 'v3',  auth: 'Username + MD5/SHA', enc: 'DES/AES', note: 'USM (User-based Security Model) — proper auth and encryption. Required for compliance.' },
+    metricsRefTitle:   'Common SNMP metrics',
+    metricsRefHeaders: ['Name', 'OID', 'What it measures'],
+    metricsRef: [
+      { name: 'sysUpTime',       oid: '1.3.6.1.2.1.1.3.0',      desc: 'Time since last reboot in hundredths of seconds. 32-bit counter resets at ~497 days. Rising then sudden drop = unexpected reboot.' },
+      { name: 'sysDescr',        oid: '1.3.6.1.2.1.1.1.0',      desc: 'Hardware and OS description string set by the vendor. Read-only. Used to identify device type and firmware version.' },
+      { name: 'sysName',         oid: '1.3.6.1.2.1.1.5.0',      desc: 'Configured hostname. Should match the device\'s FQDN. Read-write so the NMS can also set it.' },
+      { name: 'ifOperStatus',    oid: '1.3.6.1.2.1.2.2.1.8.x',  desc: 'Per-interface operational state: 1=up, 2=down, 3=testing. The primary OID for link-state alerting — triggers a Trap when it transitions.' },
+      { name: 'ifAdminStatus',   oid: '1.3.6.1.2.1.2.2.1.7.x',  desc: 'Operator-configured state: 1=up, 2=down (shutdown). Compare with ifOperStatus — if admin=up and oper=down, the link failed; if admin=down, it\'s intentional.' },
+      { name: 'ifHCInOctets',    oid: '1.3.6.1.2.1.31.1.1.1.6.x', desc: '64-bit total bytes received. Use instead of ifInOctets on any link faster than ~20 Mbps — the 32-bit counter wraps in seconds on GbE+. Requires v2c or higher.' },
+      { name: 'ifHCOutOctets',   oid: '1.3.6.1.2.1.31.1.1.1.10.x', desc: '64-bit total bytes transmitted. Divide counter delta by polling interval to get throughput in bytes/s. Multiply by 8 for bits/s.' },
+      { name: 'ifInErrors',      oid: '1.3.6.1.2.1.2.2.1.14.x', desc: 'Cumulative input errors: CRC errors, symbol errors, runts. A non-zero rising counter points to physical-layer problems — bad SFP, duplex mismatch, or cable.' },
     ],
   },
   ko: {
@@ -155,23 +149,17 @@ const T = {
       { title: 'InformRequest — 신뢰성 있는 알림 (v2c 이상, UDP 162)',
         note:  `InformRequest는 일반 Trap의 전송 후 망각 문제를 해결합니다. NMS가 동일한 요청 ID로 Response PDU를 회신해야 합니다 — 에이전트가 타임아웃 내에 응답을 받지 못하면 재전송합니다. 대시보드에 ACK 배지가 표시되어 NMS가 수신을 확인했음을 알립니다.` },
     ],
-    pduTitle:   'SNMP PDU 타입',
-    pduHeaders: ['PDU', '방향', '포트', '설명'],
-    pdus: [
-      { pdu: 'GetRequest',     dir: '매니저 → 에이전트', port: 'UDP 161', desc: '하나 이상의 OID 값을 조회합니다.' },
-      { pdu: 'GetNextRequest', dir: '매니저 → 에이전트', port: 'UDP 161', desc: 'MIB 트리에서 다음 OID를 조회 — MIB 탐색에 사용됩니다.' },
-      { pdu: 'GetBulkRequest', dir: '매니저 → 에이전트', port: 'UDP 161', desc: '한 번의 왕복으로 대용량 OID 데이터를 조회합니다 (v2c 이상).' },
-      { pdu: 'SetRequest',     dir: '매니저 → 에이전트', port: 'UDP 161', desc: '쓰기 가능한 OID에 값을 씁니다 (예: 포트 다운을 위한 ifAdminStatus 설정).' },
-      { pdu: 'Response',       dir: '에이전트 → 매니저', port: 'UDP 161', desc: '모든 Request에 대한 응답으로 OID-값 쌍 또는 오류 코드를 반환합니다.' },
-      { pdu: 'Trap-PDU',      dir: '에이전트 → 매니저', port: 'UDP 162', desc: '비요청 이벤트 알림 — 응답 없음, 전송 후 잊어버림.' },
-      { pdu: 'InformRequest',  dir: '에이전트 → 매니저', port: 'UDP 162', desc: '신뢰성 있는 알림 — 매니저가 응답할 때까지 에이전트가 재전송합니다 (v2c 이상).' },
-    ],
-    verTitle:   'SNMP 버전',
-    verHeaders: ['버전', '인증', '암호화', '비고'],
-    versions: [
-      { ver: 'v1',  auth: '커뮤니티 문자열',    enc: '없음',    note: '원본 RFC 1157 (1988). 커뮤니티 문자열이 평문으로 전송됩니다.' },
-      { ver: 'v2c', auth: '커뮤니티 문자열',    enc: '없음',    note: 'GetBulk, 64비트 카운터, InformRequest 추가. 여전히 평문 커뮤니티.' },
-      { ver: 'v3',  auth: '사용자명 + MD5/SHA', enc: 'DES/AES', note: 'USM(User-based Security Model) — 적절한 인증과 암호화. 컴플라이언스 필수.' },
+    metricsRefTitle:   '주요 SNMP 메트릭',
+    metricsRefHeaders: ['이름', 'OID', '측정 항목'],
+    metricsRef: [
+      { name: 'sysUpTime',       oid: '1.3.6.1.2.1.1.3.0',      desc: '마지막 재부팅 이후 경과 시간(1/100초 단위). 32비트 카운터로 약 497일에 리셋됩니다. 갑자기 감소하면 예상치 못한 재부팅을 의미합니다.' },
+      { name: 'sysDescr',        oid: '1.3.6.1.2.1.1.1.0',      desc: '벤더가 설정한 하드웨어 및 OS 설명 문자열. 읽기 전용. 기기 유형과 펌웨어 버전 식별에 사용됩니다.' },
+      { name: 'sysName',         oid: '1.3.6.1.2.1.1.5.0',      desc: '설정된 호스트명. FQDN과 일치해야 합니다. 읽기/쓰기 가능하여 NMS에서 직접 설정할 수도 있습니다.' },
+      { name: 'ifOperStatus',    oid: '1.3.6.1.2.1.2.2.1.8.x',  desc: '인터페이스별 운영 상태: 1=up, 2=down, 3=testing. 링크 상태 알림의 핵심 OID — 전환 시 Trap을 트리거합니다.' },
+      { name: 'ifAdminStatus',   oid: '1.3.6.1.2.1.2.2.1.7.x',  desc: '운영자가 설정한 상태: 1=up, 2=down(shutdown). ifOperStatus와 비교 — admin=up이고 oper=down이면 장애, admin=down이면 의도적인 종료입니다.' },
+      { name: 'ifHCInOctets',    oid: '1.3.6.1.2.1.31.1.1.1.6.x', desc: '64비트 수신 바이트 카운터. GbE 이상의 링크에서는 32비트 ifInOctets가 수 초 내에 오버플로우되므로 반드시 사용합니다. v2c 이상 필요.' },
+      { name: 'ifHCOutOctets',   oid: '1.3.6.1.2.1.31.1.1.1.10.x', desc: '64비트 송신 바이트 카운터. 폴링 간격으로 카운터 델타를 나누면 처리량(bytes/s)을 계산할 수 있습니다. 8을 곱하면 bits/s.' },
+      { name: 'ifInErrors',      oid: '1.3.6.1.2.1.2.2.1.14.x', desc: '누적 입력 오류: CRC 오류, 심볼 오류, 런트. 지속적으로 증가하면 불량 SFP, 듀플렉스 불일치, 케이블 불량 등 물리 계층 문제를 의심합니다.' },
     ],
   },
 }
@@ -351,52 +339,24 @@ function SnmpExplorer() {
   )
 }
 
-// ── PDU table ──────────────────────────────────────────────────────────────────
+// ── Metrics reference table ────────────────────────────────────────────────────
 
-function PduTable() {
+function MetricsRefTable() {
   const { lang } = useLang()
   const t = T[lang]
   return (
     <div className="ov-proto-section">
-      <div className="bgp2-section-title">{t.pduTitle}</div>
-      <table className="ov-proto-table">
+      <div className="bgp2-section-title">{t.metricsRefTitle}</div>
+      <table className="ov-proto-table snmp-metrics-table">
         <thead>
-          <tr>{t.pduHeaders.map(h => <th key={h}>{h}</th>)}</tr>
+          <tr>{t.metricsRefHeaders.map(h => <th key={h}>{h}</th>)}</tr>
         </thead>
         <tbody>
-          {t.pdus.map(r => (
-            <tr key={r.pdu}>
-              <td><code>{r.pdu}</code></td>
-              <td>{r.dir}</td>
-              <td><code>{r.port}</code></td>
+          {t.metricsRef.map(r => (
+            <tr key={r.name}>
+              <td><code>{r.name}</code></td>
+              <td><code className="snmp-oid-cell">{r.oid}</code></td>
               <td>{r.desc}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
-}
-
-// ── Version table ──────────────────────────────────────────────────────────────
-
-function VersionTable() {
-  const { lang } = useLang()
-  const t = T[lang]
-  return (
-    <div className="ov-proto-section">
-      <div className="bgp2-section-title">{t.verTitle}</div>
-      <table className="ov-proto-table">
-        <thead>
-          <tr>{t.verHeaders.map(h => <th key={h}>{h}</th>)}</tr>
-        </thead>
-        <tbody>
-          {t.versions.map(r => (
-            <tr key={r.ver}>
-              <td><code className="snmp-ver-code">{r.ver}</code></td>
-              <td>{r.auth}</td>
-              <td>{r.enc}</td>
-              <td>{r.note}</td>
             </tr>
           ))}
         </tbody>
@@ -419,8 +379,7 @@ export default function SnmpPage() {
       intro={t.intro}
     >
       <SnmpExplorer />
-      <PduTable />
-      <VersionTable />
+      <MetricsRefTable />
     </NoteLayout>
   )
 }

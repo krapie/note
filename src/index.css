@@ -3943,12 +3943,12 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .snmp-dash-event-msg  { color: var(--kp-fg-2); }
 .snmp-dash-no-events  { font-size: 10px; color: var(--kp-fg-4); padding: 2px 0; }
 
-/* Version table code */
-.snmp-ver-code {
-  font-size: 11px;
-  font-family: var(--kp-font-mono);
-  color: var(--kp-fg-1);
-  font-weight: 600;
+/* Metrics reference table */
+.snmp-metrics-table td:nth-child(1) { white-space: nowrap; }
+.snmp-oid-cell {
+  font-size: 10px;
+  color: var(--kp-fg-4);
+  white-space: nowrap;
 }
 
 @media (max-width: 640px) {
@@ -3958,4 +3958,71 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   .snmp-gnode-sub { font-size: 8px; }
   .snmp-dash-oid { display: none; }
   .snmp-dash-label { width: 55%; }
+}
+
+/* ── Backbone page ────────────────────────────────────────────── */
+.bb-graph-canvas {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  margin-bottom: 8px;
+}
+.bb-graph-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Lines */
+.bb-sline         { transition: stroke 0.25s, opacity 0.25s, stroke-dasharray 0.25s; }
+.bb-sline-idle    { stroke: var(--kp-border); }
+.bb-sline-transit { stroke: var(--kp-fg-2); }
+.bb-sline-peering { stroke: var(--kp-fg-1); stroke-dasharray: 8 4; }
+.bb-sline-done    { stroke: var(--kp-fg-4); }
+
+/* Dots */
+.bb-gdot      { fill: var(--kp-fg-2); }
+.bb-gdot-peer { fill: var(--kp-fg-1); }
+
+/* Node boxes */
+.bb-gnode {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px;
+  min-width: 72px;
+  border: 1.5px solid var(--kp-border);
+  border-radius: var(--kp-radius-sm);
+  background: var(--kp-bg);
+  transition: border-color 0.25s, background 0.25s;
+  text-align: center;
+}
+.bb-gnode-idle   { border-color: var(--kp-border); background: var(--kp-bg); }
+.bb-gnode-active { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); }
+.bb-gnode-done   { border-color: var(--kp-fg-4); background: var(--kp-bg); }
+
+.bb-gnode-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--kp-fg-1);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.bb-gnode-sub {
+  font-size: 9px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .bb-graph-canvas { height: unset; aspect-ratio: 560 / 240; }
+  .bb-gnode { min-width: 52px; padding: 4px 6px; }
+  .bb-gnode-label { font-size: 9px; }
+  .bb-gnode-sub { font-size: 8px; }
 }
