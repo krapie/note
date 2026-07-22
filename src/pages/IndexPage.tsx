@@ -294,25 +294,15 @@ const NOTES_KO: NoteEntry[] = [
 export default function IndexPage() {
   const { lang } = useLang()
   const notes = lang === 'ko' ? NOTES_KO : NOTES_EN
-  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
+  const [query, setQuery] = useState('')
 
-  const tagCounts = NOTES_EN.flatMap(n => n.tags).reduce<Record<string, number>>((acc, t) => {
-    acc[t] = (acc[t] ?? 0) + 1
-    return acc
-  }, {})
-  const allTags = Object.keys(tagCounts).filter(t => tagCounts[t] > 2).sort()
-
-  function toggleTag(tag: string) {
-    setSelectedTags(prev => {
-      const next = new Set(prev)
-      next.has(tag) ? next.delete(tag) : next.add(tag)
-      return next
-    })
-  }
-
-  const filtered = selectedTags.size === 0
+  const q = query.trim().toLowerCase()
+  const filtered = q === ''
     ? notes
-    : notes.filter(n => n.tags.some(t => selectedTags.has(t)))
+    : notes.filter(n =>
+        n.title.toLowerCase().includes(q) ||
+        n.blurb.toLowerCase().includes(q)
+      )
 
   return (
     <div className="app">
@@ -326,23 +316,24 @@ export default function IndexPage() {
               : 'Interactive technical notes — each one is a working demo you can step through, not just text.'}
           </p>
         </div>
-        {allTags.length > 0 && (
-          <div className="note-filter-bar">
-            {allTags.map(tag => (
-              <button
-                key={tag}
-                className={`note-filter-tag${selectedTags.has(tag) ? ' active' : ''}`}
-                onClick={() => toggleTag(tag)}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="note-search-wrap">
+          <svg className="note-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607z" />
+          </svg>
+          <input
+            className="note-search-input"
+            type="search"
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder={lang === 'ko' ? '제목 또는 내용으로 검색' : 'Search by title or content'}
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </div>
         <div className="note-list">
           {filtered.length === 0 && (
             <p className="note-empty-state">
-              {lang === 'ko' ? '선택한 태그에 해당하는 노트가 없습니다.' : 'No notes match the selected tags.'}
+              {lang === 'ko' ? '검색 결과가 없습니다.' : 'No notes match your search.'}
             </p>
           )}
           {filtered.map(note => (
@@ -350,17 +341,6 @@ export default function IndexPage() {
               <div className="note-row-main">
                 <div className="note-row-title">{note.title}</div>
                 <div className="note-row-blurb">{note.blurb}</div>
-                <div className="note-row-tags">
-                  {note.tags.map(t => (
-                    <button
-                      key={t}
-                      className={`note-tag note-tag-btn${selectedTags.has(t) ? ' active' : ''}`}
-                      onClick={e => { e.preventDefault(); toggleTag(t) }}
-                    >
-                      {t}
-                    </button>
-                  ))}
-                </div>
               </div>
               <div className="note-row-meta">
                 <span>{note.date}</span>
