@@ -15,6 +15,14 @@ interface NoteEntry {
 
 const NOTES_EN: NoteEntry[] = [
   {
+    id: 'lg',
+    title: 'Looking Glass & PeeringDB — BGP visibility tools',
+    date: '2026-07-21',
+    read: '5 min',
+    tags: ['networking', 'bgp', 'peering', 'tools', 'infrastructure'],
+    blurb: `The two tools every network engineer opens when investigating BGP routing: PeeringDB for finding a network\'s peering policy, IXP memberships, and contacts — and Looking Glass for running live BGP queries against an ISP\'s production router from the outside.`,
+  },
+  {
     id: 'backbone',
     title: 'Backbone networks — how packets cross the internet',
     date: '2026-07-20',
@@ -153,6 +161,14 @@ const NOTES_EN: NoteEntry[] = [
 ]
 
 const NOTES_KO: NoteEntry[] = [
+  {
+    id: 'lg',
+    title: 'Looking Glass & PeeringDB — BGP 가시성 도구',
+    date: '2026-07-21',
+    read: '5분',
+    tags: ['networking', 'bgp', 'peering', 'tools', 'infrastructure'],
+    blurb: `BGP 라우팅 조사 시 모든 네트워크 엔지니어가 여는 두 가지 도구: 피어링 정책·IXP 멤버십·연락처 조회를 위한 PeeringDB, 그리고 외부에서 ISP의 운영 라우터에 직접 BGP 쿼리를 실행할 수 있는 Looking Glass.`,
+  },
   {
     id: 'backbone',
     title: '백본 네트워크 — 패킷이 인터넷을 건너는 방법',

@@ -18,6 +18,7 @@ import EcmpPage from './pages/EcmpPage'
 import RetryPage from './pages/RetryPage'
 import SnmpPage from './pages/SnmpPage'
 import BackbonePage from './pages/BackbonePage'
+import LgPage from './pages/LgPage'
 
 type Theme = 'light' | 'dark'
 export type Lang = 'en' | 'ko'
@@ -100,6 +101,7 @@ export default function App() {
             <Route path="/retry" element={<RetryPage />} />
             <Route path="/snmp" element={<SnmpPage />} />
             <Route path="/backbone" element={<BackbonePage />} />
+            <Route path="/lg" element={<LgPage />} />
           </Routes>
         </BrowserRouter>
       </ThemeCtx.Provider>

@@ -4011,3 +4011,159 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   .bb-gnode-label { font-size: 9px; }
   .bb-gnode-sub { font-size: 8px; }
 }
+
+/* ── Looking Glass & PeeringDB page ──────────────────────────── */
+.lg-graph-canvas {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  margin-bottom: 8px;
+}
+.lg-graph-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Lines */
+.lg-sline          { transition: stroke 0.25s, opacity 0.25s; }
+.lg-sline-idle     { stroke: var(--kp-border); }
+.lg-sline-query    { stroke: var(--kp-fg-2); }
+.lg-sline-internal { stroke: var(--kp-fg-3); stroke-dasharray: 5 3; }
+.lg-sline-done     { stroke: var(--kp-fg-4); }
+
+/* Dots */
+.lg-gdot     { fill: var(--kp-fg-2); }
+.lg-gdot-int { fill: var(--kp-fg-3); }
+
+/* Node boxes */
+.lg-gnode {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px;
+  min-width: 72px;
+  border: 1.5px solid var(--kp-border);
+  border-radius: var(--kp-radius-sm);
+  background: var(--kp-bg);
+  transition: border-color 0.25s, background 0.25s;
+  text-align: center;
+}
+.lg-gnode-idle   { border-color: var(--kp-border); background: var(--kp-bg); }
+.lg-gnode-active { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); }
+.lg-gnode-done   { border-color: var(--kp-fg-4); background: var(--kp-bg); }
+
+.lg-gnode-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--kp-fg-1);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.lg-gnode-sub {
+  font-size: 9px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+  white-space: nowrap;
+}
+
+/* Result panel */
+.lg-panel {
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-sm);
+  overflow: hidden;
+  margin-bottom: 8px;
+  font-family: var(--kp-font-mono);
+}
+.lg-panel-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+  background: var(--kp-bg-muted);
+}
+.lg-panel-hint {
+  font-size: 11px;
+  color: var(--kp-fg-4);
+  font-family: var(--kp-font-sans);
+}
+.lg-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 12px;
+  background: var(--kp-bg-muted);
+  border-bottom: 1px solid var(--kp-border);
+}
+.lg-panel-title {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--kp-fg-3);
+}
+.lg-panel-cmd {
+  font-size: 10px;
+  color: var(--kp-fg-2);
+}
+.lg-panel-body {
+  padding: 8px 12px;
+}
+
+/* PeeringDB table */
+.lg-pdb-querying {
+  font-size: 10px;
+  color: var(--kp-fg-4);
+  padding: 4px 0;
+  animation: snmp-blink 1s step-end infinite;
+}
+.lg-pdb-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.lg-pdb-row td {
+  padding: 2px 0;
+  border-bottom: 1px solid var(--kp-border-faint);
+  font-size: 10px;
+}
+.lg-pdb-row:last-child td { border-bottom: none; }
+.lg-pdb-label {
+  color: var(--kp-fg-4);
+  width: 38%;
+  padding-right: 8px;
+  white-space: nowrap;
+}
+.lg-pdb-val {
+  color: var(--kp-fg-1);
+  font-weight: 500;
+}
+
+/* Terminal output */
+.lg-terminal {
+  font-size: 10px;
+  line-height: 1.6;
+}
+.lg-terminal-line {
+  color: var(--kp-fg-2);
+  white-space: pre;
+}
+.lg-terminal-cmd      { color: var(--kp-fg-1); font-weight: 600; }
+.lg-terminal-indent   { color: var(--kp-fg-3); padding-left: 0; }
+.lg-terminal-best     { color: var(--kp-fg-1); font-weight: 600; }
+.lg-terminal-waiting  { color: var(--kp-fg-4); animation: snmp-blink 1s step-end infinite; }
+
+/* Command table */
+.lg-cmd-table td:first-child { white-space: nowrap; }
+
+@media (max-width: 640px) {
+  .lg-graph-canvas { height: unset; aspect-ratio: 480 / 200; }
+  .lg-gnode { min-width: 54px; padding: 4px 6px; }
+  .lg-gnode-label { font-size: 9px; }
+  .lg-gnode-sub { display: none; }
+  .lg-terminal-line { white-space: pre-wrap; word-break: break-all; }
+}
