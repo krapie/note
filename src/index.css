@@ -4013,84 +4013,26 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 
 /* ── Looking Glass & PeeringDB page ──────────────────────────── */
-.lg-graph-canvas {
-  position: relative;
-  width: 100%;
-  height: 200px;
-  margin-bottom: 8px;
-}
-.lg-graph-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-/* Lines */
-.lg-sline          { transition: stroke 0.25s, opacity 0.25s; }
-.lg-sline-idle     { stroke: var(--kp-border); }
-.lg-sline-query    { stroke: var(--kp-fg-2); }
-.lg-sline-internal { stroke: var(--kp-fg-3); stroke-dasharray: 5 3; }
-.lg-sline-done     { stroke: var(--kp-fg-4); }
-
-/* Dots */
-.lg-gdot     { fill: var(--kp-fg-2); }
-.lg-gdot-int { fill: var(--kp-fg-3); }
-
-/* Node boxes */
-.lg-gnode {
-  position: absolute;
-  transform: translate(-50%, -50%);
+.lg-demo-root {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 6px 12px;
-  min-width: 72px;
-  border: 1.5px solid var(--kp-border);
-  border-radius: var(--kp-radius-sm);
-  background: var(--kp-bg);
-  transition: border-color 0.25s, background 0.25s;
-  text-align: center;
+  gap: var(--kp-space-8);
+  margin-bottom: var(--kp-space-2);
 }
-.lg-gnode-idle   { border-color: var(--kp-border); background: var(--kp-bg); }
-.lg-gnode-active { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); }
-.lg-gnode-done   { border-color: var(--kp-fg-4); background: var(--kp-bg); }
-
-.lg-gnode-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--kp-fg-1);
-  line-height: 1.2;
-  white-space: nowrap;
-}
-.lg-gnode-sub {
-  font-size: 9px;
-  font-family: var(--kp-font-mono);
-  color: var(--kp-fg-4);
-  white-space: nowrap;
+.lg-section {}
+.lg-section-note {
+  font-size: var(--kp-text-xs);
+  color: var(--kp-fg-3);
+  line-height: var(--kp-leading-relaxed);
+  margin-top: var(--kp-space-3);
 }
 
-/* Result panel */
+/* Panel chrome */
 .lg-panel {
   border: 1px solid var(--kp-border);
   border-radius: var(--kp-radius-sm);
   overflow: hidden;
-  margin-bottom: 8px;
   font-family: var(--kp-font-mono);
-}
-.lg-panel-empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 80px;
-  background: var(--kp-bg-muted);
-}
-.lg-panel-hint {
-  font-size: 11px;
-  color: var(--kp-fg-4);
-  font-family: var(--kp-font-sans);
 }
 .lg-panel-header {
   display: flex;
@@ -4114,28 +4056,32 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .lg-panel-body {
   padding: 8px 12px;
 }
+.lg-badge-open {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 7px;
+  border-radius: 2px;
+  border: 1px solid var(--kp-border-strong);
+  color: var(--kp-fg-1);
+  background: var(--kp-bg-muted);
+}
 
 /* PeeringDB table */
-.lg-pdb-querying {
-  font-size: 10px;
-  color: var(--kp-fg-4);
-  padding: 4px 0;
-  animation: snmp-blink 1s step-end infinite;
-}
 .lg-pdb-table {
   width: 100%;
   border-collapse: collapse;
 }
 .lg-pdb-row td {
-  padding: 2px 0;
+  padding: 3px 0;
   border-bottom: 1px solid var(--kp-border-faint);
-  font-size: 10px;
+  font-size: 11px;
 }
 .lg-pdb-row:last-child td { border-bottom: none; }
 .lg-pdb-label {
   color: var(--kp-fg-4);
-  width: 38%;
-  padding-right: 8px;
+  width: 36%;
+  padding-right: 12px;
   white-space: nowrap;
 }
 .lg-pdb-val {
@@ -4143,27 +4089,43 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   font-weight: 500;
 }
 
+/* Tab bar */
+.lg-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--kp-space-2);
+  margin-bottom: var(--kp-space-2);
+}
+.lg-tab {
+  font-size: 11px;
+  font-family: var(--kp-font-mono);
+  padding: 3px 10px;
+  border-radius: var(--kp-radius-sm);
+  border: 1px solid var(--kp-border);
+  color: var(--kp-fg-4);
+  cursor: pointer;
+  transition: border-color var(--kp-dur-fast) var(--kp-ease), color var(--kp-dur-fast) var(--kp-ease), background var(--kp-dur-fast) var(--kp-ease);
+}
+.lg-tab:hover { border-color: var(--kp-border-strong); color: var(--kp-fg-2); }
+.lg-tab-active { border-color: var(--kp-fg-3); color: var(--kp-fg-1); background: var(--kp-bg-muted); }
+
 /* Terminal output */
 .lg-terminal {
   font-size: 10px;
-  line-height: 1.6;
+  line-height: 1.65;
+  overflow-x: auto;
 }
-.lg-terminal-line {
-  color: var(--kp-fg-2);
-  white-space: pre;
-}
-.lg-terminal-cmd      { color: var(--kp-fg-1); font-weight: 600; }
-.lg-terminal-indent   { color: var(--kp-fg-3); padding-left: 0; }
-.lg-terminal-best     { color: var(--kp-fg-1); font-weight: 600; }
-.lg-terminal-waiting  { color: var(--kp-fg-4); animation: snmp-blink 1s step-end infinite; }
+.lg-terminal-line    { color: var(--kp-fg-2); white-space: pre; }
+.lg-terminal-blank   { min-height: 1em; }
+.lg-terminal-cmd     { color: var(--kp-fg-1); font-weight: 600; }
+.lg-terminal-indent  { color: var(--kp-fg-3); }
+.lg-terminal-indent2 { color: var(--kp-fg-4); }
+.lg-terminal-best    { color: var(--kp-fg-1); font-weight: 600; }
 
-/* Command table */
+/* Command reference table */
 .lg-cmd-table td:first-child { white-space: nowrap; }
 
 @media (max-width: 640px) {
-  .lg-graph-canvas { height: unset; aspect-ratio: 480 / 200; }
-  .lg-gnode { min-width: 54px; padding: 4px 6px; }
-  .lg-gnode-label { font-size: 9px; }
-  .lg-gnode-sub { display: none; }
   .lg-terminal-line { white-space: pre-wrap; word-break: break-all; }
+  .lg-pdb-label { width: auto; }
 }
