@@ -347,18 +347,18 @@ function DcGraph({ frame, t }: { frame: DcFrame; t: typeof T['en'] }) {
       </svg>
 
       {LINKS.map(({ id, from, to }) => {
+        if (frame.links[id] !== 'active') return null
         const [x1, y1] = NODE_PX[from]
         const [x2, y2] = NODE_PX[to]
         const mx = (x1 + x2) / 2
         const my = (y1 + y2) / 2
         const dx = x2 - x1, dy = y2 - y1
         const len = Math.sqrt(dx * dx + dy * dy) || 1
-        const ox = (-dy / len) * 13
-        const oy = ( dx / len) * 13
-        const st = frame.links[id]
+        const ox = (-dy / len) * 14
+        const oy = ( dx / len) * 14
         return (
           <span key={`lbl-${id}`}
-            className={`graph-linklabel${st !== 'idle' ? ' graph-linklabel-on' : ''}`}
+            className="graph-linklabel graph-linklabel-on"
             style={{ left: `${((mx + ox) / W) * 100}%`, top: `${((my + oy) / H) * 100}%` }}
           >
             {t.linkLabel[id]}
