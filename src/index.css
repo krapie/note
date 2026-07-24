@@ -4129,3 +4129,97 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   .lg-terminal-line { white-space: pre-wrap; word-break: break-all; }
   .lg-pdb-label { width: auto; }
 }
+
+/* ── Datacenter networking page ──────────────────────────── */
+.dc-graph-canvas {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  margin-bottom: 8px;
+}
+.dc-graph-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.dc-sline {
+  stroke: var(--kp-border);
+  transition: stroke var(--kp-dur-base) var(--kp-ease), opacity var(--kp-dur-base) var(--kp-ease);
+}
+.dc-sline-idle   { stroke: var(--kp-border); opacity: 0.6; }
+.dc-sline-active { stroke: var(--kp-fg-2); opacity: 1; }
+.dc-sline-done   { stroke: var(--kp-fg-3); opacity: 0.5; }
+.dc-gdot { fill: var(--kp-fg); }
+.dc-gnode {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 7px;
+  border-radius: var(--kp-radius-sm);
+  border: 1px solid var(--kp-border);
+  background: var(--kp-bg);
+  text-align: center;
+  transition: border-color var(--kp-dur-base) var(--kp-ease), background var(--kp-dur-base) var(--kp-ease), opacity var(--kp-dur-base) var(--kp-ease);
+  white-space: nowrap;
+  min-width: 56px;
+  pointer-events: none;
+}
+.dc-gnode-idle   { border-color: var(--kp-border); background: var(--kp-bg); opacity: 0.8; }
+.dc-gnode-active { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); opacity: 1; }
+.dc-gnode-done   { border-color: var(--kp-border-faint); background: var(--kp-bg); opacity: 0.45; }
+.dc-gnode-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--kp-fg);
+  line-height: 1.2;
+}
+.dc-gnode-sub {
+  font-size: 9px;
+  font-family: var(--kp-font-mono);
+  color: var(--kp-fg-4);
+  letter-spacing: var(--kp-tracking-mono);
+  line-height: 1.2;
+}
+.dc-scenario-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: var(--kp-space-4);
+  background: var(--kp-bg-muted);
+  border-radius: var(--kp-radius-md);
+  padding: 3px;
+  width: fit-content;
+}
+.dc-scenario-tab {
+  font-size: var(--kp-text-sm);
+  font-weight: var(--kp-weight-medium);
+  padding: 5px 12px;
+  border-radius: var(--kp-radius-sm);
+  color: var(--kp-fg-3);
+  transition: background var(--kp-dur-fast) var(--kp-ease), color var(--kp-dur-fast) var(--kp-ease);
+}
+.dc-scenario-tab:hover { color: var(--kp-fg-2); }
+.dc-scenario-tab-active {
+  background: var(--kp-bg);
+  color: var(--kp-fg);
+  box-shadow: var(--kp-shadow-sm);
+}
+.dc-cap-code {
+  font-family: var(--kp-font-mono);
+  font-size: var(--kp-text-xs);
+  color: var(--kp-fg-3);
+  letter-spacing: var(--kp-tracking-mono);
+}
+@media (max-width: 640px) {
+  .dc-graph-canvas { height: 200px; }
+  .dc-gnode { min-width: 44px; padding: 3px 5px; }
+  .dc-gnode-label { font-size: 8px; }
+  .dc-gnode-sub { display: none; }
+  .dc-scenario-tabs { width: 100%; justify-content: stretch; }
+  .dc-scenario-tab { flex: 1; text-align: center; padding: 5px 6px; font-size: var(--kp-text-xs); }
+}

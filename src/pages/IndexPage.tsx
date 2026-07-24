@@ -15,6 +15,14 @@ interface NoteEntry {
 
 const NOTES_EN: NoteEntry[] = [
   {
+    id: 'dc',
+    title: 'Datacenter networking — from rack to border',
+    date: '2026-07-24',
+    read: '7 min',
+    tags: ['networking', 'datacenter', 'infrastructure', 'switching', 'bgp'],
+    blurb: `How packets move inside a datacenter — from server NIC through ToR, Access, Aggregation, and Core switches — and how east-west (server-to-server), internet egress, and direct peer traffic each take different paths out through the border router.`,
+  },
+  {
     id: 'lg',
     title: 'Looking Glass & PeeringDB — BGP visibility tools',
     date: '2026-07-21',
@@ -161,6 +169,14 @@ const NOTES_EN: NoteEntry[] = [
 ]
 
 const NOTES_KO: NoteEntry[] = [
+  {
+    id: 'dc',
+    title: '데이터센터 네트워킹 — 랙에서 경계까지',
+    date: '2026-07-24',
+    read: '7분',
+    tags: ['networking', 'datacenter', 'infrastructure', 'switching', 'bgp'],
+    blurb: `패킷이 데이터센터 내에서 이동하는 방법 — 서버 NIC부터 ToR, Access, Aggregation, Core 스위치까지 — 그리고 East-West(서버 간), 인터넷 이그레스, 직접 피어 트래픽이 각각 Border Router를 통해 어떻게 다른 경로로 나가는지.`,
+  },
   {
     id: 'lg',
     title: 'Looking Glass & PeeringDB — BGP 가시성 도구',

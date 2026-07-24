@@ -19,6 +19,7 @@ import RetryPage from './pages/RetryPage'
 import SnmpPage from './pages/SnmpPage'
 import BackbonePage from './pages/BackbonePage'
 import LgPage from './pages/LgPage'
+import DcPage from './pages/DcPage'
 
 type Theme = 'light' | 'dark'
 export type Lang = 'en' | 'ko'
@@ -102,6 +103,7 @@ export default function App() {
             <Route path="/snmp" element={<SnmpPage />} />
             <Route path="/backbone" element={<BackbonePage />} />
             <Route path="/lg" element={<LgPage />} />
+            <Route path="/dc" element={<DcPage />} />
           </Routes>
         </BrowserRouter>
       </ThemeCtx.Provider>
