@@ -23,23 +23,23 @@ interface DcFrame {
 
 // ── Graph geometry ─────────────────────────────────────────────────────────────
 
-const W = 580
-const H = 260
+const W = 600
+const H = 300
 
 const NODE_PX: Record<NodeId, [number, number]> = {
-  srv_a:    [ 45, 252],
-  tor_a:    [ 65, 222],
-  acc_a:    [ 65, 180],
-  agg_a:    [ 98, 128],
-  core:     [220,  65],
-  agg_b:    [345, 128],
-  acc_b:    [460, 180],
-  tor_b:    [460, 222],
-  srv_b:    [480, 252],
-  br:       [432,  65],
-  internet: [490,  18],
-  peer_org: [522,  60],
-  branch:   [522, 105],
+  srv_a:    [ 45, 278],
+  tor_a:    [ 80, 243],
+  acc_a:    [118, 198],
+  agg_a:    [162, 148],
+  core:     [272,  80],
+  agg_b:    [382, 148],
+  acc_b:    [426, 198],
+  tor_b:    [462, 243],
+  srv_b:    [498, 278],
+  br:       [492,  80],
+  internet: [492,  22],
+  peer_org: [558,  58],
+  branch:   [558, 110],
 }
 
 const NODE_IDS: NodeId[] = [

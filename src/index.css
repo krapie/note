@@ -4134,7 +4134,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .dc-graph-canvas {
   position: relative;
   width: 100%;
-  height: 260px;
+  height: 300px;
   margin-bottom: 8px;
 }
 .dc-graph-svg {
@@ -4216,7 +4216,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   letter-spacing: var(--kp-tracking-mono);
 }
 @media (max-width: 640px) {
-  .dc-graph-canvas { height: 200px; }
+  .dc-graph-canvas { height: 230px; }
   .dc-gnode { min-width: 44px; padding: 3px 5px; }
   .dc-gnode-label { font-size: 8px; }
   .dc-gnode-sub { display: none; }
