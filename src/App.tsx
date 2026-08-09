@@ -20,6 +20,7 @@ import SnmpPage from './pages/SnmpPage'
 import BackbonePage from './pages/BackbonePage'
 import LgPage from './pages/LgPage'
 import DcPage from './pages/DcPage'
+import FwdPage from './pages/FwdPage'
 
 type Theme = 'light' | 'dark'
 export type Lang = 'en' | 'ko'
@@ -104,6 +105,7 @@ export default function App() {
             <Route path="/backbone" element={<BackbonePage />} />
             <Route path="/lg" element={<LgPage />} />
             <Route path="/dc" element={<DcPage />} />
+            <Route path="/fwd" element={<FwdPage />} />
           </Routes>
         </BrowserRouter>
       </ThemeCtx.Provider>

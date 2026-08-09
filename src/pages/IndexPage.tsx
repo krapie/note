@@ -15,6 +15,14 @@ interface NoteEntry {
 
 const NOTES_EN: NoteEntry[] = [
   {
+    id: 'fwd',
+    title: 'L2 vs L3 — how packets actually move',
+    date: '2026-08-09',
+    read: '5 min',
+    tags: ['networking', 'ethernet', 'ip', 'arp', 'switching', 'routing'],
+    blurb: `The IP header carries source and destination end-to-end, unchanged across every router. The Ethernet header is rewritten at every hop. Two interactive scenarios show exactly how ARP resolves MACs, how a switch forwards by MAC table, and how a router strips one L2 envelope and writes a new one for the next link.`,
+  },
+  {
     id: 'dc',
     title: 'Datacenter networking — from rack to border',
     date: '2026-07-24',
@@ -169,6 +177,14 @@ const NOTES_EN: NoteEntry[] = [
 ]
 
 const NOTES_KO: NoteEntry[] = [
+  {
+    id: 'fwd',
+    title: 'L2 vs L3 — 패킷이 실제로 이동하는 방법',
+    date: '2026-08-09',
+    read: '5분',
+    tags: ['networking', 'ethernet', 'ip', 'arp', 'switching', 'routing'],
+    blurb: `IP 헤더는 출발지와 목적지를 종단 간 변하지 않고 전달합니다. 이더넷 헤더는 매 홉마다 새로 씁니다. 두 가지 인터랙티브 시나리오로 ARP가 MAC을 어떻게 찾는지, 스위치가 MAC 테이블로 포워딩하는 방법, 라우터가 L2 봉투를 벗기고 다음 링크를 위해 새로 쓰는 과정을 단계별로 확인할 수 있습니다.`,
+  },
   {
     id: 'dc',
     title: '데이터센터 네트워킹 — 랙에서 경계까지',
