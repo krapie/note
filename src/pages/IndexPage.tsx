@@ -353,19 +353,19 @@ const COLLECTIONS_EN: Collection[] = [
     id: 'osi',
     title: 'Networking — layer by layer',
     sub: 'Follow a packet bottom-up through the OSI stack, from Ethernet frames to application protocols',
-    noteIds: ['fwd', 'mtu', 'tcp', 'conntrack', 'ipsec', 'overlay', 'dns', 'snmp', 'mtr'],
+    noteIds: ['fwd', 'mtu', 'tcp', 'conntrack', 'ipsec', 'overlay', 'dns', 'mtr'],
   },
   {
     id: 'internet',
     title: 'From host to internet',
     sub: 'How traffic leaves a single machine, crosses routing boundaries, and reaches the other side of the world',
-    noteIds: ['fwd', 'ecmp', 'cast', 'bgp', 'inet', 'backbone', 'lg'],
+    noteIds: ['ecmp', 'cast', 'bgp', 'inet', 'backbone', 'lg'],
   },
   {
     id: 'dc',
     title: 'Datacenter networking',
     sub: 'Fabric design, topology trade-offs, and cloud infrastructure — from rack to cloud VPC',
-    noteIds: ['fwd', 'dc', 'clos', 'ecmp', 'vpc'],
+    noteIds: ['dc', 'clos', 'ecmp', 'vpc', 'snmp'],
   },
 ]
 
@@ -374,19 +374,19 @@ const COLLECTIONS_KO: Collection[] = [
     id: 'osi',
     title: '네트워킹 — 레이어 by 레이어',
     sub: '이더넷 프레임부터 애플리케이션 프로토콜까지 OSI 스택을 아래서 위로 따라가는 경로',
-    noteIds: ['fwd', 'mtu', 'tcp', 'conntrack', 'ipsec', 'overlay', 'dns', 'snmp', 'mtr'],
+    noteIds: ['fwd', 'mtu', 'tcp', 'conntrack', 'ipsec', 'overlay', 'dns', 'mtr'],
   },
   {
     id: 'internet',
     title: '호스트에서 인터넷까지',
     sub: '단일 머신에서 트래픽이 출발해 라우팅 경계를 넘어 지구 반대편까지 도달하는 과정',
-    noteIds: ['fwd', 'ecmp', 'cast', 'bgp', 'inet', 'backbone', 'lg'],
+    noteIds: ['ecmp', 'cast', 'bgp', 'inet', 'backbone', 'lg'],
   },
   {
     id: 'dc',
     title: '데이터센터 네트워킹',
     sub: '패브릭 설계, 토폴로지 트레이드오프, 클라우드 인프라 — 랙에서 클라우드 VPC까지',
-    noteIds: ['fwd', 'dc', 'clos', 'ecmp', 'vpc'],
+    noteIds: ['dc', 'clos', 'ecmp', 'vpc', 'snmp'],
   },
 ]
 
