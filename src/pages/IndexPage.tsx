@@ -13,6 +13,13 @@ interface NoteEntry {
   blurb: string
 }
 
+interface Collection {
+  id: string
+  title: string
+  sub: string
+  noteIds: string[]
+}
+
 const NOTES_EN: NoteEntry[] = [
   {
     id: 'fwd',
@@ -36,7 +43,7 @@ const NOTES_EN: NoteEntry[] = [
     date: '2026-07-21',
     read: '5 min',
     tags: ['networking', 'bgp', 'peering', 'tools', 'infrastructure'],
-    blurb: `The two tools every network engineer opens when investigating BGP routing: PeeringDB for finding a network\'s peering policy, IXP memberships, and contacts — and Looking Glass for running live BGP queries against an ISP\'s production router from the outside.`,
+    blurb: `The two tools every network engineer opens when investigating BGP routing: PeeringDB for finding a network's peering policy, IXP memberships, and contacts — and Looking Glass for running live BGP queries against an ISP's production router from the outside.`,
   },
   {
     id: 'backbone',
@@ -339,10 +346,107 @@ const NOTES_KO: NoteEntry[] = [
   },
 ]
 
+// ── Collections ────────────────────────────────────────────────────────────────
+
+const COLLECTIONS_EN: Collection[] = [
+  {
+    id: 'osi',
+    title: 'Networking — layer by layer',
+    sub: 'Follow a packet bottom-up through the OSI stack, from Ethernet frames to application protocols',
+    noteIds: ['fwd', 'mtu', 'tcp', 'conntrack', 'ipsec', 'overlay', 'dns', 'snmp', 'mtr'],
+  },
+  {
+    id: 'internet',
+    title: 'From host to internet',
+    sub: 'How traffic leaves a single machine, crosses routing boundaries, and reaches the other side of the world',
+    noteIds: ['fwd', 'ecmp', 'cast', 'bgp', 'inet', 'backbone', 'lg'],
+  },
+  {
+    id: 'dc',
+    title: 'Datacenter networking',
+    sub: 'Fabric design, topology trade-offs, and cloud infrastructure — from rack to cloud VPC',
+    noteIds: ['fwd', 'dc', 'clos', 'ecmp', 'vpc'],
+  },
+]
+
+const COLLECTIONS_KO: Collection[] = [
+  {
+    id: 'osi',
+    title: '네트워킹 — 레이어 by 레이어',
+    sub: '이더넷 프레임부터 애플리케이션 프로토콜까지 OSI 스택을 아래서 위로 따라가는 경로',
+    noteIds: ['fwd', 'mtu', 'tcp', 'conntrack', 'ipsec', 'overlay', 'dns', 'snmp', 'mtr'],
+  },
+  {
+    id: 'internet',
+    title: '호스트에서 인터넷까지',
+    sub: '단일 머신에서 트래픽이 출발해 라우팅 경계를 넘어 지구 반대편까지 도달하는 과정',
+    noteIds: ['fwd', 'ecmp', 'cast', 'bgp', 'inet', 'backbone', 'lg'],
+  },
+  {
+    id: 'dc',
+    title: '데이터센터 네트워킹',
+    sub: '패브릭 설계, 토폴로지 트레이드오프, 클라우드 인프라 — 랙에서 클라우드 VPC까지',
+    noteIds: ['fwd', 'dc', 'clos', 'ecmp', 'vpc'],
+  },
+]
+
+// ── Collection section ─────────────────────────────────────────────────────────
+
+function CollectionSection({
+  col,
+  noteMap,
+}: {
+  col: Collection
+  noteMap: Map<string, NoteEntry>
+}) {
+  return (
+    <div className="idx-collection">
+      <div className="idx-col-head">
+        <div className="idx-col-title">{col.title}</div>
+        <div className="idx-col-sub">{col.sub}</div>
+      </div>
+      <ol className="idx-col-body">
+        {col.noteIds.map((id, i) => {
+          const note = noteMap.get(id)
+          if (!note) return null
+          return (
+            <li key={`${id}-${i}`} className="idx-col-item">
+              <Link to={`/${id}`} className="idx-col-row">
+                <span className="idx-col-num">{i + 1}</span>
+                <span className="idx-col-row-info">
+                  <span className="idx-col-row-title">{note.title}</span>
+                </span>
+                <span className="idx-col-row-read">{note.read}</span>
+                <svg className="idx-col-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+              </Link>
+            </li>
+          )
+        })}
+      </ol>
+    </div>
+  )
+}
+
+// ── Page ───────────────────────────────────────────────────────────────────────
+
+type View = 'paths' | 'all'
+
 export default function IndexPage() {
   const { lang } = useLang()
   const notes = lang === 'ko' ? NOTES_KO : NOTES_EN
+  const collections = lang === 'ko' ? COLLECTIONS_KO : COLLECTIONS_EN
+
+  const noteMap = new Map(notes.map(n => [n.id, n]))
+
+  const [view, setView] = useState<View>('paths')
   const [query, setQuery] = useState('')
+
+  function handleSearch(val: string) {
+    setQuery(val)
+    if (val.trim()) setView('all')
+  }
 
   const q = query.trim().toLowerCase()
   const filtered = q === ''
@@ -351,6 +455,11 @@ export default function IndexPage() {
         n.title.toLowerCase().includes(q) ||
         n.blurb.toLowerCase().includes(q)
       )
+
+  const lblPaths  = lang === 'ko' ? '경로'      : 'Paths'
+  const lblAll    = lang === 'ko' ? '전체 노트'  : 'All notes'
+  const lblSearch = lang === 'ko' ? '제목 또는 내용으로 검색' : 'Search by title or content'
+  const lblEmpty  = lang === 'ko' ? '검색 결과가 없습니다.' : 'No notes match your search.'
 
   return (
     <div className="app">
@@ -364,39 +473,69 @@ export default function IndexPage() {
               : 'Interactive technical notes — each one is a working demo you can step through, not just text.'}
           </p>
         </div>
-        <div className="note-search-wrap">
-          <svg className="note-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607z" />
-          </svg>
-          <input
-            className="note-search-input"
-            type="search"
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            placeholder={lang === 'ko' ? '제목 또는 내용으로 검색' : 'Search by title or content'}
-            autoComplete="off"
-            spellCheck={false}
-          />
+
+        {/* View toggle */}
+        <div className="idx-view-tabs">
+          <button
+            className={`idx-view-tab${view === 'paths' ? ' idx-view-tab-active' : ''}`}
+            onClick={() => setView('paths')}
+          >
+            {lblPaths}
+          </button>
+          <button
+            className={`idx-view-tab${view === 'all' ? ' idx-view-tab-active' : ''}`}
+            onClick={() => setView('all')}
+          >
+            {lblAll}
+          </button>
         </div>
-        <div className="note-list">
-          {filtered.length === 0 && (
-            <p className="note-empty-state">
-              {lang === 'ko' ? '검색 결과가 없습니다.' : 'No notes match your search.'}
-            </p>
-          )}
-          {filtered.map(note => (
-            <Link key={note.id} to={`/${note.id}`} className="note-row">
-              <div className="note-row-main">
-                <div className="note-row-title">{note.title}</div>
-                <div className="note-row-blurb">{note.blurb}</div>
-              </div>
-              <div className="note-row-meta">
-                <span>{note.date}</span>
-                <span>{note.read}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
+
+        {/* Paths view */}
+        {view === 'paths' && (
+          <div className="idx-paths">
+            {collections.map(col => (
+              <CollectionSection key={col.id} col={col} noteMap={noteMap} />
+            ))}
+          </div>
+        )}
+
+        {/* All notes view */}
+        {view === 'all' && (
+          <>
+            <div className="note-search-wrap">
+              <svg className="note-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607z" />
+              </svg>
+              <input
+                className="note-search-input"
+                type="search"
+                value={query}
+                onChange={e => handleSearch(e.target.value)}
+                placeholder={lblSearch}
+                autoComplete="off"
+                spellCheck={false}
+                autoFocus
+              />
+            </div>
+            <div className="note-list">
+              {filtered.length === 0 && (
+                <p className="note-empty-state">{lblEmpty}</p>
+              )}
+              {filtered.map(note => (
+                <Link key={note.id} to={`/${note.id}`} className="note-row">
+                  <div className="note-row-main">
+                    <div className="note-row-title">{note.title}</div>
+                    <div className="note-row-blurb">{note.blurb}</div>
+                  </div>
+                  <div className="note-row-meta">
+                    <span>{note.date}</span>
+                    <span>{note.read}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </>
+        )}
       </main>
       <Footer />
     </div>
