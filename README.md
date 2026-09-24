@@ -22,4 +22,4 @@ Static SPA — no backend. React 19 + React Router + Vite.
 - **Dark mode** — manual toggle, defaults to `prefers-color-scheme`, persisted to localStorage
 - **Embeddable** — `?embed=1` strips the chrome; `?theme=` / `?lang=` query params and `postMessage` (`kp-theme` / `kp-lang`) let a host page drive theme and language when a note is iframed
 - **PWA** — manifest, apple-touch-icon, theme-color, standalone display
-- **Deploy** — multi-stage Docker build (node build → nginx runtime) with SPA `try_files` fallback; CI pushes `krapi0314/note:<sha>` and bumps the k8s deployment tag
+- **Deploy** — multi-stage Docker build produces a files-only artifact image (`/site`); CI pushes `krapi0314/note:<sha>` and bumps its tag in `k8s/web/deployment.yaml`, where the shared nginx serves it with SPA fallback
