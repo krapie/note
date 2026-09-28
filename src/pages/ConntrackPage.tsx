@@ -146,8 +146,9 @@ const CT_T = {
     },
     ka: {
       modes: { off: 'No keepalive', on: 'Keepalive 120 s' },
-      ttl: 'ttl', expired: 'expired', timeout: 'timeout',
-      marks: { data: 'data', probe: 'probe', drop: 'query ✕' },
+      sockHeaders: { state: 'state', local: 'local', peer: 'peer', timer: 'timer' },
+      natHeaders: { src: 'source', dst: 'destination', snat: 'snat', state: 'state', ttl: 'ttl' },
+      noSocket: 'No socket', noEntry: 'No entries',
     },
   },
   ko: {
@@ -177,8 +178,9 @@ const CT_T = {
     },
     ka: {
       modes: { off: 'Keepalive 없음', on: 'Keepalive 120초' },
-      ttl: 'ttl', expired: '만료', timeout: '타임아웃',
-      marks: { data: '데이터', probe: '프로브', drop: '쿼리 ✕' },
+      sockHeaders: { state: '상태', local: '로컬', peer: '피어', timer: '타이머' },
+      natHeaders: { src: '출발지', dst: '목적지', snat: 'snat', state: '상태', ttl: 'ttl' },
+      noSocket: '소켓 없음', noEntry: '항목 없음',
     },
   },
 }
@@ -187,6 +189,8 @@ const STATE_CLS: Record<string, string> = {
   NEW:         'ctb-new',
   SYN_RECV:    'ctb-syn',
   ESTABLISHED: 'ctb-est',
+  ESTAB:       'ctb-est',
+  CLOSE:       'ctb-closing',
   TIME_WAIT:   'ctb-closing',
   FIN_WAIT:    'ctb-closing',
   UNREPLIED:   'ctb-unreplied',
@@ -208,30 +212,104 @@ function EduFact({ k, v }: { k: string; v: React.ReactNode }) {
 }
 
 type KaMode = 'off' | 'on'
-type KaMarkKind = 'data' | 'probe' | 'drop'
 
-// Idle timeout of a NAT host in front of the flow, and the visible time axis (seconds).
-const KA_TIMEOUT = 300
-const KA_AXIS = 480
-
-const KA_MARKS: Record<KaMode, { t: number; kind: KaMarkKind }[]> = {
-  off: [{ t: 0, kind: 'data' }, { t: 330, kind: 'drop' }],
-  on:  [{ t: 0, kind: 'data' }, { t: 120, kind: 'probe' }, { t: 240, kind: 'probe' }, { t: 330, kind: 'data' }],
+interface SockRow { state: string; local: string; peer: string; timer: string; highlight?: boolean }
+interface NatRow { src: string; dst: string; snat: string; state: string; ttl: string; isNew?: boolean; highlight?: boolean }
+interface KaFrame {
+  t: string
+  client: SockRow[]
+  nat: NatRow[]
+  server: SockRow[]
+  event: string
+  eventKo: string
 }
 
-const KA_FRAMES: Record<KaMode, { t: number; event: string; eventKo: string }[]> = {
+// Client 10.0.0.5 talks to a DB at 203.0.113.10 through a NAT host (public IP
+// 198.51.100.7) whose established timeout is tuned down to 300 s.
+const KA_CLIENT = '10.0.0.5:51022'
+const KA_SERVER = '203.0.113.10:5432'
+const KA_SNAT   = '198.51.100.7:40122'
+const KA_SNAT2  = '198.51.100.7:40991'
+
+const cli = (timer: string, extra: Partial<SockRow> = {}): SockRow => ({ state: 'ESTAB', local: KA_CLIENT, peer: KA_SERVER, timer, ...extra })
+const srv = (extra: Partial<SockRow> = {}): SockRow => ({ state: 'ESTAB', local: KA_SERVER, peer: KA_SNAT, timer: '', ...extra })
+const nat = (ttl: string, extra: Partial<NatRow> = {}): NatRow => ({ src: KA_CLIENT, dst: KA_SERVER, snat: KA_SNAT, state: 'ESTABLISHED', ttl, ...extra })
+
+const KA_FRAMES: Record<KaMode, KaFrame[]> = {
   off: [
-    { t: 0,   event: 'Last packet — 300 s idle timer starts', eventKo: '마지막 패킷 — 300초 유휴 타이머 시작' },
-    { t: 288, event: 'Quiet for 288 s — endpoints can\'t see this timer', eventKo: '288초 동안 조용함 — 양 끝단은 이 타이머를 모름' },
-    { t: 300, event: 'Entry removed silently — no FIN, no RST', eventKo: '항목이 조용히 삭제됨 — FIN도 RST도 없음' },
-    { t: 330, event: 'Next query: no NAT mapping → dropped or RST', eventKo: '다음 쿼리: NAT 매핑 없음 → 드롭 또는 RST' },
+    {
+      t: '0s', client: [cli('')], nat: [nat('300s')], server: [srv()],
+      event: 'Last query done — all three see the flow', eventKo: '마지막 쿼리 완료 — 세 곳 모두 흐름을 인식',
+    },
+    {
+      t: '288s', client: [cli('')], nat: [nat('12s', { highlight: true })], server: [srv()],
+      event: 'Only the NAT host is counting down', eventKo: '카운트다운하는 건 NAT 호스트뿐',
+    },
+    {
+      t: '300s', client: [cli('', { highlight: true })], nat: [], server: [srv({ highlight: true })],
+      event: 'Entry expired — both sockets still ESTAB, nobody was told', eventKo: '항목 만료 — 두 소켓은 여전히 ESTAB, 아무도 모름',
+    },
+    {
+      t: '330s', client: [cli('on,200ms,0', { highlight: true })], nat: [nat('300s', { snat: KA_SNAT2, isNew: true })], server: [srv()],
+      event: 'Next query re-tracked with a new SNAT port — server has no socket for :40991 → RST', eventKo: '다음 쿼리가 새 SNAT 포트로 다시 추적됨 — 서버에 :40991 소켓이 없음 → RST',
+    },
+    {
+      t: '330s', client: [], nat: [nat('10s', { snat: KA_SNAT2, state: 'CLOSE', highlight: true })], server: [srv({ highlight: true })],
+      event: 'Client gets ECONNRESET; server keeps a dead half-open socket', eventKo: '클라이언트는 ECONNRESET, 서버에는 죽은 half-open 소켓이 남음',
+    },
   ],
   on: [
-    { t: 0,   event: 'Last packet — TCP_KEEPIDLE = 120 s', eventKo: '마지막 패킷 — TCP_KEEPIDLE = 120초' },
-    { t: 120, event: 'Probe + ACK → timer back to 300 s', eventKo: '프로브 + ACK → 타이머 300초로 복귀' },
-    { t: 240, event: 'Probe again → reset again', eventKo: '다시 프로브 → 다시 초기화' },
-    { t: 330, event: 'Next query goes through', eventKo: '다음 쿼리 정상 통과' },
+    {
+      t: '0s', client: [cli('keepalive,2min,0')], nat: [nat('300s')], server: [srv()],
+      event: 'Last query done — client keepalive armed (TCP_KEEPIDLE = 120)', eventKo: '마지막 쿼리 완료 — 클라이언트 keepalive 대기 (TCP_KEEPIDLE = 120)',
+    },
+    {
+      t: '110s', client: [cli('keepalive,10sec,0', { highlight: true })], nat: [nat('190s', { highlight: true })], server: [srv()],
+      event: 'Idle 110 s — probe due in 10 s', eventKo: '110초 유휴 — 10초 후 프로브',
+    },
+    {
+      t: '120s', client: [cli('keepalive,2min,0')], nat: [nat('300s', { highlight: true })], server: [srv({ highlight: true })],
+      event: 'Probe + ACK cross the NAT host → ttl back to 300 s', eventKo: '프로브 + ACK가 NAT 호스트 통과 → ttl 300초로 복귀',
+    },
+    {
+      t: '330s', client: [cli('keepalive,2min,0', { highlight: true })], nat: [nat('300s', { highlight: true })], server: [srv({ highlight: true })],
+      event: 'Probes every 120 s — next query reuses :40122 and goes through', eventKo: '120초마다 프로브 — 다음 쿼리는 :40122 그대로 정상 통과',
+    },
   ],
+}
+
+function KaHost({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="ka-host">
+      <div className="ka-host-label">{label}</div>
+      <div className="ct-table-wrap">{children}</div>
+    </div>
+  )
+}
+
+function SockTable({ rows }: { rows: SockRow[] }) {
+  const { lang } = useLang()
+  const t = CT_T[lang].ka
+  return (
+    <>
+      <div className="ct-table-header ka-sock-grid">
+        <span>{t.sockHeaders.state}</span>
+        <span>{t.sockHeaders.local}</span>
+        <span>{t.sockHeaders.peer}</span>
+        <span>{t.sockHeaders.timer}</span>
+      </div>
+      {rows.length === 0 ? (
+        <div className="ct-empty">{t.noSocket}</div>
+      ) : rows.map((r, i) => (
+        <div key={i} className={`ct-row ka-sock-grid${r.highlight ? ' ct-row-highlight' : ''}`}>
+          <CtStateBadge state={r.state} />
+          <span className="ct-addr">{r.local}</span>
+          <span className="ct-addr">{r.peer}</span>
+          <span className="ct-ttl">{r.timer ? `timer:(${r.timer})` : '—'}</span>
+        </div>
+      ))}
+    </>
+  )
 }
 
 function IdleTimer() {
@@ -243,11 +321,6 @@ function IdleTimer() {
   const frames = KA_FRAMES[mode]
   const frame = frames[step]
   const isLast = step >= frames.length - 1
-  const marks = KA_MARKS[mode].filter(m => m.t <= frame.t)
-  const lastSeen = Math.max(...marks.filter(m => m.kind !== 'drop').map(m => m.t))
-  const deadline = lastSeen + KA_TIMEOUT
-  const ttl = deadline - frame.t
-  const pct = (sec: number) => `${(sec / KA_AXIS) * 100}%`
 
   function switchMode(m: KaMode) {
     setMode(m)
@@ -264,30 +337,37 @@ function IdleTimer() {
         ))}
       </div>
 
-      <div className="ka-track">
-        <div className="ka-lane">
-        <div className="ka-axis" />
-        {deadline <= KA_AXIS && (
-          <div className="ka-deadline" style={{ left: pct(deadline) }}><span>{t.timeout}</span></div>
-        )}
-        {marks.map(m => (
-          <div key={m.t} className={`ka-mark ka-mark-${m.kind}`} style={{ left: pct(m.t) }}>
-            <span className="ka-mark-label">{t.marks[m.kind]}</span>
+      <KaHost label="client · ss -tno">
+        <SockTable rows={frame.client} />
+      </KaHost>
+
+      <KaHost label="nat-gw · conntrack -L">
+        <div className="ct-table-header ka-nat-grid">
+          <span>{t.natHeaders.src}</span>
+          <span>{t.natHeaders.dst}</span>
+          <span>{t.natHeaders.snat}</span>
+          <span>{t.natHeaders.state}</span>
+          <span>{t.natHeaders.ttl}</span>
+        </div>
+        {frame.nat.length === 0 ? (
+          <div className="ct-empty">{t.noEntry}</div>
+        ) : frame.nat.map((e, i) => (
+          <div key={i} className={`ct-row ka-nat-grid${e.isNew ? ' ct-row-new' : ''}${e.highlight ? ' ct-row-highlight' : ''}`}>
+            <span className="ct-addr">{e.src}</span>
+            <span className="ct-addr">{e.dst}</span>
+            <span className="ct-addr">{e.snat}</span>
+            <CtStateBadge state={e.state} />
+            <span className="ct-ttl">{e.ttl}</span>
           </div>
         ))}
-        <div className="ka-cursor" style={{ left: pct(frame.t) }}><span>{frame.t}s</span></div>
-        </div>
-      </div>
+      </KaHost>
 
-      <div className="ka-gauge">
-        <span className="ka-gauge-k">{t.ttl}</span>
-        <div className="ka-gauge-bar">
-          <div className="ka-gauge-fill" style={{ width: `${Math.max(0, ttl / KA_TIMEOUT) * 100}%` }} />
-        </div>
-        <span className={`ka-gauge-v${ttl <= 0 ? ' ka-expired' : ''}`}>{ttl > 0 ? `${ttl}s` : t.expired}</span>
-      </div>
+      <KaHost label="server · ss -tno">
+        <SockTable rows={frame.server} />
+      </KaHost>
 
       <div className="ct-detail">
+        <div className="ct-detail-event ka-time">t = {frame.t}</div>
         <p className="ct-detail-body">{lang === 'ko' ? frame.eventKo : frame.event}</p>
       </div>
 
@@ -298,6 +378,10 @@ function IdleTimer() {
         <button className="btn-primary" onClick={() => { if (isLast) setStep(0); else setStep(s => s + 1) }}>
           {isLast ? (lang === 'ko' ? '다시 보기' : 'Replay') : (lang === 'ko' ? '다음 →' : 'Next →')}
         </button>
+      </div>
+
+      <div className="tcp-progress">
+        <div className="tcp-progress-fill" style={{ width: `${(step / (frames.length - 1)) * 100}%` }} />
       </div>
     </div>
   )
