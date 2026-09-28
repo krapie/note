@@ -94,10 +94,11 @@
   --kp-dur-base:  180ms;
   --kp-dur-slow:  280ms;
 
-  --kp-content-width: 920px;
-  --kp-wide-width:    1200px;
-  --kp-page-pad:      48px;
-  --kp-page-pad-mobile: 20px;
+  --kp-content-width: 1280px;
+  --kp-prose-width:   680px;
+  --kp-wide-width:    1440px;
+  --kp-page-pad:      clamp(16px, 2.5vw, 32px);
+  --kp-page-pad-mobile: 16px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -209,7 +210,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   align-items: center;
 }
 .kp-header-inner {
-  max-width: var(--kp-wide-width);
+  max-width: var(--kp-content-width);
   width: 100%;
   margin: 0 auto;
   padding: 0 var(--kp-page-pad);
@@ -303,12 +304,12 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   padding: var(--kp-space-7) var(--kp-page-pad) var(--kp-space-9);
 }
 .kp-main-narrow {
-  max-width: 760px;
+  max-width: var(--kp-prose-width);
 }
 
 /* ── Footer ────────────────────────────────────────────────── */
 .kp-footer {
-  max-width: var(--kp-wide-width);
+  max-width: var(--kp-content-width);
   margin: 0 auto;
   width: 100%;
   padding: var(--kp-space-5) var(--kp-page-pad);
@@ -370,6 +371,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   color: var(--kp-fg);
 }
 .note-index-sub {
+  max-width: var(--kp-prose-width);
   font-size: var(--kp-text-sm);
   color: var(--kp-fg-2);
   line-height: var(--kp-leading-relaxed);
@@ -485,6 +487,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   gap: var(--kp-space-2);
 }
 .note-page-intro {
+  max-width: var(--kp-prose-width);
   font-size: var(--kp-text-sm);
   color: var(--kp-fg-2);
   line-height: var(--kp-leading-relaxed);
