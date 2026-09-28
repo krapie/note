@@ -145,9 +145,9 @@ const NOTES_EN: NoteEntry[] = [
     id: 'conntrack',
     title: 'Linux connection tracking (conntrack)',
     date: '2026-06-21',
-    read: '6 min',
+    read: '5 min',
     tags: ['networking', 'linux', 'conntrack', 'firewall'],
-    blurb: 'How the Linux kernel tracks every active network flow and how conntrack states feed into stateful firewall rules. Four scenarios: TCP lifecycle, UDP timeout, RELATED entry for FTP, and idle timeout vs. keepalive.',
+    blurb: 'How the Linux kernel tracks every active network flow and how conntrack states feed into stateful firewall rules. Three scenarios — TCP lifecycle, UDP timeout, RELATED entry for FTP — plus why idle flows vanish and how keepalive helps.',
   },
   {
     id: 'mtr',
@@ -308,9 +308,9 @@ const NOTES_KO: NoteEntry[] = [
     id: 'conntrack',
     title: 'Linux 연결 추적 (conntrack)',
     date: '2026-06-21',
-    read: '6분',
+    read: '5분',
     tags: ['networking', 'linux', 'conntrack', 'firewall'],
-    blurb: 'Linux 커널이 모든 활성 네트워크 흐름을 추적하는 방법과 conntrack 상태가 방화벽 규칙에 연결되는 방식. 네 가지 시나리오: TCP 생명주기, UDP 타임아웃, FTP용 RELATED 항목, 유휴 타임아웃과 keepalive.',
+    blurb: 'Linux 커널이 모든 활성 네트워크 흐름을 추적하는 방법과 conntrack 상태가 방화벽 규칙에 연결되는 방식. 세 가지 시나리오 — TCP 생명주기, UDP 타임아웃, FTP용 RELATED 항목 — 그리고 유휴 흐름이 사라지는 이유와 keepalive.',
   },
   {
     id: 'mtr',

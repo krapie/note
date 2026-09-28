@@ -2771,6 +2771,70 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   margin: 0;
 }
 
+/* ── Idle timer (conntrack keepalive) ────────────────────────── */
+.ka-track {
+  position: relative;
+  height: 64px;
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-md);
+  background: var(--kp-surface);
+  margin: 0 0 var(--kp-space-2);
+}
+.ka-lane { position: absolute; inset: 0 40px 0 16px; }
+.ka-axis { position: absolute; left: 0; right: 0; top: 36px; height: 1px; background: var(--kp-border-strong); }
+.ka-mark {
+  position: absolute;
+  top: 32px;
+  width: 9px; height: 9px;
+  border-radius: 999px;
+  transform: translateX(-50%);
+  background: var(--kp-fg);
+  animation: ct-fadein 0.25s ease;
+}
+.ka-mark-probe { background: var(--kp-surface); border: 1.5px solid var(--kp-fg-2); }
+.ka-mark-drop  { background: #92400e; }
+.ka-mark-label {
+  position: absolute;
+  top: -20px; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--kp-font-mono);
+  font-size: 10px;
+  color: var(--kp-fg-3);
+  white-space: nowrap;
+}
+.ka-mark-drop .ka-mark-label { color: #92400e; }
+.ka-cursor, .ka-deadline {
+  position: absolute;
+  top: 8px; bottom: 8px;
+  width: 0;
+  transition: left var(--kp-dur-base, 200ms) var(--kp-ease);
+}
+.ka-cursor { border-left: 1px solid var(--kp-fg-2); }
+.ka-deadline { border-left: 1px dashed #92400e; }
+.ka-cursor span, .ka-deadline span {
+  position: absolute;
+  bottom: -2px; left: 4px;
+  font-family: var(--kp-font-mono);
+  font-size: 10px;
+  white-space: nowrap;
+}
+.ka-cursor span { color: var(--kp-fg-2); }
+.ka-deadline span { color: #92400e; left: auto; right: 4px; }
+
+.ka-gauge { display: flex; align-items: center; gap: var(--kp-space-3); }
+.ka-gauge-k, .ka-gauge-v {
+  font-family: var(--kp-font-mono);
+  font-size: 11px;
+  color: var(--kp-fg-3);
+  letter-spacing: var(--kp-tracking-mono);
+}
+.ka-gauge-v { min-width: 56px; text-align: right; color: var(--kp-fg-2); }
+.ka-gauge-v.ka-expired { color: #92400e; }
+.ka-gauge-bar { flex: 1; height: 6px; border-radius: 999px; background: var(--kp-bg-muted); overflow: hidden; }
+.ka-gauge-fill { height: 100%; background: var(--kp-fg-2); transition: width var(--kp-dur-base, 200ms) var(--kp-ease); }
+
+.ka-facts { margin-top: var(--kp-space-5); }
+
 /* ── Internet AS Explorer ──────────────────────────────────────────────────── */
 
 .inet-root {
