@@ -962,15 +962,16 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .tcp-span-line { flex: 1; height: 1px; background: var(--kp-border-strong); }
 .tcp-edu-facts {
   padding: var(--kp-space-3) var(--kp-space-4);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: minmax(72px, max-content) 1fr;
+  column-gap: var(--kp-space-3);
+  row-gap: 6px;
   border-bottom: 1px solid var(--kp-border-faint);
 }
 .tcp-edu-fact {
+  grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: 72px 1fr;
-  gap: var(--kp-space-3);
+  grid-template-columns: subgrid;
   font-size: var(--kp-text-sm);
   line-height: var(--kp-leading-normal);
 }
