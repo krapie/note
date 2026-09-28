@@ -179,7 +179,7 @@ const PHASE_LABEL_KO: Record<Phase, string> = {
 
 const TCP_T = {
   en: {
-    title: 'The TCP three-way handshake',
+    title: 'TCP handshake',
     readTime: '4 min',
     intro: 'What SYN, SYN-ACK, and ACK actually do — stepped through, packet by packet. Covers the full lifecycle: handshake, data transfer, and four-way teardown. Includes state machine visualization.',
     clientFsm: 'Client', serverFsm: 'Server',
@@ -205,7 +205,7 @@ const TCP_T = {
     ],
   },
   ko: {
-    title: 'TCP 완전 해설',
+    title: 'TCP 핸드셰이크',
     readTime: '4분',
     intro: 'SYN, SYN-ACK, ACK가 실제로 무엇을 하는지 — 패킷 하나씩 단계적으로. 핸드셰이크, 데이터 전송, 4-way 종료의 전체 생명주기를 다룹니다. 상태 머신 시각화 포함.',
     clientFsm: '클라이언트', serverFsm: '서버',

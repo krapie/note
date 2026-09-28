@@ -32,7 +32,7 @@ const MTU_T = {
     mssLabel: 'Client MSS',
     pktLabel: 'Packet',
     seeAlso: 'See also: ',
-    tcpLink: 'TCP three-way handshake →',
+    tcpLink: 'TCP handshake →',
     eduTitle: 'Key concepts',
     frames: [
       { title: 'Initial state',                    detail: 'Client has negotiated MSS = 1460 B (standard for 1500 B Ethernet). The R1→R2 link has MTU 1280 — neither side knows this yet. DF (Don\'t Fragment) bit is set on all outgoing segments.' },
@@ -58,7 +58,7 @@ const MTU_T = {
     mssLabel: '클라이언트 MSS',
     pktLabel: '패킷',
     seeAlso: '참고: ',
-    tcpLink: 'TCP 3-Way 핸드셰이크 →',
+    tcpLink: 'TCP 핸드셰이크 →',
     eduTitle: '핵심 개념',
     frames: [
       { title: '초기 상태',                    detail: '클라이언트가 MSS = 1460 B로 협상했습니다 (표준 1500 B 이더넷). R1→R2 링크의 MTU는 1280 — 아직 어느 쪽도 모릅니다. DF(단편화 금지) 비트가 모든 발신 세그먼트에 설정됩니다.' },

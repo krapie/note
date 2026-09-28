@@ -145,9 +145,9 @@ const NOTES_EN: NoteEntry[] = [
     id: 'conntrack',
     title: 'Linux connection tracking (conntrack)',
     date: '2026-06-21',
-    read: '4 min',
+    read: '6 min',
     tags: ['networking', 'linux', 'conntrack', 'firewall'],
-    blurb: 'How the Linux kernel tracks every active network flow and how conntrack states feed into stateful firewall rules. Three scenarios: TCP lifecycle, UDP timeout, and RELATED entry for FTP.',
+    blurb: 'How the Linux kernel tracks every active network flow and how conntrack states feed into stateful firewall rules. Four scenarios: TCP lifecycle, UDP timeout, RELATED entry for FTP, and idle timeout vs. keepalive.',
   },
   {
     id: 'mtr',
@@ -159,7 +159,7 @@ const NOTES_EN: NoteEntry[] = [
   },
   {
     id: 'tcp',
-    title: 'The TCP three-way handshake',
+    title: 'TCP handshake',
     date: '2026-06-13',
     read: '4 min',
     tags: ['networking', 'tcp'],
@@ -308,9 +308,9 @@ const NOTES_KO: NoteEntry[] = [
     id: 'conntrack',
     title: 'Linux 연결 추적 (conntrack)',
     date: '2026-06-21',
-    read: '4분',
+    read: '6분',
     tags: ['networking', 'linux', 'conntrack', 'firewall'],
-    blurb: 'Linux 커널이 모든 활성 네트워크 흐름을 추적하는 방법과 conntrack 상태가 방화벽 규칙에 연결되는 방식. 세 가지 시나리오: TCP 생명주기, UDP 타임아웃, FTP용 RELATED 항목.',
+    blurb: 'Linux 커널이 모든 활성 네트워크 흐름을 추적하는 방법과 conntrack 상태가 방화벽 규칙에 연결되는 방식. 네 가지 시나리오: TCP 생명주기, UDP 타임아웃, FTP용 RELATED 항목, 유휴 타임아웃과 keepalive.',
   },
   {
     id: 'mtr',
@@ -322,7 +322,7 @@ const NOTES_KO: NoteEntry[] = [
   },
   {
     id: 'tcp',
-    title: 'TCP 3-Way 핸드셰이크',
+    title: 'TCP 핸드셰이크',
     date: '2026-06-13',
     read: '4분',
     tags: ['networking', 'tcp'],
