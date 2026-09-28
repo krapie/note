@@ -487,7 +487,6 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   gap: var(--kp-space-2);
 }
 .note-page-intro {
-  max-width: var(--kp-prose-width);
   font-size: var(--kp-text-sm);
   color: var(--kp-fg-2);
   line-height: var(--kp-leading-relaxed);
