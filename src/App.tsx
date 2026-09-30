@@ -21,6 +21,7 @@ import BackbonePage from './pages/BackbonePage'
 import LgPage from './pages/LgPage'
 import DcPage from './pages/DcPage'
 import FwdPage from './pages/FwdPage'
+import NetToolsPage from './pages/NetToolsPage'
 
 type Theme = 'light' | 'dark'
 export type Lang = 'en' | 'ko'
@@ -106,6 +107,7 @@ export default function App() {
             <Route path="/lg" element={<LgPage />} />
             <Route path="/dc" element={<DcPage />} />
             <Route path="/fwd" element={<FwdPage />} />
+            <Route path="/nettools" element={<NetToolsPage />} />
           </Routes>
         </BrowserRouter>
       </ThemeCtx.Provider>

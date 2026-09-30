@@ -22,6 +22,14 @@ interface Collection {
 
 const NOTES_EN: NoteEntry[] = [
   {
+    id: 'nettools',
+    title: 'Network troubleshooting CLI — tools, flags, and practice',
+    date: '2026-09-30',
+    read: '12 min',
+    tags: ['networking', 'troubleshooting', 'tools', 'linux', 'dns', 'tcp'],
+    blurb: `A bottom-up diagnosis of a slow API call with ip, ping, dig, traceroute, nc, curl, tcpdump and iperf3 — each step annotated flag by flag — plus a per-tool reference of the flags and commands worth memorizing and the practices that keep troubleshooting fast and safe.`,
+  },
+  {
     id: 'fwd',
     title: 'L2 vs L3 — how packets actually move',
     date: '2026-08-09',
@@ -184,6 +192,14 @@ const NOTES_EN: NoteEntry[] = [
 ]
 
 const NOTES_KO: NoteEntry[] = [
+  {
+    id: 'nettools',
+    title: '네트워크 트러블슈팅 CLI — 도구, 플래그, 실전',
+    date: '2026-09-30',
+    read: '12분',
+    tags: ['networking', 'troubleshooting', 'tools', 'linux', 'dns', 'tcp'],
+    blurb: `느린 API 호출을 ip, ping, dig, traceroute, nc, curl, tcpdump, iperf3로 아래에서 위로 진단하는 과정을 플래그 하나하나 해설과 함께 따라갑니다. 도구별로 외워 둘 만한 플래그와 명령, 트러블슈팅을 빠르고 안전하게 만드는 원칙도 정리했습니다.`,
+  },
   {
     id: 'fwd',
     title: 'L2 vs L3 — 패킷이 실제로 이동하는 방법',
@@ -359,7 +375,7 @@ const COLLECTIONS_EN: Collection[] = [
     id: 'internet',
     title: 'From host to internet',
     sub: 'How traffic leaves a single machine, crosses routing boundaries, and reaches the other side of the world',
-    noteIds: ['cast', 'bgp', 'inet', 'backbone', 'lg', 'mtr'],
+    noteIds: ['cast', 'bgp', 'inet', 'backbone', 'lg', 'mtr', 'nettools'],
   },
   {
     id: 'dc',
@@ -380,7 +396,7 @@ const COLLECTIONS_KO: Collection[] = [
     id: 'internet',
     title: '호스트에서 인터넷까지',
     sub: '단일 머신에서 트래픽이 출발해 라우팅 경계를 넘어 지구 반대편까지 도달하는 과정',
-    noteIds: ['cast', 'bgp', 'inet', 'backbone', 'lg', 'mtr'],
+    noteIds: ['cast', 'bgp', 'inet', 'backbone', 'lg', 'mtr', 'nettools'],
   },
   {
     id: 'dc',
