@@ -22,13 +22,19 @@ interface NtFrame {
   flags: FlagNote[]   // flag anatomy for the command(s) in this frame
 }
 
+interface ToolCmd {
+  when: Bi       // troubleshooting scenario
+  c:    string   // one command per line; "# ..." comments are stripped on copy
+  why:  Bi
+}
+
 interface ToolRef {
   id:      string
   name:    string
   layer:   string
   purpose: Bi
+  cmds:    ToolCmd[]
   flags:   FlagNote[]
-  cmds:    Array<Bi & { c: string }>
   gotcha:  Bi
 }
 
@@ -82,7 +88,7 @@ const FRAMES: NtFrame[] = [
   // 0: symptom
   { nodes: N0, links: L0, bidir: [], layer: 'symptom · L7',
     term:
-`$ time curl -s -o /dev/null https://api.example.com/v1/orders
+`$ time curl -s -o /dev/null https://api.example.com/orders
 
 real    0m3.214s
 user    0m0.021s
@@ -129,7 +135,7 @@ rtt min/avg/max/mdev = 0.388/0.421/0.462/0.027 ms`,
   { nodes: { ...N0, client: 'ok', gw: 'ok', isp: 'done', dns: 'active' },
     links: { ...L0, client_gw: 'active', gw_isp: 'active', isp_dns: 'active' }, bidir: ['isp_dns'], layer: 'L7 · DNS',
     term:
-`$ dig @1.1.1.1 api.example.com +noall +answer +stats
+`$ dig @1.1.1.1 +noall +answer +stats api.example.com
 api.example.com.        300     IN      A       93.184.216.34
 ;; Query time: 14 msec
 ;; SERVER: 1.1.1.1#53(1.1.1.1) (UDP)
@@ -145,10 +151,10 @@ api.example.com.        300     IN      A       93.184.216.34
   { nodes: { ...N0, client: 'ok', gw: 'ok', isp: 'done', dns: 'ok', server: 'fail' },
     links: { ...L0, client_gw: 'active', gw_isp: 'active', isp_srv: 'active' }, bidir: [], layer: 'L3 · ICMP',
     term:
-`$ ping -c 4 -W 1 93.184.216.34
-PING 93.184.216.34 (93.184.216.34) 56(84) bytes of data.
+`$ ping -c 4 -W 1 api.example.com
+PING api.example.com (93.184.216.34) 56(84) bytes of data.
 
---- 93.184.216.34 ping statistics ---
+--- api.example.com ping statistics ---
 4 packets transmitted, 0 received, 100% packet loss, time 3062ms`,
     flags: [
       { f: '-c 4', en: 'send 4 echo requests',                          ko: 'echo 요청 4개 전송' },
@@ -158,8 +164,8 @@ PING 93.184.216.34 (93.184.216.34) 56(84) bytes of data.
   { nodes: { ...N0, client: 'ok', gw: 'ok', isp: 'active', dns: 'ok', server: 'active' },
     links: PATH_ON, bidir: [], layer: 'L3 · path (TCP)',
     term:
-`$ sudo traceroute -n -T -p 443 -q 1 93.184.216.34
-traceroute to 93.184.216.34, 30 hops max, 60 byte packets
+`$ sudo traceroute -n -T -p 443 -q 1 api.example.com
+traceroute to api.example.com (93.184.216.34), 30 hops max, 60 byte packets
  1  10.0.0.1  0.521 ms
  2  100.64.0.1  4.812 ms
  3  *
@@ -187,13 +193,10 @@ Connection to api.example.com (93.184.216.34) 443 port [tcp/https] succeeded!`,
   { nodes: { ...N0, client: 'ok', gw: 'ok', isp: 'ok', dns: 'ok', server: 'active' },
     links: PATH_ON, bidir: ['isp_srv'], layer: 'L7 · TLS + HTTP',
     term:
-`$ curl -sS -o /dev/null \\
-    -w "dns=%{time_namelookup} tcp=%{time_connect} tls=%{time_appconnect} ttfb=%{time_starttransfer} total=%{time_total} code=%{http_code}\\n" \\
-    https://api.example.com/v1/orders
-dns=0.014 tcp=0.026 tls=0.071 ttfb=3.118 total=3.121 code=200`,
+`$ curl -so /dev/null -w "tcp=%{time_connect} tls=%{time_appconnect} ttfb=%{time_starttransfer}\\n" https://api.example.com/orders
+tcp=0.026 tls=0.071 ttfb=3.118`,
     flags: [
-      { f: '-sS',                   en: 'silent, but still show errors',                          ko: '조용히, 단 에러는 표시' },
-      { f: '-o /dev/null',          en: 'discard the body — only the metrics matter',             ko: '본문 버림 — 지표만 필요' },
+      { f: '-so /dev/null',         en: '-s silent + -o /dev/null discard the body — only the metrics matter', ko: '-s 조용히 + -o /dev/null 본문 버림 — 지표만 필요' },
       { f: '-w "…"',                en: 'write-out: print variables after the transfer',          ko: 'write-out: 전송 후 변수 출력' },
       { f: '%{time_connect}',       en: 'TCP handshake done (seconds since start)',               ko: 'TCP 핸드셰이크 완료 시점 (시작 기준 누적 초)' },
       { f: '%{time_appconnect}',    en: 'TLS handshake done',                                     ko: 'TLS 핸드셰이크 완료 시점' },
@@ -203,7 +206,7 @@ dns=0.014 tcp=0.026 tls=0.071 ttfb=3.118 total=3.121 code=200`,
   { nodes: { ...N0, client: 'capture', gw: 'ok', isp: 'ok', dns: 'ok', server: 'active' },
     links: { ...L0, client_gw: 'active', gw_isp: 'done', isp_srv: 'done', isp_dns: 'done' }, bidir: ['client_gw'], layer: 'L2–L4 · wire',
     term:
-`$ sudo tcpdump -nni eth0 -c 6 "host 93.184.216.34 and tcp port 443"
+`$ sudo tcpdump -nni eth0 -c 6 host 93.184.216.34 and port 443
 10:42:01.100211 IP 10.0.0.5.51522 > 93.184.216.34.443: Flags [S], length 0
 10:42:01.111502 IP 93.184.216.34.443 > 10.0.0.5.51522: Flags [S.], length 0
 10:42:01.111560 IP 10.0.0.5.51522 > 93.184.216.34.443: Flags [.], length 0
@@ -214,7 +217,7 @@ dns=0.014 tcp=0.026 tls=0.071 ttfb=3.118 total=3.121 code=200`,
       { f: '-nn',       en: 'no host AND no port name resolution',            ko: '호스트명과 포트명 모두 변환 안 함' },
       { f: '-i eth0',   en: 'capture on this interface (any = all)',          ko: '이 인터페이스에서 캡처 (any = 전체)' },
       { f: '-c 6',      en: 'stop after 6 packets',                           ko: '패킷 6개 후 종료' },
-      { f: '"host … and tcp port 443"', en: 'BPF filter — only this flow, applied in the kernel', ko: 'BPF 필터 — 이 흐름만, 커널에서 적용' },
+      { f: 'host … and port 443', en: 'BPF filter — only this flow, applied in the kernel', ko: 'BPF 필터 — 이 흐름만, 커널에서 적용' },
     ] },
   // 9: iperf3
   { nodes: { ...N0, client: 'ok', gw: 'ok', isp: 'ok', dns: 'ok', server: 'active' },
@@ -242,22 +245,28 @@ const TOOLS: ToolRef[] = [
   {
     id: 'ip', name: 'ip', layer: 'L2–L3 · local',
     purpose: {
-      en: 'The local view first: is the interface up, does it have an address, and which route and source IP will the kernel actually pick for a destination?',
-      ko: '로컬부터 확인합니다: 인터페이스가 UP인지, 주소가 있는지, 커널이 특정 목적지에 대해 실제로 어떤 경로와 출발지 IP를 고르는지.',
+      en: 'Local view first: is the interface up, does it have an address, and which route will the kernel pick?',
+      ko: '로컬부터: 인터페이스가 UP인지, 주소가 있는지, 커널이 어떤 경로를 고르는지.',
     },
-    flags: [
-      { f: '-br',             en: 'brief — one line per interface',                                           ko: 'brief — 인터페이스당 한 줄' },
-      { f: '-c',              en: 'colorize state and addresses',                                             ko: '상태와 주소를 색으로 구분' },
-      { f: '-s  (-s -s)',     en: 'statistics: RX/TX bytes, errors, drops, overruns (twice = more detail)',   ko: '통계: RX/TX 바이트, 에러, 드롭, 오버런 (두 번 = 상세)' },
-      { f: '-4 / -6',         en: 'limit output to one address family',                                       ko: '한 주소 체계만 출력' },
-      { f: 'route get <dst>', en: 'which route, next hop, device and source IP the kernel would use',         ko: '커널이 사용할 경로, 넥스트홉, 장치, 출발지 IP' },
-      { f: 'neigh',           en: 'ARP / NDP neighbor cache — FAILED or INCOMPLETE means no L2 reply',        ko: 'ARP / NDP 이웃 캐시 — FAILED, INCOMPLETE는 L2 응답 없음' },
-    ],
     cmds: [
-      { c: 'ip -br -c addr',                en: 'At-a-glance interface state and IPs.',                                   ko: '인터페이스 상태와 IP를 한눈에.' },
-      { c: 'ip route get 93.184.216.34',    en: 'Which gateway and interface win for this destination — catches VPN and policy-routing surprises.', ko: '이 목적지에 어떤 게이트웨이와 인터페이스가 쓰이는지 — VPN, 정책 라우팅 함정 확인.' },
-      { c: 'ip -s -s link show eth0',       en: 'Errors, drops, overruns — bad cable, duplex mismatch, or full ring buffer.', ko: '에러, 드롭, 오버런 — 불량 케이블, duplex 불일치, 링 버퍼 포화.' },
-      { c: 'ip neigh show dev eth0',        en: 'Is the gateway MAC resolved? REACHABLE / STALE vs FAILED.',             ko: '게이트웨이 MAC이 해석됐는지? REACHABLE / STALE vs FAILED.' },
+      { when: { en: 'Interfaces up? IPs assigned?', ko: '인터페이스 UP? IP 할당?' },
+        c: 'ip -br a',
+        why: { en: 'One line per interface: name, state, addresses.', ko: '인터페이스당 한 줄: 이름, 상태, 주소.' } },
+      { when: { en: 'Which route wins for a destination?', ko: '이 목적지엔 어떤 경로가 쓰이나?' },
+        c: 'ip r get 1.1.1.1',
+        why: { en: 'Next hop, device and source IP the kernel will use.', ko: '커널이 쓸 넥스트홉, 장치, 출발지 IP.' } },
+      { when: { en: 'NIC errors or drops', ko: 'NIC 에러, 드롭' },
+        c: 'ip -s link show eth0',
+        why: { en: 'Rising errors/drops = bad cable, duplex mismatch, full ring buffer.', ko: '에러/드롭 증가 = 불량 케이블, duplex 불일치, 링 버퍼 포화.' } },
+      { when: { en: 'Gateway MAC resolved?', ko: '게이트웨이 MAC 해석됐나?' },
+        c: 'ip neigh',
+        why: { en: 'FAILED or INCOMPLETE means no ARP reply.', ko: 'FAILED, INCOMPLETE는 ARP 응답 없음.' } },
+    ],
+    flags: [
+      { f: '-br',         en: 'brief — one line per interface',                    ko: 'brief — 인터페이스당 한 줄' },
+      { f: '-s',          en: 'statistics: bytes, errors, drops',                  ko: '통계: 바이트, 에러, 드롭' },
+      { f: 'r get <dst>', en: 'the route the kernel would use for <dst>',          ko: '<dst>에 커널이 사용할 경로' },
+      { f: 'neigh',       en: 'ARP / NDP neighbor cache',                          ko: 'ARP / NDP 이웃 캐시' },
     ],
     gotcha: {
       en: 'ifconfig, route and arp (net-tools) are deprecated and hide secondary addresses and policy routes. Use iproute2.',
@@ -267,27 +276,27 @@ const TOOLS: ToolRef[] = [
   {
     id: 'ss', name: 'ss', layer: 'L4 · sockets',
     purpose: {
-      en: 'Socket state on this host: what is listening, what is connected, and how healthy each TCP connection is (RTT, cwnd, retransmits).',
-      ko: '이 호스트의 소켓 상태: 무엇이 리슨 중인지, 무엇이 연결됐는지, 각 TCP 연결이 얼마나 건강한지 (RTT, cwnd, 재전송).',
+      en: 'Socket state on this host: what is listening, what is connected, and how healthy each TCP connection is.',
+      ko: '이 호스트의 소켓 상태: 무엇이 리슨 중이고, 무엇이 연결됐고, 각 TCP 연결이 얼마나 건강한지.',
     },
-    flags: [
-      { f: '-t / -u',                en: 'TCP / UDP sockets',                                       ko: 'TCP / UDP 소켓' },
-      { f: '-l',                     en: 'listening sockets only',                                  ko: '리슨 소켓만' },
-      { f: '-a',                     en: 'all sockets — listening and connected',                   ko: '전체 소켓 — 리슨 + 연결' },
-      { f: '-n',                     en: 'numeric — no service or host names',                      ko: 'numeric — 서비스명, 호스트명 변환 안 함' },
-      { f: '-p',                     en: 'owning process (root to see other users)',                ko: '소유 프로세스 (다른 사용자 것은 root 필요)' },
-      { f: '-i',                     en: 'internal TCP info: rtt, cwnd, retrans, send rate',        ko: 'TCP 내부 정보: rtt, cwnd, retrans, 송신 속도' },
-      { f: '-o',                     en: 'timers: retransmit, keepalive, time-wait',                ko: '타이머: 재전송, keepalive, time-wait' },
-      { f: '-s',                     en: 'summary counts per state',                                ko: '상태별 요약 카운트' },
-      { f: 'state <s>',              en: 'filter by TCP state (established, syn-sent, time-wait …)', ko: 'TCP 상태로 필터 (established, syn-sent, time-wait …)' },
-      { f: 'dport = :443 / dst <ip>', en: 'filter by remote port or address',                       ko: '원격 포트 또는 주소로 필터' },
-    ],
     cmds: [
-      { c: 'ss -tlnp',                                           en: 'Is the service listening — and on 0.0.0.0 or only 127.0.0.1?',          ko: '서비스가 리슨 중인지 — 0.0.0.0인지 127.0.0.1뿐인지?' },
-      { c: `ss -tan state established '( dport = :443 )'`,       en: 'All established outbound HTTPS connections.',                           ko: '연결된 모든 아웃바운드 HTTPS 연결.' },
-      { c: 'ss -tin dst 93.184.216.34',                           en: 'Per-connection rtt, cwnd and retrans — spot a lossy path.',              ko: '연결별 rtt, cwnd, retrans — 손실 경로 발견.' },
-      { c: 'ss -tan state syn-sent',                              en: 'Stuck in SYN-SENT = SYN never answered, usually a firewall DROP.',       ko: 'SYN-SENT에 멈춤 = SYN 응답 없음, 대개 방화벽 DROP.' },
-      { c: 'ss -s',                                               en: 'Totals — piles of TIME-WAIT or orphaned sockets.',                       ko: '합계 — TIME-WAIT나 orphan 소켓이 쌓였는지.' },
+      { when: { en: 'Is my service listening?', ko: '서비스가 리슨 중인가?' },
+        c: 'ss -tlnp',
+        why: { en: 'Check the address too: 0.0.0.0 vs 127.0.0.1 only.', ko: '주소도 확인: 0.0.0.0인지 127.0.0.1뿐인지.' } },
+      { when: { en: 'Is this connection lossy or slow?', ko: '이 연결이 손실/지연 중인가?' },
+        c: 'ss -tin dst 10.0.2.10',
+        why: { en: 'rtt, cwnd and retrans per connection.', ko: '연결별 rtt, cwnd, retrans.' } },
+      { when: { en: 'SYN never answered?', ko: 'SYN 응답이 없나?' },
+        c: 'ss -tn state syn-sent',
+        why: { en: 'Stuck in SYN-SENT usually means a firewall DROP.', ko: 'SYN-SENT에 멈춤 = 대개 방화벽 DROP.' } },
+    ],
+    flags: [
+      { f: '-t / -u',   en: 'TCP / UDP sockets',                          ko: 'TCP / UDP 소켓' },
+      { f: '-l',        en: 'listening sockets only',                     ko: '리슨 소켓만' },
+      { f: '-n',        en: 'numeric — no name resolution',               ko: 'numeric — 이름 변환 안 함' },
+      { f: '-p',        en: 'owning process',                             ko: '소유 프로세스' },
+      { f: '-i',        en: 'TCP internals: rtt, cwnd, retrans',          ko: 'TCP 내부 정보: rtt, cwnd, retrans' },
+      { f: 'state <s>', en: 'filter by TCP state',                        ko: 'TCP 상태로 필터' },
     ],
     gotcha: {
       en: 'A service bound to 127.0.0.1 is reachable only from the host itself — the most common reason a port looks closed from outside.',
@@ -297,86 +306,91 @@ const TOOLS: ToolRef[] = [
   {
     id: 'ping', name: 'ping', layer: 'L3 · ICMP',
     purpose: {
-      en: 'L3 reachability and round-trip time using ICMP echo. It proves the IP path works for ICMP — not that TCP/443 works.',
-      ko: 'ICMP echo로 L3 도달성과 왕복 시간을 확인합니다. IP 경로가 ICMP에 대해 동작함을 증명할 뿐, TCP/443이 동작함을 증명하지는 않습니다.',
+      en: 'L3 reachability and round-trip time with ICMP echo. Proves the path works for ICMP — not that TCP/443 works.',
+      ko: 'ICMP echo로 L3 도달성과 왕복 시간을 확인합니다. ICMP 경로를 증명할 뿐, TCP/443을 증명하지는 않습니다.',
     },
-    flags: [
-      { f: '-c N',          en: 'stop after N packets',                                          ko: 'N개 후 종료' },
-      { f: '-i S',          en: 'interval between packets (below 0.2 s needs root)',             ko: '패킷 간격 (0.2초 미만은 root 필요)' },
-      { f: '-W S',          en: 'per-reply timeout',                                             ko: '응답당 타임아웃' },
-      { f: '-w S',          en: 'deadline — total run time cap',                                 ko: '데드라인 — 전체 실행 시간 상한' },
-      { f: '-s N',          en: 'payload bytes (+28 for IP and ICMP headers)',                   ko: '페이로드 바이트 (IP+ICMP 헤더 28바이트 추가)' },
-      { f: '-M do',         en: 'set Don\'t Fragment — path MTU probing',                        ko: 'DF 비트 설정 — 경로 MTU 탐지' },
-      { f: '-I <if|addr>',  en: 'source interface or address',                                   ko: '출발 인터페이스 또는 주소' },
-      { f: '-4 / -6',       en: 'force IPv4 or IPv6',                                            ko: 'IPv4 또는 IPv6 강제' },
-      { f: '-q',            en: 'quiet — summary only',                                          ko: 'quiet — 요약만' },
-      { f: '-D',            en: 'prefix each line with a unix timestamp',                        ko: '각 줄에 유닉스 타임스탬프' },
-      { f: '-O',            en: 'report a missing reply before sending the next probe',          ko: '다음 전송 전에 응답 누락을 출력' },
-    ],
     cmds: [
-      { c: 'ping -c 5 -i 0.2 10.0.0.1',                 en: 'Quick gateway check.',                                                           ko: '빠른 게이트웨이 확인.' },
-      { c: 'ping -M do -s 1472 -c 3 93.184.216.34',     en: '1472 + 28 = 1500. "message too long" or silence means the path MTU is below 1500.', ko: '1472 + 28 = 1500. "message too long"이나 무응답은 경로 MTU가 1500 미만이라는 뜻.' },
-      { c: 'ping -D -O 8.8.8.8 | tee ping.log',         en: 'Long-running timestamped log to correlate intermittent drops.',                   ko: '간헐적 드롭을 시간과 대조하기 위한 장시간 타임스탬프 로그.' },
-      { c: 'ping -I eth1 -c 3 1.1.1.1',                 en: 'Test one specific uplink on a multi-homed host.',                                 ko: '멀티홈 호스트에서 특정 업링크만 테스트.' },
-      { c: 'ping -c 100 -i 0.2 -q 93.184.216.34',       en: 'Loss % and mdev (jitter) summary only.',                                          ko: '손실률과 mdev(지터) 요약만.' },
+      { when: { en: 'Reachability and RTT', ko: '도달성과 RTT' },
+        c: 'ping -c 5 example.com',
+        why: { en: 'Always bound it with -c.', ko: '항상 -c로 제한.' } },
+      { when: { en: 'Fast probing — loss over a short window', ko: '빠른 프로브 — 짧은 시간의 손실률' },
+        c: 'ping -c 50 -i 0.2 10.0.0.1',
+        why: { en: '50 probes in 10 s instead of 50 s. Below 0.2 s needs root.', ko: '50초 대신 10초에 50개. 0.2초 미만은 root 필요.' } },
+      { when: { en: 'Does a 1500-byte packet fit? (MTU)', ko: '1500바이트 패킷이 통과하나? (MTU)' },
+        c: 'ping -M do -s 1472 -c 3 example.com',
+        why: { en: '1472 + 28 header bytes = 1500 with DF set. "message too long" or silence = path MTU < 1500 — lower -s until it passes.', ko: 'DF 설정, 1472 + 헤더 28 = 1500. "message too long"이나 무응답 = 경로 MTU < 1500 — 통과할 때까지 -s를 낮추세요.' } },
+      { when: { en: 'Intermittent drops — keep a log', ko: '간헐적 드롭 — 로그 남기기' },
+        c: 'ping -D -O example.com | tee ping.log',
+        why: { en: 'Timestamped lines, missed replies reported immediately.', ko: '타임스탬프 기록, 응답 누락 즉시 표시.' } },
+    ],
+    flags: [
+      { f: '-c N',  en: 'stop after N packets',                           ko: 'N개 후 종료' },
+      { f: '-i S',  en: 'interval between packets',                       ko: '패킷 간격' },
+      { f: '-s N',  en: 'payload size in bytes (+28 for IP + ICMP headers)', ko: '페이로드 크기 (IP+ICMP 헤더 +28)' },
+      { f: '-M do', en: 'set Don\'t Fragment — required for MTU tests',   ko: 'DF 비트 설정 — MTU 테스트에 필수' },
+      { f: '-D',    en: 'timestamp each line',                            ko: '각 줄에 타임스탬프' },
+      { f: '-O',    en: 'report missing replies',                         ko: '응답 누락 표시' },
     ],
     gotcha: {
       en: 'Many hosts and clouds drop ICMP echo. 100% loss to a server whose TCP port works is normal — confirm with nc or curl.',
-      ko: '많은 호스트와 클라우드가 ICMP echo를 드롭합니다. TCP 포트가 동작하는 서버에 100% 손실은 흔한 일입니다 — nc나 curl로 확인하세요.',
+      ko: '많은 호스트와 클라우드가 ICMP echo를 드롭합니다. TCP 포트가 동작하는 서버에 100% 손실은 흔합니다 — nc나 curl로 확인하세요.',
     },
   },
   {
     id: 'traceroute', name: 'traceroute', layer: 'L3 · path',
     purpose: {
-      en: 'Discover the hop-by-hop L3 path by sending probes with increasing TTL and reading each router\'s ICMP Time Exceeded reply.',
-      ko: 'TTL을 1씩 늘린 프로브를 보내고 각 라우터의 ICMP Time Exceeded 응답을 읽어 홉 단위 L3 경로를 찾습니다.',
+      en: 'Discover the hop-by-hop path by sending probes with increasing TTL and reading each router\'s ICMP Time Exceeded reply.',
+      ko: 'TTL을 1씩 늘린 프로브를 보내고 각 라우터의 ICMP Time Exceeded 응답을 읽어 홉 단위 경로를 찾습니다.',
     },
-    flags: [
-      { f: '-n',     en: 'no reverse DNS per hop',                                            ko: '홉별 역방향 DNS 조회 안 함' },
-      { f: '-I',     en: 'ICMP echo probes',                                                  ko: 'ICMP echo 프로브' },
-      { f: '-T',     en: 'TCP SYN probes (root) — pass firewalls that allow the app port',    ko: 'TCP SYN 프로브 (root) — 앱 포트를 허용하는 방화벽 통과' },
-      { f: '-U',     en: 'UDP probes to ports 33434+ (Linux default)',                        ko: '33434+ 포트로 UDP 프로브 (Linux 기본)' },
-      { f: '-p N',   en: 'destination port (with -T, use the app port)',                      ko: '목적지 포트 (-T와 함께 앱 포트 사용)' },
-      { f: '-q N',   en: 'probes per hop (default 3)',                                        ko: '홉당 프로브 수 (기본 3)' },
-      { f: '-w S',   en: 'wait time per probe',                                               ko: '프로브당 대기 시간' },
-      { f: '-m N',   en: 'max TTL (default 30)',                                              ko: '최대 TTL (기본 30)' },
-      { f: '-f N',   en: 'start at TTL N — skip known local hops',                            ko: 'TTL N부터 시작 — 알려진 로컬 홉 건너뜀' },
-      { f: '-A',     en: 'look up the AS number of each hop',                                 ko: '홉마다 AS 번호 조회' },
-    ],
     cmds: [
-      { c: 'sudo traceroute -n -T -p 443 api.example.com', en: 'Follow the same protocol and port as the app.',           ko: '앱과 같은 프로토콜과 포트로 추적.' },
-      { c: 'traceroute -n -I 1.1.1.1',                     en: 'ICMP path when UDP probes are filtered.',                 ko: 'UDP 프로브가 막혔을 때 ICMP 경로.' },
-      { c: 'traceroute -n -q 1 -w 1 -m 20 8.8.8.8',        en: 'Fast single-probe pass.',                                 ko: '빠른 단일 프로브 패스.' },
-      { c: 'traceroute -n -A 93.184.216.34',               en: 'Which networks (ASes) the path crosses.',                 ko: '경로가 어떤 네트워크(AS)를 거치는지.' },
+      { when: { en: 'Path the app actually uses', ko: '앱이 실제로 쓰는 경로' },
+        c: 'sudo traceroute -n -T -p 443 example.com',
+        why: { en: 'TCP SYN to 443 passes firewalls that drop UDP/ICMP probes.', ko: '443 TCP SYN은 UDP/ICMP를 막는 방화벽도 통과.' } },
+      { when: { en: 'ICMP path', ko: 'ICMP 경로' },
+        c: 'sudo traceroute -n -I example.com',
+        why: { en: 'When the default UDP probes are filtered.', ko: '기본 UDP 프로브가 막혔을 때.' } },
+      { when: { en: 'Which networks (ASes)?', ko: '어떤 네트워크(AS)를 거치나?' },
+        c: 'traceroute -n -A example.com',
+        why: { en: 'AS number per hop — who to contact.', ko: '홉별 AS 번호 — 누구에게 연락할지.' } },
+    ],
+    flags: [
+      { f: '-n',   en: 'no reverse DNS per hop',              ko: '홉별 역방향 DNS 안 함' },
+      { f: '-T',   en: 'TCP SYN probes (root)',               ko: 'TCP SYN 프로브 (root)' },
+      { f: '-I',   en: 'ICMP echo probes (root)',             ko: 'ICMP echo 프로브 (root)' },
+      { f: '-p N', en: 'destination port',                    ko: '목적지 포트' },
+      { f: '-A',   en: 'AS number lookup per hop',            ko: '홉별 AS 번호 조회' },
     ],
     gotcha: {
       en: '"* * *" at a middle hop while later hops answer means that router doesn\'t reply to probes — not packet loss.',
-      ko: '중간 홉이 "* * *"인데 이후 홉이 응답한다면 그 라우터가 프로브에 응답하지 않을 뿐, 패킷 손실이 아닙니다.',
+      ko: '중간 홉이 "* * *"인데 이후 홉이 응답하면 그 라우터가 프로브에 응답하지 않을 뿐, 패킷 손실이 아닙니다.',
     },
   },
   {
     id: 'mtr', name: 'mtr', layer: 'L3 · path + loss',
     purpose: {
-      en: 'traceroute and ping combined, run continuously: per-hop loss and latency over many cycles. The best tool for intermittent loss and for ISP tickets.',
-      ko: 'traceroute와 ping을 결합해 계속 실행합니다: 여러 사이클에 걸친 홉별 손실과 지연. 간헐적 손실 분석과 ISP 티켓에 가장 좋은 도구입니다.',
+      en: 'traceroute + ping, continuously: per-hop loss and latency over many cycles. The tool for intermittent loss and ISP tickets.',
+      ko: 'traceroute + ping을 계속 실행: 여러 사이클에 걸친 홉별 손실과 지연. 간헐적 손실과 ISP 티켓의 필수 도구.',
     },
-    flags: [
-      { f: '-r',       en: 'report mode — run, then print a table (no TUI)',   ko: 'report 모드 — 실행 후 표 출력 (TUI 없음)' },
-      { f: '-w',       en: 'wide — don\'t truncate hostnames',                  ko: 'wide — 호스트명 자르지 않음' },
-      { f: '-z',       en: 'show AS number per hop',                            ko: '홉별 AS 번호 표시' },
-      { f: '-b',       en: 'show both hostname and IP',                         ko: '호스트명과 IP 모두 표시' },
-      { f: '-n',       en: 'no DNS',                                            ko: 'DNS 조회 안 함' },
-      { f: '-c N',     en: 'cycles (probes per hop)',                           ko: '사이클 수 (홉당 프로브 수)' },
-      { f: '-T / -u',  en: 'TCP SYN / UDP probes',                              ko: 'TCP SYN / UDP 프로브' },
-      { f: '-P N',     en: 'destination port (with -T or -u)',                  ko: '목적지 포트 (-T 또는 -u와 함께)' },
-      { f: '-i S',     en: 'interval between cycles',                           ko: '사이클 간격' },
-      { f: '-4 / -6',  en: 'force address family',                              ko: '주소 체계 강제' },
-    ],
     cmds: [
-      { c: 'mtr -rwzbc 100 api.example.com',              en: 'The standard report to paste into a ticket.',                       ko: '티켓에 붙이는 표준 리포트.' },
-      { c: 'sudo mtr -T -P 443 -rwc 100 api.example.com', en: 'TCP path when ICMP is deprioritized or filtered.',                  ko: 'ICMP가 후순위 처리되거나 막혔을 때 TCP 경로.' },
-      { c: 'mtr -n -i 0.5 api.example.com',               en: 'Live interactive view while reproducing an issue.',                 ko: '문제 재현 중 실시간 인터랙티브 뷰.' },
-      { c: 'mtr -4 -rwc 200 host  ;  mtr -6 -rwc 200 host', en: 'Compare IPv4 and IPv6 paths — they are often different.',        ko: 'IPv4와 IPv6 경로 비교 — 다른 경우가 많습니다.' },
+      { when: { en: 'Report for an ISP ticket', ko: 'ISP 티켓용 리포트' },
+        c: 'mtr -rwc 100 example.com',
+        why: { en: '100 cycles, printed as a table — paste it as-is.', ko: '100 사이클을 표로 — 그대로 붙여넣기.' } },
+      { when: { en: 'Which networks (ASNs) are on the path?', ko: '경로상 네트워크(ASN)는?' },
+        c: 'mtr --aslookup -rwc 100 example.com',
+        why: { en: 'Shows where one AS hands off to the next.', ko: 'AS가 넘어가는 지점을 보여줌.' } },
+      { when: { en: 'Bidirectional — run from both ends', ko: '양방향 — 양 끝에서 실행' },
+        c: 'mtr -rwc 100 203.0.113.10   # on client → server\nmtr -rwc 100 198.51.100.7   # on server → client',
+        why: { en: 'Return paths are often asymmetric. Loss in only one direction points at that path — send both reports.', ko: '돌아오는 경로는 흔히 비대칭입니다. 한 방향에서만 손실이 보이면 그 경로 문제 — 두 리포트를 함께 보내세요.' } },
+      { when: { en: 'ICMP filtered — use TCP', ko: 'ICMP 차단 — TCP 사용' },
+        c: 'sudo mtr -T -P 443 -rwc 100 example.com',
+        why: { en: 'Same protocol and port as the app.', ko: '앱과 같은 프로토콜과 포트.' } },
+    ],
+    flags: [
+      { f: '-r',              en: 'report mode — run, then print a table',     ko: 'report 모드 — 실행 후 표 출력' },
+      { f: '-w',              en: 'wide — don\'t truncate hostnames',           ko: 'wide — 호스트명 자르지 않음' },
+      { f: '-c N',            en: 'cycles (probes per hop)',                    ko: '사이클 수 (홉당 프로브)' },
+      { f: '-z / --aslookup', en: 'AS number per hop',                          ko: '홉별 AS 번호' },
+      { f: '-T / -P N',       en: 'TCP SYN probes to port N',                   ko: 'N 포트로 TCP SYN 프로브' },
     ],
     gotcha: {
       en: 'Loss at one middle hop that does not continue to the final hop is ICMP rate-limiting. Real loss persists all the way to the destination. See the MTR note.',
@@ -386,188 +400,191 @@ const TOOLS: ToolRef[] = [
   {
     id: 'dig', name: 'dig', layer: 'L7 · DNS',
     purpose: {
-      en: 'Query DNS directly — bypassing /etc/hosts and the OS cache — and see exactly which server answered, with what TTL, and how fast.',
-      ko: '/etc/hosts와 OS 캐시를 거치지 않고 DNS에 직접 질의해, 어느 서버가 어떤 TTL로 얼마나 빨리 답했는지 정확히 봅니다.',
+      en: 'Query DNS directly — bypassing /etc/hosts and the OS cache — and see which server answered, with what TTL, and how fast.',
+      ko: '/etc/hosts와 OS 캐시를 거치지 않고 DNS에 직접 질의해, 어느 서버가 어떤 TTL로 얼마나 빨리 답했는지 봅니다.',
     },
-    flags: [
-      { f: '@server',            en: 'query a specific resolver or authoritative server',      ko: '특정 리졸버 또는 권위 서버에 질의' },
-      { f: 'A / AAAA / MX / NS / TXT / SOA', en: 'record type (positional, or -t TYPE)',        ko: '레코드 타입 (위치 인자 또는 -t TYPE)' },
-      { f: '+short',             en: 'answer data only',                                       ko: '응답 데이터만' },
-      { f: '+noall +answer',     en: 'hide everything, then show the answer section (keeps TTL)', ko: '전부 숨기고 answer 섹션만 (TTL 유지)' },
-      { f: '+trace',             en: 'iterate from the root yourself, showing every referral',  ko: '루트부터 직접 반복 질의, 모든 위임 표시' },
-      { f: '-x <ip>',            en: 'reverse (PTR) lookup',                                   ko: '역방향(PTR) 조회' },
-      { f: '+norecurse',         en: 'RD=0 — ask a server only what it knows itself',           ko: 'RD=0 — 서버가 스스로 아는 것만 질의' },
-      { f: '+tcp',               en: 'use TCP instead of UDP',                                 ko: 'UDP 대신 TCP 사용' },
-      { f: '+dnssec',            en: 'request DNSSEC records (RRSIG)',                         ko: 'DNSSEC 레코드(RRSIG) 요청' },
-      { f: '+time=N +tries=N',   en: 'timeout per try and number of tries',                    ko: '시도당 타임아웃과 시도 횟수' },
-    ],
     cmds: [
-      { c: 'dig +short api.example.com',                       en: 'Quick answer from the system resolver.',                         ko: '시스템 리졸버의 빠른 응답.' },
-      { c: 'dig @1.1.1.1 api.example.com +noall +answer',      en: 'Compare resolvers side by side, with TTL.',                      ko: 'TTL과 함께 리졸버끼리 비교.' },
-      { c: 'dig +trace api.example.com',                        en: 'Find a broken delegation between root, TLD and authoritative.', ko: '루트, TLD, 권위 서버 사이의 깨진 위임 찾기.' },
-      { c: 'dig @ns1.example.com example.com SOA +norecurse',   en: 'Check the authoritative serial after a zone change.',          ko: '존 변경 후 권위 서버의 시리얼 확인.' },
-      { c: 'dig -x 93.184.216.34 +short',                       en: 'Reverse PTR for an IP.',                                        ko: 'IP의 역방향 PTR.' },
-      { c: 'dig api.example.com AAAA +short',                   en: 'Is there an IPv6 record? Explains "IPv6 first, then fall back" delays.', ko: 'IPv6 레코드가 있는지? "IPv6 먼저 시도 후 폴백" 지연의 원인.' },
+      { when: { en: 'Quick lookup', ko: '빠른 조회' },
+        c: 'dig +short example.com',
+        why: { en: 'Just the answer.', ko: '응답만.' } },
+      { when: { en: 'Ask a specific resolver', ko: '특정 리졸버에 질의' },
+        c: 'dig @1.1.1.1 +short example.com',
+        why: { en: 'Different from your resolver = stale cache or split-horizon.', ko: '내 리졸버와 다르면 = 오래된 캐시나 split-horizon.' } },
+      { when: { en: 'Trace the delegation', ko: '위임 추적' },
+        c: 'dig +trace example.com',
+        why: { en: 'Walks root → TLD → authoritative yourself; shows where it breaks.', ko: '루트 → TLD → 권위 서버를 직접 따라가며 끊기는 지점을 보여줌.' } },
+      { when: { en: 'Reverse DNS (rDNS)', ko: '역방향 DNS (rDNS)' },
+        c: 'dig -x 93.184.216.34 +short',
+        why: { en: 'PTR record for an IP.', ko: 'IP의 PTR 레코드.' } },
+    ],
+    flags: [
+      { f: '@server', en: 'query a specific server',                               ko: '특정 서버에 질의' },
+      { f: '+short',  en: 'answer data only',                                      ko: '응답 데이터만' },
+      { f: '+trace',  en: 'iterate from the root, showing every referral',         ko: '루트부터 반복 질의, 모든 위임 표시' },
+      { f: '-x <ip>', en: 'reverse (PTR) lookup',                                  ko: '역방향(PTR) 조회' },
     ],
     gotcha: {
-      en: 'dig ignores /etc/hosts and nsswitch; your application does not. Use "getent ahosts <name>" to see what the app\'s resolver actually returns.',
-      ko: 'dig는 /etc/hosts와 nsswitch를 무시하지만 애플리케이션은 그렇지 않습니다. 앱 리졸버가 실제로 반환하는 값은 "getent ahosts <name>"으로 확인하세요.',
+      en: 'dig ignores /etc/hosts and nsswitch; your application does not. When they disagree, check getent ahosts <name>.',
+      ko: 'dig는 /etc/hosts와 nsswitch를 무시하지만 애플리케이션은 그렇지 않습니다. 결과가 다르면 getent ahosts <name>을 확인하세요.',
     },
   },
   {
     id: 'nc', name: 'nc', layer: 'L4 · TCP / UDP',
     purpose: {
-      en: 'Raw TCP or UDP: can I open a connection to this port? Also a tiny client and server for testing firewalls between two hosts.',
-      ko: '순수 TCP 또는 UDP: 이 포트에 연결할 수 있는가? 두 호스트 사이 방화벽을 테스트하는 작은 클라이언트/서버로도 씁니다.',
+      en: 'Raw TCP or UDP: can I open a connection to this port? Also a tiny client and server for firewall tests.',
+      ko: '순수 TCP 또는 UDP: 이 포트에 연결할 수 있는가? 방화벽 테스트용 작은 클라이언트/서버로도 씁니다.',
     },
-    flags: [
-      { f: '-z',     en: 'zero-I/O scan — connect and close, send nothing',       ko: 'zero-I/O 스캔 — 연결 후 종료, 데이터 없음' },
-      { f: '-v',     en: 'verbose — print the result',                            ko: 'verbose — 결과 출력' },
-      { f: '-w S',   en: 'connect / idle timeout',                                ko: '연결 / 유휴 타임아웃' },
-      { f: '-u',     en: 'UDP instead of TCP',                                    ko: 'TCP 대신 UDP' },
-      { f: '-l',     en: 'listen mode',                                           ko: '리슨 모드' },
-      { f: '-k',     en: 'keep listening after a client disconnects',             ko: '클라이언트 종료 후에도 계속 리슨' },
-      { f: '-n',     en: 'no DNS — IPs only',                                     ko: 'DNS 안 씀 — IP만' },
-    ],
     cmds: [
-      { c: 'nc -zv -w 3 api.example.com 443',                         en: 'Is the port open end to end?',                          ko: '포트가 종단 간 열려 있는지?' },
-      { c: 'nc -zv -w 1 10.0.0.9 20-25',                              en: 'Scan a small port range.',                              ko: '작은 포트 범위 스캔.' },
-      { c: 'nc -l 9000   # host B\nnc -v 10.0.0.9 9000   # host A',  en: 'End-to-end firewall test on any port, no service needed.', ko: '서비스 없이 아무 포트로 종단 간 방화벽 테스트.' },
-      { c: 'printf "GET / HTTP/1.1\\r\\nHost: example.com\\r\\nConnection: close\\r\\n\\r\\n" | nc example.com 80', en: 'Hand-craft a raw HTTP request.', ko: 'HTTP 요청을 직접 작성해 전송.' },
-      { c: 'nc -zvu -w 2 1.1.1.1 53',                                 en: 'UDP check — weak signal, see gotcha.',                  ko: 'UDP 확인 — 신뢰도 낮음, 주의점 참고.' },
+      { when: { en: 'Is the port open?', ko: '포트가 열려 있나?' },
+        c: 'nc -zv -w 3 example.com 443',
+        why: { en: 'succeeded / refused / timed out — each means something different.', ko: 'succeeded / refused / timed out — 각각 의미가 다름.' } },
+      { when: { en: 'Server side — listen on a port', ko: '서버 측 — 포트 리슨' },
+        c: 'nc -lk 9000',
+        why: { en: 'Run on host B (10.0.0.9). No real service needed; -k keeps it open for repeated tests.', ko: '호스트 B(10.0.0.9)에서 실행. 실제 서비스 불필요; -k로 반복 테스트 동안 유지.' } },
+      { when: { en: 'Client side — connect and send', ko: '클라이언트 측 — 연결 후 전송' },
+        c: 'nc -v 10.0.0.9 9000',
+        why: { en: 'Run on host A. Type a line — it appears on B. Timed out = a firewall in between drops it.', ko: '호스트 A에서 실행. 입력한 줄이 B에 표시됨. timed out = 중간 방화벽이 DROP.' } },
+    ],
+    flags: [
+      { f: '-z',   en: 'connect and close, send nothing',   ko: '연결 후 종료, 데이터 없음' },
+      { f: '-v',   en: 'print the result',                  ko: '결과 출력' },
+      { f: '-w S', en: 'timeout',                           ko: '타임아웃' },
+      { f: '-l',   en: 'listen mode (server side)',         ko: '리슨 모드 (서버 측)' },
+      { f: '-k',   en: 'keep listening after a client leaves', ko: '클라이언트 종료 후에도 리슨' },
     ],
     gotcha: {
-      en: 'Three TCP outcomes: succeeded; refused (RST — host is up, nothing listening or REJECT); timed out (silent DROP). UDP "succeeded" proves nothing. Flags differ between openbsd-netcat, ncat and traditional nc.',
-      ko: 'TCP 결과는 세 가지: succeeded; refused (RST — 호스트는 살아 있고 리슨 없음 또는 REJECT); timed out (조용한 DROP). UDP "succeeded"는 아무것도 증명하지 않습니다. openbsd-netcat, ncat, traditional nc마다 플래그가 다릅니다.',
+      en: 'refused = RST (host up, nothing listening, or REJECT). timed out = silent DROP. UDP results (-u) prove little.',
+      ko: 'refused = RST (호스트는 살아 있고 리슨 없음 또는 REJECT). timed out = 조용한 DROP. UDP(-u) 결과는 신뢰도가 낮음.',
     },
   },
   {
     id: 'curl', name: 'curl', layer: 'L7 · HTTP',
     purpose: {
-      en: 'The application\'s real protocol: DNS, TCP, TLS and HTTP in one request, with timing for each phase.',
-      ko: '애플리케이션의 실제 프로토콜: DNS, TCP, TLS, HTTP를 한 요청으로, 단계별 타이밍과 함께.',
+      en: 'The app\'s real protocol: DNS, TCP, TLS and HTTP in one request, with timing for each phase.',
+      ko: '앱의 실제 프로토콜: DNS, TCP, TLS, HTTP를 한 요청으로, 단계별 타이밍과 함께.',
     },
-    flags: [
-      { f: '-v',                  en: 'verbose — connection, TLS and headers',                  ko: 'verbose — 연결, TLS, 헤더' },
-      { f: '-sS',                 en: 'silent but show errors',                                 ko: '조용히, 단 에러는 표시' },
-      { f: '-o <file>',           en: 'write body to file (/dev/null to discard)',              ko: '본문을 파일로 (/dev/null이면 버림)' },
-      { f: '-w <fmt>',            en: 'write-out variables after the transfer',                 ko: '전송 후 write-out 변수 출력' },
-      { f: '-I',                  en: 'HEAD request — headers only',                            ko: 'HEAD 요청 — 헤더만' },
-      { f: '-L',                  en: 'follow redirects',                                       ko: '리다이렉트 따라가기' },
-      { f: '--resolve h:p:ip',    en: 'pin a hostname to an IP — keeps SNI and Host correct',   ko: '호스트명을 IP로 고정 — SNI와 Host는 그대로' },
-      { f: '--connect-to h:p:h2:p2', en: 'send traffic for h:p to another host:port',           ko: 'h:p 트래픽을 다른 host:port로 전송' },
-      { f: '--connect-timeout S', en: 'limit the TCP/TLS connect phase',                        ko: 'TCP/TLS 연결 단계 제한' },
-      { f: '-m S',                en: 'max total time for the whole request',                  ko: '요청 전체 최대 시간' },
-      { f: '-4 / -6',             en: 'force address family',                                   ko: '주소 체계 강제' },
-      { f: '--http1.1 / --http2', en: 'force HTTP version',                                     ko: 'HTTP 버전 강제' },
-      { f: '-x <proxy>',          en: 'go through a proxy',                                     ko: '프록시 경유' },
-      { f: '-k',                  en: 'skip TLS verification — never in scripts or production', ko: 'TLS 검증 생략 — 스크립트나 운영에서는 금지' },
-    ],
     cmds: [
-      { c: 'curl -sS -o /dev/null -w "dns=%{time_namelookup} tcp=%{time_connect} tls=%{time_appconnect} ttfb=%{time_starttransfer} total=%{time_total} code=%{http_code}\\n" https://api.example.com', en: 'Timing breakdown per phase.', ko: '단계별 타이밍 분해.' },
-      { c: 'curl -v --resolve api.example.com:443:10.0.0.9 https://api.example.com/health', en: 'Hit one specific backend without touching DNS.', ko: 'DNS를 건드리지 않고 특정 백엔드 하나에 요청.' },
-      { c: 'curl -sSIL http://example.com',                          en: 'Show the redirect chain, headers only.',                         ko: '리다이렉트 체인을 헤더만으로 확인.' },
-      { c: 'curl -v --connect-timeout 3 -m 10 https://api.example.com', en: 'Bounded request — fails fast instead of hanging.',           ko: '시간 제한 요청 — 멈추지 않고 빨리 실패.' },
-      { c: 'curl -6 -sS -o /dev/null -w "%{remote_ip} %{time_connect}\\n" https://api.example.com', en: 'Compare IPv6 against -4.',          ko: '-4와 IPv6 비교.' },
+      { when: { en: 'Where does the time go?', ko: '시간이 어디서 쓰이나?' },
+        c: 'curl -so /dev/null -w "tcp=%{time_connect} tls=%{time_appconnect} ttfb=%{time_starttransfer}\\n" https://example.com',
+        why: { en: 'Cumulative seconds: TCP done, TLS done, first byte.', ko: '누적 초: TCP 완료, TLS 완료, 첫 바이트.' } },
+      { when: { en: 'See the handshake and headers', ko: '핸드셰이크와 헤더 보기' },
+        c: 'curl -v -o /dev/null https://example.com',
+        why: { en: 'Connection, TLS and request/response headers on stderr; body discarded.', ko: '연결, TLS, 요청/응답 헤더를 stderr로; 본문은 버림.' } },
+      { when: { en: 'Send a custom header', ko: '커스텀 헤더 보내기' },
+        c: 'curl -s -H "Host: example.com" http://10.0.0.9/',
+        why: { en: 'Test a vhost by IP, or add auth / debug headers.', ko: 'IP로 vhost 테스트, 또는 인증/디버그 헤더 추가.' } },
+      { when: { en: 'Headers and redirect chain', ko: '헤더와 리다이렉트 체인' },
+        c: 'curl -sIL https://example.com',
+        why: { en: 'HEAD, following every redirect.', ko: 'HEAD, 모든 리다이렉트 추적.' } },
+      { when: { en: 'Hit one backend, bypass DNS', ko: 'DNS 우회, 특정 백엔드로' },
+        c: 'curl -v --resolve example.com:443:10.0.0.9 https://example.com',
+        why: { en: 'SNI and Host stay correct.', ko: 'SNI와 Host는 그대로 유지.' } },
+    ],
+    flags: [
+      { f: '-v',               en: 'verbose — connection, TLS and headers',   ko: 'verbose — 연결, TLS, 헤더' },
+      { f: '-s',               en: 'silent — no progress meter',              ko: 'silent — 진행 표시 끔' },
+      { f: '-o /dev/null',     en: 'discard the body',                        ko: '본문 버림' },
+      { f: '-w <fmt>',         en: 'print variables after the transfer',      ko: '전송 후 변수 출력' },
+      { f: '-H "K: V"',        en: 'add or override a request header',        ko: '요청 헤더 추가 또는 덮어쓰기' },
+      { f: '-I / -L',          en: 'HEAD only / follow redirects',            ko: 'HEAD만 / 리다이렉트 따라가기' },
+      { f: '--resolve h:p:ip', en: 'pin a hostname to an IP',                 ko: '호스트명을 IP로 고정' },
     ],
     gotcha: {
-      en: '-w times are cumulative from the start. Subtract: TLS = appconnect − connect; server think time ≈ starttransfer − appconnect.',
-      ko: '-w 시간은 시작 기준 누적값입니다. 빼서 계산하세요: TLS = appconnect − connect; 서버 처리 시간 ≈ starttransfer − appconnect.',
+      en: '-w times are cumulative. TLS = appconnect − connect; server think time ≈ starttransfer − appconnect.',
+      ko: '-w 시간은 누적값입니다. TLS = appconnect − connect; 서버 처리 시간 ≈ starttransfer − appconnect.',
     },
   },
   {
-    id: 'openssl', name: 'openssl s_client', layer: 'L6 · TLS',
+    id: 'openssl', name: 'openssl', layer: 'L6 · TLS',
     purpose: {
-      en: 'Only the TLS handshake: which certificate chain, protocol version and cipher the server presents — independent of HTTP.',
-      ko: 'TLS 핸드셰이크만: 서버가 제시하는 인증서 체인, 프로토콜 버전, 암호 스위트 — HTTP와 독립적으로.',
+      en: 'Only the TLS handshake: which certificate, protocol and cipher the server presents — independent of HTTP.',
+      ko: 'TLS 핸드셰이크만: 서버가 제시하는 인증서, 프로토콜, 암호 — HTTP와 독립적으로.',
     },
-    flags: [
-      { f: '-connect h:p',           en: 'host and port to connect to',                                 ko: '연결할 호스트와 포트' },
-      { f: '-servername h',          en: 'SNI — required on shared hosts / CDNs',                        ko: 'SNI — 공유 호스트, CDN에서 필수' },
-      { f: '-brief',                 en: 'short summary: protocol, cipher, peer cert',                   ko: '짧은 요약: 프로토콜, 암호, 상대 인증서' },
-      { f: '-showcerts',             en: 'print the full chain sent by the server',                      ko: '서버가 보낸 전체 체인 출력' },
-      { f: '-alpn h2',               en: 'offer ALPN protocols — check HTTP/2 support',                  ko: 'ALPN 제안 — HTTP/2 지원 확인' },
-      { f: '-tls1_2 / -tls1_3',      en: 'force one protocol version',                                   ko: '특정 프로토콜 버전 강제' },
-      { f: '</dev/null',             en: 'close stdin so the command exits after the handshake',         ko: 'stdin을 닫아 핸드셰이크 후 종료' },
-      { f: 'x509 -noout -dates -subject -issuer', en: 'decode the cert: validity, subject, issuer',       ko: '인증서 디코드: 유효기간, subject, issuer' },
-      { f: 'x509 -ext subjectAltName', en: 'print the SAN list',                                         ko: 'SAN 목록 출력' },
-    ],
     cmds: [
-      { c: 'openssl s_client -connect api.example.com:443 -servername api.example.com -brief </dev/null', en: 'Protocol, cipher and peer cert in a few lines.', ko: '프로토콜, 암호, 상대 인증서를 몇 줄로.' },
-      { c: 'openssl s_client -connect api.example.com:443 -servername api.example.com </dev/null 2>/dev/null | openssl x509 -noout -dates -subject -issuer', en: 'Certificate expiry and issuer.', ko: '인증서 만료일과 발급자.' },
-      { c: 'openssl s_client -connect api.example.com:443 -servername api.example.com </dev/null 2>/dev/null | openssl x509 -noout -ext subjectAltName', en: 'Does the SAN include the name you requested?', ko: 'SAN에 요청한 이름이 포함되는지?' },
-      { c: 'openssl s_client -connect api.example.com:443 -servername api.example.com -showcerts </dev/null', en: 'Missing intermediate certificate?', ko: '중간 인증서 누락 여부?' },
-      { c: 'openssl s_client -connect api.example.com:443 -servername api.example.com -tls1_2 </dev/null', en: 'Will old clients still connect?', ko: '구형 클라이언트도 연결되는지?' },
+      { when: { en: 'Handshake summary', ko: '핸드셰이크 요약' },
+        c: 'openssl s_client -connect example.com:443 -brief </dev/null',
+        why: { en: 'Protocol, cipher, peer cert in a few lines.', ko: '프로토콜, 암호, 상대 인증서를 몇 줄로.' } },
+      { when: { en: 'When does the cert expire?', ko: '인증서 만료일은?' },
+        c: 'openssl s_client -connect example.com:443 </dev/null 2>/dev/null | openssl x509 -noout -dates',
+        why: { en: 'notBefore / notAfter.', ko: 'notBefore / notAfter.' } },
+      { when: { en: 'Missing intermediate?', ko: '중간 인증서 누락?' },
+        c: 'openssl s_client -connect example.com:443 -showcerts </dev/null',
+        why: { en: 'Every cert the server sends.', ko: '서버가 보내는 모든 인증서.' } },
+    ],
+    flags: [
+      { f: '-connect h:p',  en: 'host and port',                                ko: '호스트와 포트' },
+      { f: '-servername h', en: 'SNI — needed when connecting by IP',           ko: 'SNI — IP로 연결할 때 필요' },
+      { f: '-brief',        en: 'short summary',                                ko: '짧은 요약' },
+      { f: '-showcerts',    en: 'print the full chain',                         ko: '전체 체인 출력' },
+      { f: '</dev/null',    en: 'exit right after the handshake',               ko: '핸드셰이크 후 바로 종료' },
     ],
     gotcha: {
-      en: 'Without -servername, many servers return their default certificate and you chase a name mismatch that real clients never see.',
-      ko: '-servername이 없으면 많은 서버가 기본 인증서를 반환해, 실제 클라이언트는 겪지 않는 이름 불일치를 쫓게 됩니다.',
+      en: 'Connecting by IP without -servername returns the default cert — a name mismatch real clients never see.',
+      ko: '-servername 없이 IP로 연결하면 기본 인증서가 와서, 실제 클라이언트는 겪지 않는 이름 불일치를 보게 됩니다.',
     },
   },
   {
     id: 'tcpdump', name: 'tcpdump', layer: 'L2–L4 · wire',
     purpose: {
-      en: 'Ground truth: packets exactly as they hit the interface. Settles "did we send it?" and "did they answer?" for good.',
-      ko: '최종 증거: 인터페이스에 실제로 도달한 패킷 그대로. "우리가 보냈나?", "상대가 답했나?"를 확정합니다.',
+      en: 'Ground truth: packets exactly as they hit the interface. Settles "did we send it?" and "did they answer?".',
+      ko: '최종 증거: 인터페이스에 실제로 도달한 패킷. "우리가 보냈나?", "상대가 답했나?"를 확정합니다.',
     },
-    flags: [
-      { f: '-i <if>',     en: 'interface (any = all interfaces)',                    ko: '인터페이스 (any = 전체)' },
-      { f: '-n / -nn',    en: 'no host names / no host or port names',               ko: '호스트명 변환 안 함 / 호스트명, 포트명 모두 안 함' },
-      { f: '-c N',        en: 'stop after N packets',                                 ko: '패킷 N개 후 종료' },
-      { f: '-w <file>',   en: 'write raw pcap — open later in Wireshark',             ko: 'pcap 원본 저장 — 나중에 Wireshark로 분석' },
-      { f: '-r <file>',   en: 'read a pcap instead of a live interface',              ko: '라이브 대신 pcap 읽기' },
-      { f: '-s N',        en: 'snaplen — bytes per packet (0 = full, default 262144)', ko: 'snaplen — 패킷당 캡처 바이트 (0 = 전체, 기본 262144)' },
-      { f: '-v / -vv',    en: 'more protocol detail (TTL, IP ID, options)',           ko: '프로토콜 상세 (TTL, IP ID, 옵션)' },
-      { f: '-A / -X',     en: 'payload as ASCII / hex + ASCII',                       ko: '페이로드를 ASCII / hex + ASCII로' },
-      { f: '-e',          en: 'print link-layer header (MAC addresses)',              ko: '링크 계층 헤더(MAC 주소) 출력' },
-      { f: '-tttt',       en: 'full date and time on each line',                      ko: '각 줄에 전체 날짜와 시간' },
-      { f: '-C MB / -W N', en: 'rotate files every MB, keep N files (ring buffer)',   ko: 'MB마다 파일 교체, N개 유지 (링 버퍼)' },
-      { f: 'BPF filter',  en: 'host, net, port, src/dst, tcp[tcpflags] — applied in the kernel', ko: 'host, net, port, src/dst, tcp[tcpflags] — 커널에서 적용' },
-    ],
     cmds: [
-      { c: `sudo tcpdump -nni eth0 -c 50 'host 93.184.216.34 and tcp port 443'`,  en: 'One flow, bounded.',                                          ko: '한 흐름만, 개수 제한.' },
-      { c: `sudo tcpdump -nni any -w /tmp/cap.pcap -C 100 -W 5 'port 443'`,        en: 'Long capture as a 5 × 100 MB ring buffer for Wireshark.',     ko: 'Wireshark용 5 × 100MB 링 버퍼 장기 캡처.' },
-      { c: `sudo tcpdump -nni eth0 'tcp[tcpflags] & (tcp-syn|tcp-rst) != 0'`,      en: 'Only handshakes and resets — cheap on busy hosts.',           ko: '핸드셰이크와 리셋만 — 바쁜 호스트에서도 가벼움.' },
-      { c: 'sudo tcpdump -nni eth0 icmp',                                           en: 'ICMP unreachable and "fragmentation needed" messages.',      ko: 'ICMP unreachable과 "fragmentation needed" 메시지.' },
-      { c: 'sudo tcpdump -nni eth0 -e arp',                                         en: 'ARP requests and replies with MACs.',                         ko: 'MAC과 함께 ARP 요청/응답.' },
-      { c: `sudo tcpdump -nni eth0 -A -s 0 'tcp port 80'`,                          en: 'Read plaintext HTTP payloads.',                               ko: '평문 HTTP 페이로드 읽기.' },
+      { when: { en: 'One host, one port', ko: '호스트 하나, 포트 하나' },
+        c: 'sudo tcpdump -nni any host 10.0.2.10 and port 443',
+        why: { en: 'The flow you care about, nothing else.', ko: '관심 있는 흐름만.' } },
+      { when: { en: 'All HTTPS traffic', ko: '모든 HTTPS 트래픽' },
+        c: 'sudo tcpdump -nni eth0 tcp port 443',
+        why: { en: 'Every TCP/443 packet on the interface.', ko: '인터페이스의 모든 TCP/443 패킷.' } },
+      { when: { en: 'Save for Wireshark', ko: 'Wireshark용 저장' },
+        c: 'sudo tcpdump -nni eth0 -w cap.pcap tcp port 443',
+        why: { en: 'Analyze later, share with others.', ko: '나중에 분석, 공유.' } },
+      { when: { en: 'Long capture — rotate files', ko: '장시간 캡처 — 파일 로테이션' },
+        c: 'sudo tcpdump -nni eth0 -w cap.pcap -C 100 -W 10 tcp port 443',
+        why: { en: 'Ring of 10 × 100 MB files; oldest is overwritten. Disk never fills.', ko: '100MB × 10개 링 버퍼; 가장 오래된 파일부터 덮어씀. 디스크가 차지 않음.' } },
+      { when: { en: 'Only handshakes and resets', ko: '핸드셰이크와 리셋만' },
+        c: "sudo tcpdump -nni eth0 'tcp[tcpflags] & (tcp-syn|tcp-rst) != 0'",
+        why: { en: 'Cheap on busy hosts.', ko: '바쁜 호스트에서도 가벼움.' } },
+    ],
+    flags: [
+      { f: '-i <if>',      en: 'interface (any = all)',               ko: '인터페이스 (any = 전체)' },
+      { f: '-nn',          en: 'no host or port name resolution',     ko: '호스트명, 포트명 변환 안 함' },
+      { f: '-c N',         en: 'stop after N packets',                ko: '패킷 N개 후 종료' },
+      { f: '-w / -r file', en: 'write / read a pcap',                 ko: 'pcap 쓰기 / 읽기' },
+      { f: '-C MB / -W N', en: 'rotate every MB, keep N files',       ko: 'MB마다 교체, N개 유지' },
+      { f: '-A',           en: 'print payload as ASCII',              ko: '페이로드를 ASCII로 출력' },
     ],
     gotcha: {
       en: 'Always filter on busy hosts and prefer -w over printing. pcaps can contain tokens and passwords — treat them as secrets.',
-      ko: '바쁜 호스트에서는 반드시 필터를 걸고 출력보다 -w를 쓰세요. pcap에는 토큰과 비밀번호가 들어 있을 수 있으니 비밀로 취급하세요.',
+      ko: '바쁜 호스트에서는 반드시 필터를 걸고 출력보다 -w를 쓰세요. pcap에는 토큰과 비밀번호가 있을 수 있으니 비밀로 취급하세요.',
     },
   },
   {
     id: 'iperf3', name: 'iperf3', layer: 'L4 · throughput',
     purpose: {
-      en: 'Measure achievable throughput, loss and jitter between two hosts you control — separating "network capacity" from "application speed".',
-      ko: '직접 제어하는 두 호스트 사이의 처리량, 손실, 지터를 측정해 "네트워크 용량"과 "애플리케이션 속도"를 분리합니다.',
+      en: 'Throughput, loss and jitter between two hosts you control — separates "network capacity" from "application speed".',
+      ko: '직접 제어하는 두 호스트 사이의 처리량, 손실, 지터 — "네트워크 용량"과 "앱 속도"를 분리합니다.',
     },
-    flags: [
-      { f: '-s',        en: 'server mode (listens on 5201)',                              ko: '서버 모드 (5201 리슨)' },
-      { f: '-c <host>', en: 'client mode — connect to the server',                        ko: '클라이언트 모드 — 서버에 연결' },
-      { f: '-p N',      en: 'port (default 5201)',                                        ko: '포트 (기본 5201)' },
-      { f: '-t S',      en: 'test duration (default 10 s)',                               ko: '테스트 시간 (기본 10초)' },
-      { f: '-P N',      en: 'parallel streams',                                           ko: '병렬 스트림 수' },
-      { f: '-R',        en: 'reverse — server sends, client receives',                    ko: 'reverse — 서버가 송신, 클라이언트가 수신' },
-      { f: '--bidir',   en: 'both directions at once',                                    ko: '양방향 동시' },
-      { f: '-u',        en: 'UDP — reports loss and jitter',                              ko: 'UDP — 손실과 지터 보고' },
-      { f: '-b rate',   en: 'target bitrate (UDP default is only 1 Mbit/s)',              ko: '목표 비트레이트 (UDP 기본은 1 Mbit/s뿐)' },
-      { f: '-O N',      en: 'omit the first N seconds (TCP slow start)',                  ko: '처음 N초 제외 (TCP 슬로 스타트)' },
-      { f: '-i S',      en: 'report interval',                                            ko: '리포트 간격' },
-      { f: '-J',        en: 'JSON output for scripts',                                    ko: '스크립트용 JSON 출력' },
-      { f: '-C algo',   en: 'congestion control (cubic, bbr) — Linux',                    ko: '혼잡 제어 알고리즘 (cubic, bbr) — Linux' },
-    ],
     cmds: [
-      { c: 'iperf3 -s',                              en: 'Run on the far host.',                                         ko: '반대편 호스트에서 실행.' },
-      { c: 'iperf3 -c 10.0.2.10 -t 30 -O 3',         en: 'Upload baseline, slow start excluded.',                        ko: '업로드 기준값, 슬로 스타트 제외.' },
-      { c: 'iperf3 -c 10.0.2.10 -R -P 4 -t 30',      en: 'Download with 4 streams — beats single-flow window limits.',    ko: '4개 스트림 다운로드 — 단일 흐름 윈도 한계 극복.' },
-      { c: 'iperf3 -c 10.0.2.10 -u -b 200M -t 10',   en: 'UDP at a fixed rate — loss % and jitter.',                     ko: '고정 속도 UDP — 손실률과 지터.' },
-      { c: 'iperf3 -c 10.0.2.10 -J > result.json',   en: 'Machine-readable result for trending.',                        ko: '추세 분석용 기계 판독 결과.' },
+      { when: { en: 'Server, then client', ko: '서버, 그다음 클라이언트' },
+        c: 'iperf3 -s                 # on host B\niperf3 -c 10.0.2.10      # on host A',
+        why: { en: 'Upload from A to B for 10 s.', ko: 'A에서 B로 10초 업로드.' } },
+      { when: { en: 'Download direction', ko: '다운로드 방향' },
+        c: 'iperf3 -c 10.0.2.10 -R',
+        why: { en: 'Server sends — the other direction often differs.', ko: '서버가 송신 — 반대 방향은 결과가 다른 경우가 많음.' } },
+      { when: { en: 'UDP loss and jitter', ko: 'UDP 손실과 지터' },
+        c: 'iperf3 -c 10.0.2.10 -u -b 100M',
+        why: { en: 'Set -b — the UDP default is only 1 Mbit/s.', ko: '-b 필수 — UDP 기본은 1 Mbit/s.' } },
+    ],
+    flags: [
+      { f: '-s / -c <host>', en: 'server / client mode',            ko: '서버 / 클라이언트 모드' },
+      { f: '-R',             en: 'reverse — server sends',          ko: 'reverse — 서버가 송신' },
+      { f: '-P N',           en: 'parallel streams',                ko: '병렬 스트림 수' },
+      { f: '-u / -b rate',   en: 'UDP at a target bitrate',         ko: '목표 비트레이트로 UDP' },
     ],
     gotcha: {
-      en: 'A single TCP stream is capped by window ÷ RTT; compare -P 1 with -P 4 before blaming the link. Don\'t saturate production links during peak hours.',
-      ko: '단일 TCP 스트림은 윈도 ÷ RTT로 제한됩니다; 링크를 탓하기 전에 -P 1과 -P 4를 비교하세요. 피크 시간에 운영 링크를 포화시키지 마세요.',
+      en: 'Don\'t saturate production links during peak hours — iperf3 will happily fill the pipe.',
+      ko: '피크 시간에 운영 링크를 포화시키지 마세요 — iperf3는 파이프를 가득 채웁니다.',
     },
   },
 ]
@@ -584,6 +601,7 @@ const T = {
     linkLabel: { client_gw: 'LAN', gw_isp: 'WAN', isp_srv: 'transit', isp_dns: 'UDP/53' } as Record<LinkId, string>,
     badge:     { ok: 'ok', fail: 'no reply', capture: 'capturing' },
     termLabel:    'Terminal',
+    copyLabel:    'Copy command',
     anatomyLabel: 'Flag anatomy',
     frames: [
       { title: 'Symptom — the API call takes 3 seconds',
@@ -601,14 +619,13 @@ const T = {
       { title: 'nc -zv — port 443 is open',
         note:  '"succeeded" means the full TCP handshake completed. Learn the other two outcomes: "refused" is an RST — the host is reachable but nothing listens (or a REJECT rule); "timed out" is a silent DROP by a firewall. -w 3 keeps a DROP from hanging for two minutes.' },
       { title: 'curl -w — where the 3 seconds actually go',
-        note:  'The write-out timings are cumulative: DNS 14 ms, TCP connect at 26 ms, TLS done at 71 ms, first byte at 3.118 s. Subtracting, the network and TLS cost ~70 ms total; the server spends ~3.05 s thinking between receiving the request and sending the first byte. The problem is in the application, not the network.' },
+        note:  'The write-out timings are cumulative from the start: TCP connect at 26 ms (DNS included), TLS done at 71 ms, first byte at 3.118 s. Subtracting, the network and TLS cost ~70 ms total; the server spends ~3.05 s thinking between receiving the request and sending the first byte. The problem is in the application, not the network.' },
       { title: 'tcpdump — proof on the wire',
         note:  'The capture confirms it: handshake completes in 11 ms, the request (98 bytes) is ACKed 11 ms later, then silence for 3.0 s before the first response segment. No retransmits, no resets. This transcript is the evidence you attach when handing the issue to the application team.' },
       { title: 'iperf3 — rule out bandwidth',
         note:  'If you control both ends (a test host near the server running iperf3 -s), measure raw capacity: 4 reverse streams hit ~940 Mbit/s with 0 retransmits. The pipe is clean and full-speed. Verdict: network healthy end to end; the latency is server think time.' },
     ],
     toolsTitle:   'Tool reference — flags and useful commands',
-    purposeLabel: 'Purpose',
     flagsLabel:   'Flags',
     flagHeaders:  ['Flag', 'Meaning'],
     cmdsLabel:    'Useful commands',
@@ -635,6 +652,7 @@ const T = {
     linkLabel: { client_gw: 'LAN', gw_isp: 'WAN', isp_srv: '트랜짓', isp_dns: 'UDP/53' } as Record<LinkId, string>,
     badge:     { ok: 'ok', fail: '응답 없음', capture: '캡처 중' },
     termLabel:    '터미널',
+    copyLabel:    '명령 복사',
     anatomyLabel: '플래그 해부',
     frames: [
       { title: '증상 — API 호출이 3초 걸림',
@@ -652,14 +670,13 @@ const T = {
       { title: 'nc -zv — 443 포트 열림',
         note:  '"succeeded"는 TCP 핸드셰이크가 완료됐다는 뜻입니다. 나머지 두 결과도 알아 두세요: "refused"는 RST — 호스트에는 도달했지만 리슨 중인 프로세스가 없거나 REJECT 규칙; "timed out"은 방화벽의 조용한 DROP. -w 3은 DROP 시 2분씩 멈추는 것을 막습니다.' },
       { title: 'curl -w — 3초가 실제로 어디서 쓰이는가',
-        note:  'write-out 타이밍은 누적값입니다: DNS 14ms, TCP 연결 26ms, TLS 완료 71ms, 첫 바이트 3.118초. 빼 보면 네트워크와 TLS는 합쳐서 ~70ms이고, 서버는 요청을 받은 뒤 첫 바이트를 보내기까지 ~3.05초를 소비합니다. 문제는 네트워크가 아니라 애플리케이션입니다.' },
+        note:  'write-out 타이밍은 시작 기준 누적값입니다: TCP 연결 26ms (DNS 포함), TLS 완료 71ms, 첫 바이트 3.118초. 빼 보면 네트워크와 TLS는 합쳐서 ~70ms이고, 서버는 요청을 받은 뒤 첫 바이트를 보내기까지 ~3.05초를 소비합니다. 문제는 네트워크가 아니라 애플리케이션입니다.' },
       { title: 'tcpdump — 와이어 위의 증거',
         note:  '캡처가 이를 확인합니다: 핸드셰이크는 11ms, 요청(98바이트)은 11ms 뒤 ACK, 그리고 첫 응답 세그먼트까지 3.0초 동안 침묵. 재전송도 리셋도 없습니다. 이 기록이 애플리케이션 팀에 문제를 넘길 때 첨부할 증거입니다.' },
       { title: 'iperf3 — 대역폭 배제',
         note:  '양 끝을 모두 제어할 수 있다면(서버 근처 테스트 호스트에서 iperf3 -s) 순수 용량을 측정합니다: 역방향 스트림 4개로 재전송 0, ~940 Mbit/s. 파이프는 깨끗하고 최고 속도입니다. 결론: 네트워크는 종단 간 정상이고, 지연은 서버 처리 시간입니다.' },
     ],
     toolsTitle:   '도구 레퍼런스 — 플래그와 유용한 명령',
-    purposeLabel: '용도',
     flagsLabel:   '플래그',
     flagHeaders:  ['플래그', '의미'],
     cmdsLabel:    '유용한 명령',
@@ -767,6 +784,39 @@ function NtGraph({ frame, t }: { frame: NtFrame; t: typeof T['en'] }) {
   )
 }
 
+// ── Copy button ────────────────────────────────────────────────────────────────
+
+// Strip trailing "# ..." annotations so the copied line runs as-is.
+function stripComment(line: string) {
+  return line.replace(/\s+#\s.*$/, '')
+}
+
+function CopyBtn({ text, label }: { text: string; label: string }) {
+  const [copied, setCopied] = useState(false)
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current) }, [])
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      if (timer.current) clearTimeout(timer.current)
+      timer.current = setTimeout(() => setCopied(false), 1400)
+    } catch { /* clipboard unavailable — ignore */ }
+  }
+
+  return (
+    <button type="button" className={`nt-copy${copied ? ' nt-copy-done' : ''}`}
+      onClick={copy} aria-label={label} title={label}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+        {copied
+          ? <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+          : <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 8.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v8.25A2.25 2.25 0 0 0 6 16.5h2.25m8.25-8.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-7.5A2.25 2.25 0 0 1 8.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 0 0-2.25 2.25v6" />}
+      </svg>
+    </button>
+  )
+}
+
 // ── Terminal panel ─────────────────────────────────────────────────────────────
 
 function Terminal({ text }: { text: string }) {
@@ -779,6 +829,10 @@ function Terminal({ text }: { text: string }) {
       ))}
     </pre>
   )
+}
+
+function termCommands(text: string) {
+  return text.split('\n').filter(l => l.startsWith('$ ')).map(l => l.slice(2)).join('\n')
 }
 
 // ── Explorer ───────────────────────────────────────────────────────────────────
@@ -824,7 +878,10 @@ function NtExplorer() {
       <div className="nt-term">
         <div className="nt-term-head">
           <span>{t.termLabel}</span>
-          <span className="nt-layer-chip">{frame.layer}</span>
+          <span className="nt-term-head-right">
+            <span className="nt-layer-chip">{frame.layer}</span>
+            <CopyBtn text={termCommands(frame.term)} label={t.copyLabel} />
+          </span>
         </div>
         <Terminal text={frame.term} />
         <div className="nt-anatomy">
@@ -887,6 +944,24 @@ function ToolReference() {
         </div>
         <p className="nt-tool-purpose">{tool.purpose[lang]}</p>
 
+        <div className="nt-sub-title">{t.cmdsLabel}</div>
+        <div className="nt-cmd-grid">
+          {tool.cmds.map(cmd => (
+            <div key={cmd.c} className="nt-cmd-card">
+              <div className="nt-cmd-when">{cmd.when[lang]}</div>
+              <div className="nt-cmd-code">
+                {cmd.c.split('\n').map(line => (
+                  <div key={line} className="nt-cmd-line">
+                    <code className="nt-cmd-text">{line}</code>
+                    <CopyBtn text={stripComment(line)} label={t.copyLabel} />
+                  </div>
+                ))}
+              </div>
+              <div className="nt-cmd-why">{cmd.why[lang]}</div>
+            </div>
+          ))}
+        </div>
+
         <div className="nt-sub-title">{t.flagsLabel}</div>
         <table className="ov-proto-table nt-flag-table">
           <thead>
@@ -901,16 +976,6 @@ function ToolReference() {
             ))}
           </tbody>
         </table>
-
-        <div className="nt-sub-title">{t.cmdsLabel}</div>
-        <ul className="nt-cmd-list">
-          {tool.cmds.map(cmd => (
-            <li key={cmd.c} className="nt-cmd-item">
-              <pre className="nt-cmd-code">{cmd.c}</pre>
-              <span className="nt-cmd-desc">{cmd[lang]}</span>
-            </li>
-          ))}
-        </ul>
 
         <div className="nt-gotcha">
           <span className="nt-gotcha-label">{t.gotchaLabel}</span>
@@ -929,7 +994,7 @@ function BestPractices() {
   return (
     <div className="ov-proto-section">
       <div className="bgp2-section-title">{t.bpTitle}</div>
-      <table className="ov-proto-table">
+      <table className="ov-proto-table nt-bp-table">
         <thead>
           <tr>{t.bpHeaders.map(h => <th key={h}>{h}</th>)}</tr>
         </thead>
