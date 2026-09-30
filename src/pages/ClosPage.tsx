@@ -156,8 +156,8 @@ function renderTopo(
   const nodeMap = Object.fromEntries(topo.nodes.map(n => [n.id, n]))
 
   topo.layers.forEach(layer => {
-    const lbl = svgEl('text', { x: 4, y: layer.y + 1, fill: cssVar('--kp-fg-3'),
-      'font-family': 'var(--kp-font-mono)', 'font-size': 8, 'dominant-baseline': 'central' })
+    const lbl = svgEl('text', { x: 4, y: layer.y - 26, fill: cssVar('--kp-fg-3'),
+      'font-family': 'var(--kp-font-mono)', 'font-size': 11, 'dominant-baseline': 'central' })
     lbl.textContent = layer.label
     svgElement.appendChild(lbl)
   })
@@ -188,7 +188,7 @@ function renderTopo(
     const opacity = failed ? 0.4 : 1
 
     if (n.type === 'server') {
-      g.appendChild(svgEl('rect', { x: n.x - 13, y: n.y - 8, width: 26, height: 16, rx: 3,
+      g.appendChild(svgEl('rect', { x: n.x - 14, y: n.y - 10, width: 28, height: 20, rx: 3,
         fill: fillColor, stroke: strokeColor, 'stroke-width': strokeW, opacity }))
     } else {
       if (failable && failMode) (g as SVGGElement).style.cursor = 'pointer'
@@ -198,7 +198,7 @@ function renderTopo(
 
     const lbl = svgEl('text', { x: n.x, y: n.y, 'text-anchor': 'middle', 'dominant-baseline': 'central',
       fill: active && !failed ? cssVar('--kp-bg') : cssVar('--kp-fg'),
-      'font-family': 'var(--kp-font-mono)', 'font-size': 9, 'pointer-events': 'none',
+      'font-family': 'var(--kp-font-mono)', 'font-size': 12, 'pointer-events': 'none',
       opacity: failed ? 0.4 : 1, 'font-weight': active ? 600 : 400 })
     lbl.textContent = n.label
     g.appendChild(lbl)

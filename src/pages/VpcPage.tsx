@@ -246,66 +246,66 @@ export default function VpcPage() {
             <style>{`
               .vpc-node-box { fill: ${NODE_COLOR.box}; stroke: ${NODE_COLOR.stroke}; stroke-width: 1; }
               .vpc-node-box.highlighted { stroke: ${NODE_COLOR.hl_stroke}; fill: ${NODE_COLOR.hl_box}; }
-              .vpc-node-label { font-family: var(--kp-font-sans); font-size: 11px; font-weight: 600; fill: ${NODE_COLOR.label}; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
-              .vpc-node-sub { font-family: var(--kp-font-mono); font-size: 9px; fill: ${NODE_COLOR.sub}; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
+              .vpc-node-label { font-family: var(--kp-font-sans); font-size: 14px; font-weight: 600; fill: ${NODE_COLOR.label}; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
+              .vpc-node-sub { font-family: var(--kp-font-mono); font-size: 12px; fill: ${NODE_COLOR.sub}; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
               .vpc-edge { stroke: ${NODE_COLOR.edge}; stroke-width: 1.5; fill: none; stroke-dasharray: 4 3; }
               .vpc-packet-dot { fill: ${NODE_COLOR.packet}; }
               .vpc-packet-ring { fill: none; stroke: ${NODE_COLOR.packet}; stroke-width: 1; opacity: 0.3; }
             `}</style>
           </defs>
           <g id="edges">
-            <line id="edge-ec2a-nitroA"      className="vpc-edge" x1="110" y1="80"  x2="110" y2="168"/>
-            <line id="edge-nitroA-mapping"   className="vpc-edge" x1="175" y1="195" x2="363" y2="108"/>
-            <line id="edge-nitroA-awsNet"    className="vpc-edge" x1="110" y1="222" x2="260" y2="344"/>
-            <line id="edge-awsNet-nitroB"    className="vpc-edge" x1="640" y1="344" x2="725" y2="195"/>
-            <line id="edge-nitroB-ec2b"      className="vpc-edge" x1="790" y1="168" x2="790" y2="80"/>
-            <line id="edge-awsNet-blackfoot" className="vpc-edge" x1="560" y1="392" x2="620" y2="427"/>
-            <line id="edge-blackfoot-internet" className="vpc-edge" x1="693" y1="450" x2="735" y2="452"/>
-            <line id="edge-hyperplane-awsNet" className="vpc-edge" x1="450" y1="272" x2="450" y2="344"/>
+            <line id="edge-ec2a-nitroA"      className="vpc-edge" x1="110" y1="84"  x2="110" y2="168"/>
+            <line id="edge-nitroA-mapping"   className="vpc-edge" x1="185" y1="195" x2="340" y2="108"/>
+            <line id="edge-nitroA-awsNet"    className="vpc-edge" x1="110" y1="226" x2="260" y2="342"/>
+            <line id="edge-awsNet-nitroB"    className="vpc-edge" x1="640" y1="342" x2="715" y2="195"/>
+            <line id="edge-nitroB-ec2b"      className="vpc-edge" x1="790" y1="168" x2="790" y2="84"/>
+            <line id="edge-awsNet-blackfoot" className="vpc-edge" x1="560" y1="396" x2="620" y2="424"/>
+            <line id="edge-blackfoot-internet" className="vpc-edge" x1="705" y1="451" x2="740" y2="452"/>
+            <line id="edge-hyperplane-awsNet" className="vpc-edge" x1="450" y1="274" x2="450" y2="342"/>
           </g>
           <g id="nodes">
             <g id="node-ec2a" className="node">
-              <rect className="vpc-node-box" x="45" y="30" width="130" height="50" rx="6"/>
+              <rect className="vpc-node-box" x="35" y="28" width="150" height="56" rx="6"/>
               <text className="vpc-node-label" x="110" y="50">EC2-A</text>
-              <text className="vpc-node-sub" x="110" y="65">10.0.0.10</text>
+              <text className="vpc-node-sub" x="110" y="68">10.0.0.10</text>
             </g>
             <g id="node-nitroA" className="node">
-              <rect className="vpc-node-box" x="45" y="168" width="130" height="54" rx="6"/>
+              <rect className="vpc-node-box" x="35" y="168" width="150" height="58" rx="6"/>
               <text className="vpc-node-label" x="110" y="188">Nitro Card A</text>
-              <text className="vpc-node-sub" x="110" y="203">host: 172.16.1.10</text>
+              <text className="vpc-node-sub" x="110" y="206">host: 172.16.1.10</text>
             </g>
             <g id="node-mapping" className="node">
-              <rect className="vpc-node-box" x="363" y="83" width="175" height="50" rx="6"/>
+              <rect className="vpc-node-box" x="340" y="80" width="220" height="56" rx="6"/>
               <text className="vpc-node-label" x="450" y="102">Mapping Service</text>
-              <text className="vpc-node-sub" x="450" y="118">control plane · distributed</text>
+              <text className="vpc-node-sub" x="450" y="120">control plane · distributed</text>
             </g>
             <g id="node-hyperplane" className="node">
-              <rect className="vpc-node-box" x="363" y="218" width="175" height="54" rx="6"/>
+              <rect className="vpc-node-box" x="340" y="216" width="220" height="58" rx="6"/>
               <text className="vpc-node-label" x="450" y="238">Hyperplane</text>
-              <text className="vpc-node-sub" x="450" y="253">NLB · NAT GW · PrivateLink</text>
+              <text className="vpc-node-sub" x="450" y="256">NLB · NAT GW · PrivateLink</text>
             </g>
             <g id="node-awsNet" className="node">
-              <rect className="vpc-node-box" x="155" y="344" width="590" height="48" rx="6"/>
+              <rect className="vpc-node-box" x="155" y="342" width="590" height="54" rx="6"/>
               <text className="vpc-node-label" x="450" y="360">AWS Physical Network</text>
-              <text className="vpc-node-sub" x="450" y="375">outer IP routing · encapsulated packets only</text>
+              <text className="vpc-node-sub" x="450" y="378">outer IP routing · encapsulated packets only</text>
             </g>
             <g id="node-nitroB" className="node">
-              <rect className="vpc-node-box" x="725" y="168" width="130" height="54" rx="6"/>
+              <rect className="vpc-node-box" x="715" y="168" width="150" height="58" rx="6"/>
               <text className="vpc-node-label" x="790" y="188">Nitro Card B</text>
-              <text className="vpc-node-sub" x="790" y="203">host: 172.16.2.20</text>
+              <text className="vpc-node-sub" x="790" y="206">host: 172.16.2.20</text>
             </g>
             <g id="node-ec2b" className="node">
-              <rect className="vpc-node-box" x="725" y="30" width="130" height="50" rx="6"/>
+              <rect className="vpc-node-box" x="715" y="28" width="150" height="56" rx="6"/>
               <text className="vpc-node-label" x="790" y="50">EC2-B</text>
-              <text className="vpc-node-sub" x="790" y="65">10.0.0.20</text>
+              <text className="vpc-node-sub" x="790" y="68">10.0.0.20</text>
             </g>
             <g id="node-blackfoot" className="node">
-              <rect className="vpc-node-box" x="548" y="427" width="145" height="46" rx="6"/>
+              <rect className="vpc-node-box" x="535" y="424" width="170" height="54" rx="6"/>
               <text className="vpc-node-label" x="620" y="446">Blackfoot</text>
-              <text className="vpc-node-sub" x="620" y="462">edge · decap + NAT</text>
+              <text className="vpc-node-sub" x="620" y="464">edge · decap + NAT</text>
             </g>
             <g id="node-internet" className="node">
-              <rect className="vpc-node-box" x="735" y="433" width="110" height="38" rx="6"/>
+              <rect className="vpc-node-box" x="740" y="432" width="110" height="40" rx="6"/>
               <text className="vpc-node-label" x="790" y="452">Internet</text>
             </g>
           </g>

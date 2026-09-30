@@ -41,6 +41,8 @@
   --kp-font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --kp-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
+  --kp-text-2xs:  12px;
+  --kp-text-ui:   14px;
   --kp-text-xs:   13px;
   --kp-text-sm:   15px;
   --kp-text-base: 17px;
@@ -508,7 +510,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   flex-wrap: wrap;
 }
 .tcp-phase-pill {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -546,14 +548,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   gap: 5px;
 }
 .tcp-entity-name {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--kp-fg-3);
 }
 .tcp-state-badge {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -563,7 +565,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   white-space: nowrap;
   transition: color var(--kp-dur-base) var(--kp-ease), background var(--kp-dur-base) var(--kp-ease), border-color var(--kp-dur-base) var(--kp-ease);
 }
-@media (min-width: 480px) { .tcp-state-badge { font-size: 10px; } }
+@media (min-width: 480px) { .tcp-state-badge { font-size: var(--kp-text-2xs); } }
 .tcp-st-est     { color: #1f7a3a; border-color: rgba(31,122,58,.3); background: rgba(31,122,58,.06); }
 .tcp-st-listen  { color: var(--kp-fg-2); border-color: var(--kp-border); background: var(--kp-bg-muted); }
 .tcp-st-closing { color: #92400e; border-color: rgba(146,64,14,.3); background: rgba(146,64,14,.06); }
@@ -645,14 +647,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .tcp-pkt-name {
   font-family: var(--kp-font-mono);
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-weight: 600;
   letter-spacing: 0.01em;
   color: inherit;
 }
 .tcp-pkt-meta {
   font-family: var(--kp-font-mono);
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   color: var(--kp-fg-4);
   letter-spacing: var(--kp-tracking-mono);
 }
@@ -679,7 +681,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 @keyframes tcp-rtl { from { right: 0; } to { right: calc(100% - 9px); } }
 .tcp-annotation {
   text-align: center;
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -700,7 +702,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   align-items: center;
   gap: var(--kp-space-2);
   margin-left: auto;
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-3);
 }
 .tcp-speed-wrap input[type=range] { width: 80px; accent-color: var(--kp-fg); }
@@ -736,7 +738,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   min-height: 44px;
 }
 .tcp-step-counter {
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-4);
 }
 .tcp-detail-top {
@@ -754,7 +756,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   font-size: var(--kp-text-sm);
 }
 .tcp-df { display: flex; gap: 6px; align-items: baseline; }
-.tcp-df .k { color: var(--kp-fg-4); font-size: var(--kp-text-xs); }
+.tcp-df .k { color: var(--kp-fg-4); font-size: var(--kp-text-ui); }
 .tcp-df .v { color: var(--kp-fg); font-weight: 500; }
 .tcp-detail-payload {
   display: flex;
@@ -766,14 +768,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   padding: 6px 10px;
 }
 .tcp-detail-payload-label {
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-4);
   font-family: var(--kp-font-mono);
   flex-shrink: 0;
 }
 .tcp-detail-payload-val {
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-1);
   letter-spacing: var(--kp-tracking-mono);
   word-break: break-all;
@@ -790,7 +792,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   align-items: center;
   padding: 2px 7px;
   border-radius: 3px;
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.03em;
@@ -812,7 +814,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   padding: 7px var(--kp-space-4);
   background: var(--kp-bg-muted);
   border-bottom: 1px solid var(--kp-border-faint);
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -822,7 +824,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .tcp-fsm-divider { background: var(--kp-border-faint); }
 .tcp-fsm-col { padding: var(--kp-space-4); display: flex; flex-direction: column; }
 .tcp-fsm-col-title {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -855,12 +857,12 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .tcp-fsm-node.fsm-current .tcp-fsm-node-dot { background: currentColor; }
 .tcp-fsm-node-name {
   font-family: var(--kp-font-mono);
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-weight: 600;
   letter-spacing: 0.02em;
   white-space: nowrap;
 }
-@media (min-width: 480px) { .tcp-fsm-node-name { font-size: 12px; } }
+@media (min-width: 480px) { .tcp-fsm-node-name { font-size: var(--kp-text-ui); } }
 .tcp-fsm-edge {
   display: flex;
   gap: 9px;
@@ -886,7 +888,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   opacity: 0.4;
 }
 .tcp-fsm-edge-label {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-3);
   line-height: 1.5;
@@ -905,7 +907,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   padding: 7px var(--kp-space-4);
   background: var(--kp-bg-muted);
   border-bottom: 1px solid var(--kp-border-faint);
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -925,7 +927,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   border: 1px solid var(--kp-border);
   overflow: hidden;
   font-family: var(--kp-font-mono);
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
 }
 .tcp-frame-seg {
   display: flex;
@@ -939,7 +941,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   border-right: 1px solid var(--kp-border);
 }
 .tcp-frame-seg:last-child { border-right: none; }
-.tcp-seg-sz { font-weight: 400; color: var(--kp-fg-3); font-size: 9px; }
+.tcp-seg-sz { font-weight: 400; color: var(--kp-fg-3); font-size: var(--kp-text-2xs); }
 .tcp-seg-eth     { flex: 0 0 56px; background: var(--kp-bg-muted); color: var(--kp-fg-3); }
 .tcp-seg-ip      { flex: 0 0 60px; background: var(--kp-bg-subtle); color: var(--kp-fg-2); }
 .tcp-seg-tcp     { flex: 0 0 60px; background: var(--kp-bg-subtle); color: var(--kp-fg-2); }
@@ -955,7 +957,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-3);
   height: 14px;
@@ -979,7 +981,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .tcp-edu-fact-k {
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--kp-fg-3);
@@ -988,7 +990,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .tcp-edu-fact-v { color: var(--kp-fg-2); }
 .tcp-edu-fact-v code {
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   background: var(--kp-bg-muted);
   padding: 1px 4px;
   border-radius: 2px;
@@ -996,7 +998,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .tcp-coming-soon {
   padding: var(--kp-space-3) var(--kp-space-4);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   letter-spacing: var(--kp-tracking-mono);
@@ -1006,7 +1008,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   flex-direction: column;
   border-bottom: 1px solid var(--kp-border-faint);
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   overflow-x: auto;
 }
 .tcp-ct-header,
@@ -1021,7 +1023,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   background: var(--kp-bg-muted);
   border-bottom: 1px solid var(--kp-border-faint);
   color: var(--kp-fg-4);
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -1048,7 +1050,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   margin-bottom: var(--kp-space-5);
 }
 .topo-ctrl-label {
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -1072,7 +1074,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   height: 30px;
   padding: 0 14px;
   font-family: var(--kp-font-mono);
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   border: 1px solid var(--kp-border);
@@ -1088,7 +1090,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .topo-ctrl-sep { width: 1px; height: 20px; background: var(--kp-border); flex-shrink: 0; }
 .topo-ctrl-status {
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-3);
   letter-spacing: -0.01em;
   margin-left: auto;
@@ -1113,7 +1115,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   border-bottom: 1px solid var(--kp-border-faint);
 }
 .topo-name { font-weight: var(--kp-weight-semi); font-size: var(--kp-text-md); }
-.topo-badge { font-size: 10px; font-family: var(--kp-font-mono); color: var(--kp-fg-3); letter-spacing: 0.04em; }
+.topo-badge { font-size: var(--kp-text-2xs); font-family: var(--kp-font-mono); color: var(--kp-fg-3); letter-spacing: 0.04em; }
 .topo-svg-wrap { padding: var(--kp-space-3) var(--kp-space-2); }
 .topo-svg { width: 100%; display: block; }
 .topo-stats {
@@ -1133,7 +1135,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   letter-spacing: -0.025em;
   line-height: 1;
 }
-.topo-stat-key { font-size: var(--kp-text-xs); color: var(--kp-fg-3); margin-top: 4px; }
+.topo-stat-key { font-size: var(--kp-text-ui); color: var(--kp-fg-3); margin-top: 4px; }
 .topo-info-bar {
   margin-bottom: var(--kp-space-4);
   padding: var(--kp-space-3) var(--kp-space-4);
@@ -1162,7 +1164,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   font-weight: var(--kp-weight-semi);
   letter-spacing: -0.025em;
 }
-.topo-fact-desc { font-size: var(--kp-text-xs); color: var(--kp-fg-3); margin-top: 4px; line-height: var(--kp-leading-relaxed); }
+.topo-fact-desc { font-size: var(--kp-text-ui); color: var(--kp-fg-3); margin-top: 4px; line-height: var(--kp-leading-relaxed); }
 
 /* ── VPC Packet Flow ──────────────────────────────────────── */
 .vpc-tabs {
@@ -1215,7 +1217,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .vpc-node-label {
   font-family: var(--kp-font-sans);
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-weight: 600;
   fill: var(--kp-fg);
   text-anchor: middle;
@@ -1224,7 +1226,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .vpc-node-sub {
   font-family: var(--kp-font-mono);
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   fill: var(--kp-fg-3);
   text-anchor: middle;
   dominant-baseline: middle;
@@ -1250,7 +1252,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .vpc-step-badge {
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   font-weight: 500;
   color: var(--kp-fg-3);
   background: var(--kp-bg-muted);
@@ -1273,7 +1275,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .vpc-step-packet {
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-3);
   background: var(--kp-bg-muted);
   border-radius: var(--kp-radius-sm);
@@ -1308,7 +1310,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .vpc-ctrl-btn svg { width: 14px; height: 14px; }
 .vpc-step-counter {
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-3);
   margin-left: auto;
 }
@@ -1318,7 +1320,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   padding: var(--kp-space-5);
 }
 .vpc-disclaimer-header {
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -1334,7 +1336,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .vpc-disclaimer p:last-child { margin-bottom: 0; }
 .vpc-disclaimer .sources {
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-3);
   letter-spacing: var(--kp-tracking-mono);
 }
@@ -1383,7 +1385,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .mtr-verdict-label {
   flex-shrink: 0;
   margin-top: 1px;
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -1410,7 +1412,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   display: flex;
   flex-direction: column;
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   letter-spacing: var(--kp-tracking-mono);
   overflow-x: auto;
 }
@@ -1426,7 +1428,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   border-bottom: 1px solid var(--kp-border-faint);
   padding: 5px var(--kp-space-4);
   color: var(--kp-fg-4);
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -1436,7 +1438,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   width: 100%;
   text-align: right;
   font: inherit;
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -1494,7 +1496,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .mtr-detail-hint {
   align-items: center;
   justify-content: center;
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   letter-spacing: var(--kp-tracking-mono);
@@ -1502,7 +1504,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .mtr-detail-key {
   flex-shrink: 0;
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--kp-fg-3);
@@ -1539,7 +1541,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   padding: 7px var(--kp-space-4);
   background: var(--kp-bg-muted);
   border-bottom: 1px solid var(--kp-border-faint);
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1554,7 +1556,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .mtr-cheat-pattern {
   padding: var(--kp-space-3) var(--kp-space-4);
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-2);
   letter-spacing: var(--kp-tracking-mono);
   border-right: 1px solid var(--kp-border-faint);
@@ -1582,10 +1584,10 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   .note-page-tags { flex-wrap: wrap; }
   .kp-footer { padding: var(--kp-space-4) var(--kp-page-pad-mobile); }
   .vpc-tabs { width: 100%; }
-  .vpc-tab-btn { flex: 1; text-align: center; padding: 6px 8px; font-size: 12px; }
-  .vpc-step-packet { font-size: 10px; }
+  .vpc-tab-btn { flex: 1; text-align: center; padding: 6px 8px; font-size: var(--kp-text-ui); }
+  .vpc-step-packet { font-size: var(--kp-text-2xs); }
   .mtr-toggle { width: 100%; }
-  .mtr-toggle-btn { flex: 1; font-size: 13px; padding: 6px 8px; }
+  .mtr-toggle-btn { flex: 1; font-size: var(--kp-text-ui); padding: 6px 8px; }
   .mtr-cheat-row { grid-template-columns: 1fr; }
   .mtr-cheat-pattern { border-right: none; border-bottom: 1px solid var(--kp-border-faint); }
   .bgp-rib-panels { flex-direction: column; }
@@ -1599,7 +1601,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .bgp-sep { height: 1px; background: var(--kp-border-faint); }
 .bgp-explorer { display: flex; flex-direction: column; gap: var(--kp-space-4); }
 .bgp-section-label {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -1607,7 +1609,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   color: var(--kp-fg-4);
 }
 .bgp-sub-label {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -1619,13 +1621,13 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .bgp-ibgp-dim { opacity: 0.35; pointer-events: none; }
 .bgp-asn {
   font-family: var(--kp-font-mono);
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   color: var(--kp-fg-3);
   letter-spacing: var(--kp-tracking-mono);
 }
 .bgp-dir-label {
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-3);
   align-self: center;
 }
@@ -1641,7 +1643,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   align-items: center;
   padding: 2px 7px;
   border-radius: 3px;
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.03em;
@@ -1667,7 +1669,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   align-items: center;
   padding: 0 var(--kp-space-2);
   color: var(--kp-fg-4);
-  font-size: 14px;
+  font-size: var(--kp-text-ui);
   background: var(--kp-bg-muted);
   border-left: 1px solid var(--kp-border-faint);
   border-right: 1px solid var(--kp-border-faint);
@@ -1691,14 +1693,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   background: var(--kp-bg-muted);
 }
 .bgp-rib-title {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--kp-fg-2);
 }
 .bgp-rib-sub {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   letter-spacing: var(--kp-tracking-mono);
@@ -1712,14 +1714,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   gap: var(--kp-space-2);
 }
 .bgp-rib-empty {
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
 }
 .bgp-rib-row { display: flex; flex-direction: column; gap: 2px; }
 .bgp-rib-prefix {
   font-family: var(--kp-font-mono);
-  font-size: 12px;
+  font-size: var(--kp-text-ui);
   font-weight: 600;
   color: var(--kp-fg);
   letter-spacing: var(--kp-tracking-mono);
@@ -1729,7 +1731,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   flex-wrap: wrap;
   gap: var(--kp-space-3);
   font-family: var(--kp-font-mono);
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   color: var(--kp-fg-2);
   letter-spacing: var(--kp-tracking-mono);
 }
@@ -1767,13 +1769,13 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   color: var(--kp-fg);
 }
 .bgp-ibgp-role {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   letter-spacing: 0.02em;
 }
 .bgp-ibgp-route {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: #1f7a3a;
   margin-top: 2px;
@@ -1817,7 +1819,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 @keyframes bgp-dot-ltr { from { left: 0; } to { left: calc(100% - 8px); } }
 .bgp-ibgp-link-tag {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   white-space: nowrap;
@@ -1847,7 +1849,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   color: var(--kp-fg);
 }
 .bgp-rs-role {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
 }
@@ -1858,14 +1860,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   margin-top: 3px;
 }
 .bgp-rs-icon {
-  font-size: 12px;
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-4);
   line-height: 1;
 }
 .bgp-rs-inst .bgp-rs-icon { color: #1f7a3a; }
 .bgp-rs-recv .bgp-rs-icon { color: #92400e; }
 .bgp-rs-label {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-3);
   letter-spacing: var(--kp-tracking-mono);
@@ -1881,7 +1883,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 /* Inline status badges */
 .ike-cleartext-badge,
 .ike-enc-badge {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -1917,14 +1919,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   border-bottom: 1px solid var(--kp-border-faint);
 }
 .ike-db-title {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--kp-fg-2);
 }
 .ike-db-sub {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   letter-spacing: var(--kp-tracking-mono);
@@ -1941,11 +1943,11 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   align-items: center;
   gap: var(--kp-space-3);
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   flex-wrap: wrap;
 }
 .ike-dir-badge {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -1956,8 +1958,8 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .ike-dir-out { color: #1f7a3a; border-color: rgba(31,122,58,.3); background: rgba(31,122,58,.06); }
 .ike-dir-in  { color: #92400e; border-color: rgba(146,64,14,.3); background: rgba(146,64,14,.06); }
-.ike-selector { color: var(--kp-fg); font-size: 12px; }
-.ike-spi      { color: var(--kp-fg); font-size: 12px; }
+.ike-selector { color: var(--kp-fg); font-size: var(--kp-text-ui); }
+.ike-spi      { color: var(--kp-fg); font-size: var(--kp-text-ui); }
 .ike-cipher   { color: var(--kp-fg-2); }
 .ike-action   { color: var(--kp-fg-3); }
 .ike-seq      { color: var(--kp-fg-4); }
@@ -1972,7 +1974,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   overflow: hidden;
 }
 .ipsec-dir-btn {
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   font-weight: 600;
   letter-spacing: 0.03em;
@@ -1986,7 +1988,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .ipsec-dir-btn:hover { background: var(--kp-hover-bg); color: var(--kp-fg); }
 .ipsec-dir-btn.active { background: var(--kp-fg); color: var(--kp-bg); }
 .ipsec-xfrm-label {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -1998,7 +2000,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 /* ESP packet frame */
 .ipsec-packet-wrap { display: flex; flex-direction: column; gap: var(--kp-space-2); }
 .ipsec-packet-title {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -2034,14 +2036,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   z-index: 1;
 }
 .ipsec-seg-label {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   letter-spacing: 0.02em;
   color: inherit;
   white-space: nowrap;
 }
 .ipsec-seg-sub {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-weight: 400;
   color: inherit;
   opacity: 0.65;
@@ -2087,13 +2089,13 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   border-bottom: 1px solid var(--kp-border-faint);
 }
 .ipsec2-peer-name {
-  font-size: 13px;
+  font-size: var(--kp-text-ui);
   font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--kp-fg);
 }
 .ipsec2-peer-addr {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-3);
   letter-spacing: var(--kp-tracking-mono);
@@ -2115,14 +2117,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   border-bottom: 1px solid var(--kp-border-faint);
 }
 .ipsec2-table-name {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--kp-fg-2);
 }
 .ipsec2-table-sub {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
 }
@@ -2135,7 +2137,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .ipsec2-sad-body { min-height: 46px; }
 .ipsec2-empty {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   letter-spacing: var(--kp-tracking-mono);
@@ -2147,7 +2149,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   align-items: center;
   gap: var(--kp-space-2);
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   flex-wrap: wrap;
   padding: 2px 0;
   border-radius: var(--kp-radius-xs);
@@ -2187,7 +2189,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   animation: bgp2-pop 0.3s ease;
 }
 .ipsec2-msg-pill {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 600;
   padding: 3px 6px;
@@ -2232,7 +2234,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   gap: var(--kp-space-2);
 }
 .bgp2-phase-pill {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   font-weight: 600;
   letter-spacing: 0.05em;
@@ -2249,7 +2251,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   background: var(--kp-bg-subtle);
 }
 .bgp2-phase-sep {
-  font-size: 12px;
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-4);
 }
 
@@ -2273,19 +2275,19 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   border-bottom: 1px solid var(--kp-border-faint);
 }
 .bgp2-router-name {
-  font-size: 13px;
+  font-size: var(--kp-text-ui);
   font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--kp-fg);
 }
 .bgp2-router-asn {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-3);
   letter-spacing: var(--kp-tracking-mono);
 }
 .bgp2-router-role {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   margin-left: auto;
@@ -2308,14 +2310,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   border-bottom: 1px solid var(--kp-border-faint);
 }
 .bgp2-table-name {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--kp-fg-2);
 }
 .bgp2-table-sub {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
 }
@@ -2324,7 +2326,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   min-height: 38px;
 }
 .bgp2-table-empty {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   letter-spacing: var(--kp-tracking-mono);
@@ -2333,14 +2335,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .bgp2-prefix {
   display: block;
   font-family: var(--kp-font-mono);
-  font-size: 12px;
+  font-size: var(--kp-text-ui);
   font-weight: 600;
   color: var(--kp-fg);
   letter-spacing: var(--kp-tracking-mono);
 }
 .bgp2-attrs {
   display: block;
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-3);
   letter-spacing: var(--kp-tracking-mono);
@@ -2365,7 +2367,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   padding: var(--kp-space-3) var(--kp-space-2);
 }
 .bgp2-session-tag {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -2386,7 +2388,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 .bgp2-msg-pill {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 600;
   color: var(--kp-fg);
@@ -2449,7 +2451,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .bgp2-ibgp-link-active .bgp2-ibgp-link-line { background: var(--kp-fg-2); }
 .bgp2-ibgp-tag {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -2523,7 +2525,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .mtu-node-icmp     { border-color: var(--kp-fg-3); background: var(--kp-bg-subtle); }
 .mtu-node-name {
   font-family: var(--kp-font-mono);
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--kp-fg-3);
@@ -2533,7 +2535,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .mtu-node-dropping .mtu-node-name { color: var(--kp-fg); }
 .mtu-node-badge {
   font-family: var(--kp-font-mono);
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   letter-spacing: 0.04em;
   min-height: 14px;
@@ -2554,7 +2556,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .mtu-link-mtu-label {
   font-family: var(--kp-font-mono);
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   color: var(--kp-fg-4);
   text-align: center;
   margin-bottom: 4px;
@@ -2583,7 +2585,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   background: var(--kp-fg);
   color: var(--kp-bg);
   font-family: var(--kp-font-mono);
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   padding: 2px 7px;
   border-radius: 999px;
@@ -2593,7 +2595,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .mtu-link-blocked-mark {
   position: absolute;
   left: 50%; transform: translateX(-50%);
-  font-size: 14px;
+  font-size: var(--kp-text-ui);
   font-weight: 700;
   color: var(--kp-fg-2);
   z-index: 1;
@@ -2603,7 +2605,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   position: absolute;
   left: 50%; transform: translateX(-50%);
   font-family: var(--kp-font-mono);
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-weight: 600;
   color: var(--kp-fg-3);
   white-space: nowrap;
@@ -2622,7 +2624,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .mtu-stat { display: flex; align-items: baseline; gap: var(--kp-space-2); }
 .mtu-stat-k {
   font-family: var(--kp-font-mono);
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -2630,7 +2632,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .mtu-stat-v {
   font-family: var(--kp-font-mono);
-  font-size: 14px;
+  font-size: var(--kp-text-ui);
   font-weight: 600;
   color: var(--kp-fg);
 }
@@ -2703,7 +2705,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   background: var(--kp-bg-muted);
   border-bottom: 1px solid var(--kp-border-faint);
   font-family: var(--kp-font-mono);
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -2721,17 +2723,17 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   padding: var(--kp-space-5) var(--kp-space-4);
   text-align: center;
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-4);
   letter-spacing: var(--kp-tracking-mono);
 }
-.ct-proto { font-family: var(--kp-font-mono); font-size: 11px; font-weight: 600; color: var(--kp-fg-2); letter-spacing: var(--kp-tracking-mono); }
-.ct-addr  { font-family: var(--kp-font-mono); font-size: 11px; color: var(--kp-fg-3); letter-spacing: var(--kp-tracking-mono); word-break: break-all; }
-.ct-ttl   { font-family: var(--kp-font-mono); font-size: 11px; color: var(--kp-fg-4); letter-spacing: var(--kp-tracking-mono); }
+.ct-proto { font-family: var(--kp-font-mono); font-size: var(--kp-text-ui); font-weight: 600; color: var(--kp-fg-2); letter-spacing: var(--kp-tracking-mono); }
+.ct-addr  { font-family: var(--kp-font-mono); font-size: var(--kp-text-ui); color: var(--kp-fg-3); letter-spacing: var(--kp-tracking-mono); word-break: break-all; }
+.ct-ttl   { font-family: var(--kp-font-mono); font-size: var(--kp-text-ui); color: var(--kp-fg-4); letter-spacing: var(--kp-tracking-mono); }
 
 .ct-state-badge {
   font-family: var(--kp-font-mono);
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   padding: 2px 8px;
   border-radius: 999px;
@@ -2760,7 +2762,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .ct-detail-event {
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -2778,7 +2780,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .ka-host { display: flex; flex-direction: column; gap: 6px; }
 .ka-host-label {
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-3);
   letter-spacing: var(--kp-tracking-mono);
 }
@@ -2808,7 +2810,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   overflow: hidden;
   background: var(--kp-bg-subtle);
 }
-.inet-graph-canvas { height: 240px; }
+.inet-graph-canvas { height: 290px; }
 
 .inet-graph-svg,
 .bgp-graph-svg {
@@ -2840,7 +2842,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .graph-linklabel {
   position: absolute;
   transform: translate(-50%, -50%);
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -2888,7 +2890,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 
 .inet-gnode-label,
 .bgp-gnode-name {
-  font-size: 12px;
+  font-size: var(--kp-text-ui);
   font-weight: 700;
   color: var(--kp-fg);
   white-space: nowrap;
@@ -2896,14 +2898,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .inet-gnode-sub,
 .bgp-gnode-asn {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   letter-spacing: 0.02em;
   white-space: nowrap;
 }
 .bgp-gnode-hi {
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -2933,19 +2935,19 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   border-bottom: 1px solid var(--kp-border-faint);
 }
 .inet-detail-name {
-  font-size: 14px;
+  font-size: var(--kp-text-ui);
   font-weight: 700;
   color: var(--kp-fg);
   letter-spacing: 0.01em;
 }
 .inet-detail-asn {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-3);
   letter-spacing: var(--kp-tracking-mono);
 }
 .inet-badge {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -2984,7 +2986,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .inet-detail-key {
   flex: 0 0 56px;
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -2994,7 +2996,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .inet-detail-val {
   flex: 1;
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-3);
   line-height: 1.6;
@@ -3002,7 +3004,10 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 
 @media (max-width: 640px) {
-  .inet-graph-canvas { height: unset; aspect-ratio: 600 / 240; }
+  .inet-graph-canvas { height: unset; aspect-ratio: 600 / 330; }
+  .inet-gnode, .bgp-gnode { padding: 4px 6px; }
+  .inet-gnode-label, .bgp-gnode-name { font-size: var(--kp-text-2xs); }
+  .inet-gnode-sub, .bgp-gnode-asn { display: none; }
   .inet-detail-row { flex-direction: column; gap: 2px; }
   .inet-detail-key { flex: none; }
 }
@@ -3058,10 +3063,10 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .ov-gnode-idle   { border-color: var(--kp-border); opacity: 0.65; }
 .ov-gnode-active { border-color: var(--kp-fg-2); opacity: 1; }
 .ov-gnode-vtep   { border-color: var(--kp-fg-3); opacity: 1; }
-.ov-gnode-label  { font-size: 11px; font-weight: 600; color: var(--kp-fg-1); font-family: var(--kp-font-mono); }
-.ov-gnode-sub    { font-size: 10px; color: var(--kp-fg-4); font-family: var(--kp-font-mono); }
+.ov-gnode-label  { font-size: var(--kp-text-ui); font-weight: 600; color: var(--kp-fg-1); font-family: var(--kp-font-mono); }
+.ov-gnode-sub    { font-size: var(--kp-text-2xs); color: var(--kp-fg-4); font-family: var(--kp-font-mono); }
 .ov-vtep-badge {
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -3104,7 +3109,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .ov-encap-label {
   display: block;
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   text-transform: uppercase;
@@ -3117,7 +3122,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   gap: 8px;
   flex-wrap: wrap;
   align-items: center;
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-2);
   letter-spacing: var(--kp-tracking-mono);
@@ -3130,13 +3135,13 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .ov-proto-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
+  font-size: var(--kp-text-ui);
   margin-top: 10px;
 }
 .ov-proto-table th {
   text-align: left;
   padding: 6px 10px;
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -3146,20 +3151,23 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .ov-proto-table td {
   padding: 7px 10px;
-  font-size: 11px;
+  font-size: var(--kp-text-sm);
   color: var(--kp-fg-2);
   border-bottom: 1px solid var(--kp-border-faint);
   vertical-align: top;
 }
 .ov-proto-table td code {
   font-family: var(--kp-font-mono);
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-2);
 }
 .ov-proto-table tbody tr:last-child td { border-bottom: none; }
 
 @media (max-width: 640px) {
-  .ov-graph-canvas { height: unset; aspect-ratio: 560 / 220; }
+  .ov-graph-canvas { height: unset; aspect-ratio: 560 / 290; }
+  .ov-gnode { padding: 4px 6px; min-width: 0; }
+  .ov-gnode-label { font-size: var(--kp-text-2xs); white-space: nowrap; }
+  .ov-gnode-sub { display: none; }
   .ov-proto-table th:nth-child(3),
   .ov-proto-table td:nth-child(3) { display: none; }
 }
@@ -3212,11 +3220,11 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .dns-gnode-active { border-color: var(--kp-fg-2); opacity: 1; }
 .dns-gnode-done   { border-color: var(--kp-fg-4); opacity: 0.8; }
 .dns-gnode-cached { border-color: var(--kp-fg-3); opacity: 1; }
-.dns-gnode-label  { font-size: 11px; font-weight: 600; color: var(--kp-fg-1); font-family: var(--kp-font-mono); }
-.dns-gnode-sub    { font-size: 10px; color: var(--kp-fg-4); font-family: var(--kp-font-mono); }
+.dns-gnode-label  { font-size: var(--kp-text-ui); font-weight: 600; color: var(--kp-fg-1); font-family: var(--kp-font-mono); }
+.dns-gnode-sub    { font-size: var(--kp-text-2xs); color: var(--kp-fg-4); font-family: var(--kp-font-mono); }
 
 .dns-cached-badge {
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -3231,14 +3239,17 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 /* Record table — extends .ov-proto-table */
 .dns-record-table td:nth-child(3) { color: var(--kp-fg-3); }
 .dns-ex {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-3);
   word-break: break-all;
 }
 
 @media (max-width: 640px) {
-  .dns-graph-canvas { height: unset; aspect-ratio: 560 / 260; }
+  .dns-graph-canvas { height: unset; aspect-ratio: 560 / 340; }
+  .dns-gnode { padding: 4px 6px; min-width: 0; }
+  .dns-gnode-label { font-size: var(--kp-text-2xs); }
+  .dns-gnode-sub { display: none; }
   .dns-record-table th:nth-child(3),
   .dns-record-table td:nth-child(3) { display: none; }
 }
@@ -3259,7 +3270,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   background: var(--kp-bg-subtle);
 }
 .crdt-comp-label {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   text-transform: uppercase;
@@ -3313,10 +3324,10 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .crdt-gnode-synced { border-color: var(--kp-fg-3); opacity: 1; }
 .crdt-gnode-done   { border-color: var(--kp-fg-4); opacity: 0.85; }
 .crdt-gnode-server.crdt-gnode-active { border-style: dashed; }
-.crdt-gnode-label { font-size: 10px; font-weight: 600; color: var(--kp-fg-1); font-family: var(--kp-font-mono); white-space: nowrap; }
-.crdt-gnode-doc   { font-size: 10px; color: var(--kp-fg-2); font-family: var(--kp-font-mono); margin-top: 2px; white-space: nowrap; }
-.crdt-gnode-val   { font-size: 11px; color: var(--kp-fg-2); font-family: var(--kp-font-mono); margin-top: 2px; word-break: break-word; max-width: 130px; text-align: center; }
-.crdt-gnode-ts    { font-size: 10px; color: var(--kp-fg-4); font-family: var(--kp-font-mono); }
+.crdt-gnode-label { font-size: var(--kp-text-ui); font-weight: 600; color: var(--kp-fg-1); font-family: var(--kp-font-mono); white-space: nowrap; }
+.crdt-gnode-doc   { font-size: var(--kp-text-2xs); color: var(--kp-fg-2); font-family: var(--kp-font-mono); margin-top: 2px; white-space: nowrap; }
+.crdt-gnode-val   { font-size: var(--kp-text-ui); color: var(--kp-fg-2); font-family: var(--kp-font-mono); margin-top: 2px; word-break: break-word; max-width: 130px; text-align: center; }
+.crdt-gnode-ts    { font-size: var(--kp-text-2xs); color: var(--kp-fg-4); font-family: var(--kp-font-mono); }
 
 /* LWW nodes need more room for sentence values */
 .crdt-gnode:has(.crdt-gnode-val) { min-width: 120px; padding: 6px 10px; }
@@ -3334,7 +3345,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .crdt-doc-row { display: flex; align-items: flex-start; gap: 10px; }
 .crdt-doc-row-label {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   font-weight: 700;
   text-transform: uppercase;
@@ -3358,7 +3369,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .crdt-doc-word-new { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); }
 .crdt-word-text {
-  font-size: 13px;
+  font-size: var(--kp-text-ui);
   font-weight: 600;
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-1);
@@ -3366,7 +3377,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   white-space: nowrap;
 }
 .crdt-word-id {
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   white-space: nowrap;
@@ -3375,14 +3386,19 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 @media (max-width: 640px) {
   .crdt-comp-grid { grid-template-columns: 1fr; }
   .crdt-gnode { min-width: 60px; }
-  .crdt-gnode-doc { font-size: 9px; }
+  .crdt-gnode-doc { font-size: var(--kp-text-2xs); }
+}
+
+@media (max-width: 640px) {
+  .crdt-gnode { padding: 4px 6px; min-width: 0; }
+  .crdt-gnode-label { font-size: var(--kp-text-2xs); }
 }
 
 /* Cast page */
 .cast-graph-canvas {
   position: relative;
   width: 100%;
-  height: 185px;
+  height: 215px;
   margin-bottom: 8px;
 }
 .cast-graph-svg {
@@ -3429,14 +3445,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .cast-gnode-nearest { border-color: var(--kp-fg-1); background: var(--kp-bg-muted); box-shadow: 0 0 0 2px var(--kp-fg-1); }
 
 .cast-gnode-label {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-weight: 600;
   color: var(--kp-fg-1);
   line-height: 1.2;
   white-space: nowrap;
 }
 .cast-gnode-sub {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   white-space: nowrap;
@@ -3448,7 +3464,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   top: 6px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   font-family: var(--kp-font-mono);
   letter-spacing: 0.08em;
@@ -3463,7 +3479,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 
 /* Nearest / member badges */
 .cast-near-badge {
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   font-family: var(--kp-font-mono);
   letter-spacing: 0.06em;
@@ -3476,7 +3492,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   margin-top: 2px;
 }
 .cast-member-badge {
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-3);
   padding: 1px 5px;
@@ -3488,7 +3504,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 
 /* Mode table — address code column */
 .cast-addr-code {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-2);
   white-space: nowrap;
@@ -3497,16 +3513,16 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 
 @media (max-width: 640px) {
   .cast-gnode { min-width: 56px; padding: 4px 6px; }
-  .cast-gnode-label { font-size: 9px; }
-  .cast-gnode-sub { font-size: 8px; }
-  .cast-addr-code { font-size: 10px; white-space: normal; }
+  .cast-gnode-label { font-size: var(--kp-text-2xs); }
+  .cast-gnode-sub { display: none; }
+  .cast-addr-code { font-size: var(--kp-text-2xs); white-space: normal; }
 }
 
 /* ECMP page */
 .ecmp-graph-canvas {
   position: relative;
   width: 100%;
-  height: 165px;
+  height: 195px;
   margin-bottom: 8px;
 }
 .ecmp-graph-svg {
@@ -3549,14 +3565,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .ecmp-gnode-down   { border-color: var(--kp-border); background: var(--kp-bg); opacity: 0.35; }
 
 .ecmp-gnode-label {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-weight: 600;
   color: var(--kp-fg-1);
   line-height: 1.2;
   white-space: nowrap;
 }
 .ecmp-gnode-sub {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   white-space: nowrap;
@@ -3564,7 +3580,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 
 /* Down badge */
 .ecmp-down-badge {
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   font-family: var(--kp-font-mono);
   letter-spacing: 0.06em;
@@ -3579,29 +3595,29 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 
 /* Hash table */
 .ecmp-port-code {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-2);
 }
 .ecmp-hash-note {
-  font-size: 12px;
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-3);
   margin-top: 10px;
   line-height: 1.6;
 }
 
 @media (max-width: 640px) {
-  .ecmp-graph-canvas { height: unset; aspect-ratio: 500 / 165; }
+  .ecmp-graph-canvas { height: unset; aspect-ratio: 500 / 230; }
   .ecmp-gnode { min-width: 56px; padding: 4px 6px; }
-  .ecmp-gnode-label { font-size: 9px; }
-  .ecmp-gnode-sub { font-size: 8px; }
+  .ecmp-gnode-label { font-size: var(--kp-text-2xs); }
+  .ecmp-gnode-sub { display: none; }
 }
 
 /* Cast page — anycast deep-dive additions */
 .cast-gnode-failed  { border-color: var(--kp-border); background: var(--kp-bg); opacity: 0.35; }
 .cast-sline-failed  { stroke: var(--kp-border); stroke-dasharray: 4 3; opacity: 0.35; }
 .cast-fail-badge {
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   font-family: var(--kp-font-mono);
   letter-spacing: 0.06em;
@@ -3618,7 +3634,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .rb-graph-canvas {
   position: relative;
   width: 100%;
-  height: 210px;
+  height: 250px;
   margin-bottom: 8px;
 }
 .rb-graph-svg {
@@ -3664,14 +3680,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .rb-gnode-ok      { border-color: var(--kp-fg-1); background: var(--kp-bg-muted); box-shadow: 0 0 0 2px var(--kp-fg-1); }
 
 .rb-gnode-label {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-weight: 600;
   color: var(--kp-fg-1);
   line-height: 1.2;
   white-space: nowrap;
 }
 .rb-gnode-sub {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   white-space: nowrap;
@@ -3683,7 +3699,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   top: 6px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   font-family: var(--kp-font-mono);
   letter-spacing: 0.08em;
@@ -3698,7 +3714,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 
 /* Status badges */
 .rb-busy-badge {
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   font-family: var(--kp-font-mono);
   letter-spacing: 0.06em;
@@ -3710,7 +3726,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   margin-top: 2px;
 }
 .rb-ok-badge {
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   font-family: var(--kp-font-mono);
   letter-spacing: 0.06em;
@@ -3722,7 +3738,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   margin-top: 2px;
 }
 .rb-wait-badge {
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-3);
   padding: 1px 5px;
@@ -3734,25 +3750,25 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 
 /* Strategy table */
 .rb-formula-code {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-2);
   white-space: nowrap;
 }
 
 @media (max-width: 640px) {
-  .rb-graph-canvas { height: unset; aspect-ratio: 500 / 210; }
+  .rb-graph-canvas { height: unset; aspect-ratio: 500 / 280; }
   .rb-gnode { min-width: 56px; padding: 4px 6px; }
-  .rb-gnode-label { font-size: 9px; }
-  .rb-gnode-sub { font-size: 8px; }
-  .rb-formula-code { white-space: normal; font-size: 10px; }
+  .rb-gnode-label { font-size: var(--kp-text-2xs); }
+  .rb-gnode-sub { display: none; }
+  .rb-formula-code { white-space: normal; font-size: var(--kp-text-2xs); }
 }
 
 /* SNMP page */
 .snmp-graph-canvas {
   position: relative;
   width: 100%;
-  height: 160px;
+  height: 185px;
   margin-bottom: 4px;
 }
 .snmp-graph-svg {
@@ -3806,14 +3822,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .snmp-gnode-trapping   { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); }
 
 .snmp-gnode-label {
-  font-size: 12px;
+  font-size: var(--kp-text-ui);
   font-weight: 600;
   color: var(--kp-fg-1);
   line-height: 1.2;
   white-space: nowrap;
 }
 .snmp-gnode-sub {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   white-space: nowrap;
@@ -3825,7 +3841,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   top: 6px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   font-family: var(--kp-font-mono);
   letter-spacing: 0.08em;
@@ -3857,7 +3873,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   padding: 5px 12px;
   background: var(--kp-bg-muted);
   border-bottom: 1px solid var(--kp-border);
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -3871,7 +3887,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   padding: 8px 12px;
 }
 .snmp-dash-section-title {
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -3889,21 +3905,21 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .snmp-dash-row td { padding: 2px 0; border-bottom: 1px solid var(--kp-border-faint); }
 .snmp-dash-row:last-child td { border-bottom: none; }
 .snmp-dash-label {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   color: var(--kp-fg-2);
   padding-right: 8px;
   white-space: nowrap;
   width: 38%;
 }
 .snmp-dash-oid {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   color: var(--kp-fg-4);
   padding-right: 8px;
   white-space: nowrap;
   width: 44%;
 }
 .snmp-dash-val {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   font-weight: 600;
   color: var(--kp-fg-1);
   white-space: nowrap;
@@ -3928,11 +3944,11 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   padding: 2px 0;
 }
 .snmp-dash-event-badge {
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   padding: 1px 5px;
   border-radius: 2px;
@@ -3942,24 +3958,24 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .snmp-dash-event-trap   { background: var(--kp-bg-muted); color: var(--kp-fg-3); border: 1px solid var(--kp-border); }
 .snmp-dash-event-inform { background: var(--kp-bg-muted); color: var(--kp-fg-2); border: 1px solid var(--kp-fg-3); }
-.snmp-dash-event-ack    { background: var(--kp-bg-muted); color: var(--kp-fg-1); border: 1px solid var(--kp-fg-2); font-size: 7px; }
+.snmp-dash-event-ack    { background: var(--kp-bg-muted); color: var(--kp-fg-1); border: 1px solid var(--kp-fg-2); font-size: var(--kp-text-2xs); }
 .snmp-dash-event-time { color: var(--kp-fg-4); }
 .snmp-dash-event-msg  { color: var(--kp-fg-2); }
-.snmp-dash-no-events  { font-size: 10px; color: var(--kp-fg-4); padding: 2px 0; }
+.snmp-dash-no-events  { font-size: var(--kp-text-2xs); color: var(--kp-fg-4); padding: 2px 0; }
 
 /* Metrics reference table */
 .snmp-metrics-table td:nth-child(1) { white-space: nowrap; }
 .snmp-oid-cell {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   color: var(--kp-fg-4);
   white-space: nowrap;
 }
 
 @media (max-width: 640px) {
-  .snmp-graph-canvas { height: unset; aspect-ratio: 500 / 160; }
+  .snmp-graph-canvas { height: unset; aspect-ratio: 500 / 210; }
   .snmp-gnode { min-width: 60px; padding: 4px 8px; }
-  .snmp-gnode-label { font-size: 10px; }
-  .snmp-gnode-sub { font-size: 8px; }
+  .snmp-gnode-label { font-size: var(--kp-text-2xs); }
+  .snmp-gnode-sub { display: none; }
   .snmp-dash-oid { display: none; }
   .snmp-dash-label { width: 55%; }
 }
@@ -3968,7 +3984,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .bb-graph-canvas {
   position: relative;
   width: 100%;
-  height: 240px;
+  height: 320px;
   margin-bottom: 8px;
 }
 .bb-graph-svg {
@@ -4011,24 +4027,24 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .bb-gnode-done   { border-color: var(--kp-fg-4); background: var(--kp-bg); }
 
 .bb-gnode-label {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-weight: 600;
   color: var(--kp-fg-1);
   line-height: 1.2;
   white-space: nowrap;
 }
 .bb-gnode-sub {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   white-space: nowrap;
 }
 
 @media (max-width: 640px) {
-  .bb-graph-canvas { height: unset; aspect-ratio: 560 / 240; }
+  .bb-graph-canvas { height: unset; aspect-ratio: 560 / 360; }
   .bb-gnode { min-width: 52px; padding: 4px 6px; }
-  .bb-gnode-label { font-size: 9px; }
-  .bb-gnode-sub { font-size: 8px; }
+  .bb-gnode-label { font-size: var(--kp-text-2xs); }
+  .bb-gnode-sub { display: none; }
 }
 
 /* ── Looking Glass & PeeringDB page ──────────────────────────── */
@@ -4040,7 +4056,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .lg-section {}
 .lg-section-note {
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-3);
   line-height: var(--kp-leading-relaxed);
   margin-top: var(--kp-space-3);
@@ -4062,21 +4078,21 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   border-bottom: 1px solid var(--kp-border);
 }
 .lg-panel-title {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--kp-fg-3);
 }
 .lg-panel-cmd {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   color: var(--kp-fg-2);
 }
 .lg-panel-body {
   padding: 8px 12px;
 }
 .lg-badge-open {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-weight: 700;
   letter-spacing: 0.06em;
   padding: 2px 7px;
@@ -4094,7 +4110,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .lg-pdb-row td {
   padding: 3px 0;
   border-bottom: 1px solid var(--kp-border-faint);
-  font-size: 11px;
+  font-size: var(--kp-text-sm);
 }
 .lg-pdb-row:last-child td { border-bottom: none; }
 .lg-pdb-label {
@@ -4116,7 +4132,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   margin-bottom: var(--kp-space-2);
 }
 .lg-tab {
-  font-size: 11px;
+  font-size: var(--kp-text-ui);
   font-family: var(--kp-font-mono);
   padding: 3px 10px;
   border-radius: var(--kp-radius-sm);
@@ -4130,7 +4146,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 
 /* Terminal output */
 .lg-terminal {
-  font-size: 10px;
+  font-size: var(--kp-text-2xs);
   line-height: 1.65;
   overflow-x: auto;
 }
@@ -4153,7 +4169,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .dc-graph-canvas {
   position: relative;
   width: 100%;
-  height: 300px;
+  height: 400px;
   margin-bottom: 8px;
 }
 .dc-graph-svg {
@@ -4192,14 +4208,14 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .dc-gnode-active { border-color: var(--kp-fg-2); background: var(--kp-bg-muted); opacity: 1; }
 .dc-gnode-done   { border-color: var(--kp-border-faint); background: var(--kp-bg); opacity: 0.45; }
 .dc-gnode-label {
-  font-size: 10px;
+  font-size: var(--kp-text-ui);
   font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--kp-fg);
   line-height: 1.2;
 }
 .dc-gnode-sub {
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   font-family: var(--kp-font-mono);
   color: var(--kp-fg-4);
   letter-spacing: var(--kp-tracking-mono);
@@ -4230,17 +4246,17 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .dc-cap-code {
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-3);
   letter-spacing: var(--kp-tracking-mono);
 }
 @media (max-width: 640px) {
-  .dc-graph-canvas { height: 230px; }
+  .dc-graph-canvas { height: 300px; }
   .dc-gnode { min-width: 44px; padding: 3px 5px; }
-  .dc-gnode-label { font-size: 8px; }
+  .dc-gnode-label { font-size: var(--kp-text-2xs); }
   .dc-gnode-sub { display: none; }
   .dc-scenario-tabs { width: 100%; justify-content: stretch; }
-  .dc-scenario-tab { flex: 1; text-align: center; padding: 5px 6px; font-size: var(--kp-text-xs); }
+  .dc-scenario-tab { flex: 1; text-align: center; padding: 5px 6px; font-size: var(--kp-text-ui); }
 }
 
 /* ── L2/L3 Forwarding page ───────────────────────────────── */
@@ -4289,7 +4305,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .fwd-gnode-faint  { border-color: var(--kp-border-faint); opacity: 0.25; }
 
 .fwd-gnode-label {
-  font-size: 10px;
+  font-size: var(--kp-text-ui);
   font-weight: var(--kp-weight-semi);
   color: var(--kp-fg);
   white-space: nowrap;
@@ -4297,7 +4313,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .fwd-gnode-sub {
   font-family: var(--kp-font-mono);
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   color: var(--kp-fg-3);
   white-space: nowrap;
   letter-spacing: var(--kp-tracking-mono);
@@ -4307,7 +4323,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .fwd-subnet-tag {
   position: absolute;
   font-family: var(--kp-font-mono);
-  font-size: 8px;
+  font-size: var(--kp-text-2xs);
   color: var(--kp-fg-3);
   letter-spacing: 0.04em;
   z-index: 1;
@@ -4328,7 +4344,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .fwd-header-label {
   display: block;
   font-family: var(--kp-font-mono);
-  font-size: 9px;
+  font-size: var(--kp-text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--kp-fg-3);
@@ -4338,7 +4354,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .fwd-header-pre {
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-2);
   background: var(--kp-bg-subtle);
   padding: var(--kp-space-3) var(--kp-space-4);
@@ -4349,7 +4365,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   overflow-x: auto;
 }
 .fwd-header-empty {
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-3);
   font-family: var(--kp-font-mono);
   text-align: center;
@@ -4362,7 +4378,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 
 .fwd-arp-payload {
   font-family: var(--kp-font-mono);
-  font-size: var(--kp-text-xs);
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-3);
   letter-spacing: var(--kp-tracking-mono);
 }
@@ -4370,7 +4386,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 @media (max-width: 640px) {
   .fwd-graph-canvas { height: 220px; }
   .fwd-gnode { min-width: 46px; padding: 3px 5px; }
-  .fwd-gnode-label { font-size: 8px; }
+  .fwd-gnode-label { font-size: var(--kp-text-2xs); }
   .fwd-gnode-sub { display: none; }
   .fwd-subnet-tag { display: none; }
 }
@@ -4557,7 +4573,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .nt-gnode-capture { border-color: var(--kp-fg); border-width: 2px; background: var(--kp-bg-muted); opacity: 1; }
 
 .nt-gnode-label {
-  font-size: 14px;
+  font-size: var(--kp-text-ui);
   font-weight: var(--kp-weight-semi);
   color: var(--kp-fg);
   white-space: nowrap;
@@ -4565,7 +4581,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .nt-gnode-sub {
   font-family: var(--kp-font-mono);
-  font-size: 12px;
+  font-size: var(--kp-text-2xs);
   color: var(--kp-fg-3);
   white-space: nowrap;
   letter-spacing: var(--kp-tracking-mono);
@@ -4576,7 +4592,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   top: -11px;
   right: -8px;
   font-family: var(--kp-font-mono);
-  font-size: 11px;
+  font-size: var(--kp-text-2xs);
   line-height: 1;
   padding: 3px 6px;
   border-radius: 3px;
@@ -4620,7 +4636,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   justify-content: space-between;
   gap: var(--kp-space-3);
   font-family: var(--kp-font-mono);
-  font-size: 12px;
+  font-size: var(--kp-text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--kp-fg-3);
@@ -4635,7 +4651,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .nt-layer-chip {
   font-family: var(--kp-font-mono);
-  font-size: 12px;
+  font-size: var(--kp-text-2xs);
   text-transform: none;
   letter-spacing: var(--kp-tracking-mono);
   color: var(--kp-fg-2);
@@ -4647,7 +4663,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .nt-term-pre {
   font-family: var(--kp-font-mono);
-  font-size: 14px;
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg-3);
   background: var(--kp-bg-subtle);
   padding: var(--kp-space-4) var(--kp-space-5);
@@ -4672,7 +4688,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .nt-anatomy-label {
   font-family: var(--kp-font-mono);
-  font-size: 12px;
+  font-size: var(--kp-text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--kp-fg-3);
@@ -4686,7 +4702,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .nt-anatomy-flag {
   font-family: var(--kp-font-mono);
-  font-size: 14px;
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg);
   background: var(--kp-bg-muted);
   border-radius: 3px;
@@ -4709,7 +4725,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .nt-tool-tab {
   font-family: var(--kp-font-mono);
-  font-size: 14px;
+  font-size: var(--kp-text-ui);
   letter-spacing: var(--kp-tracking-mono);
   padding: 7px 14px;
   border: 1px solid var(--kp-border);
@@ -4754,7 +4770,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 .nt-sub-title {
   font-family: var(--kp-font-mono);
-  font-size: 12px;
+  font-size: var(--kp-text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--kp-fg-3);
@@ -4799,7 +4815,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   flex: 1;
   min-width: 0;
   font-family: var(--kp-font-mono);
-  font-size: 14px;
+  font-size: var(--kp-text-ui);
   color: var(--kp-fg);
   letter-spacing: var(--kp-tracking-mono);
   white-space: pre;
@@ -4813,10 +4829,10 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 }
 
 .nt-flag-table th,
-.nt-bp-table th { font-size: 12px; padding: 8px 12px; }
+.nt-bp-table th { font-size: var(--kp-text-2xs); padding: 8px 12px; }
 .nt-flag-table td,
 .nt-bp-table td { font-size: var(--kp-text-sm); padding: 9px 12px; line-height: var(--kp-leading-relaxed); }
-.nt-flag-table td code { font-size: 14px; }
+.nt-flag-table td code { font-size: var(--kp-text-ui); }
 .nt-flag-table td:first-child { white-space: nowrap; width: 1%; padding-right: var(--kp-space-6); }
 .nt-bp-table td:first-child { width: 28%; }
 
@@ -4835,7 +4851,7 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 .nt-gotcha-label {
   flex-shrink: 0;
   font-family: var(--kp-font-mono);
-  font-size: 12px;
+  font-size: var(--kp-text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--kp-fg-3);
@@ -4844,9 +4860,9 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
 @media (max-width: 640px) {
   .nt-graph-canvas { height: 240px; }
   .nt-gnode { min-width: 60px; padding: 5px 7px; }
-  .nt-gnode-label { font-size: 11px; }
+  .nt-gnode-label { font-size: var(--kp-text-2xs); }
   .nt-gnode-sub { display: none; }
-  .nt-badge { font-size: 9px; top: -9px; right: -4px; }
+  .nt-badge { padding: 2px 4px; top: -10px; right: -4px; }
   .nt-term-pre { font-size: 13px; padding: var(--kp-space-3) var(--kp-space-4); }
   .nt-anatomy { padding: var(--kp-space-3) var(--kp-space-4); }
   .nt-anatomy-row { grid-template-columns: 1fr; gap: 4px; }
