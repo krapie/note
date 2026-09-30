@@ -147,6 +147,7 @@ export default function VpcPage() {
     if (!packetRef.current) return
     packetRef.current.style.transition = animate ? 'transform 0.55s cubic-bezier(0.2, 0, 0, 1)' : 'none'
     packetRef.current.style.transform = `translate(${x}px, ${y}px)`
+    packetRef.current.style.opacity = '1'
   }
 
   async function animateWaypoints(waypoints: [number, number][]) {
@@ -309,7 +310,7 @@ export default function VpcPage() {
               <text className="vpc-node-label" x="790" y="452">Internet</text>
             </g>
           </g>
-          <g ref={packetRef} style={{ transform: 'translate(0px, 0px)' }}>
+          <g ref={packetRef} style={{ transform: 'translate(0px, 0px)', opacity: 0 }}>
             <circle className="vpc-packet-ring" cx="0" cy="0" r="11"/>
             <circle className="vpc-packet-dot" cx="0" cy="0" r="6"/>
           </g>

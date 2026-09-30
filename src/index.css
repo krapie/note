@@ -4874,3 +4874,48 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   .nt-bp-table td:first-child { width: auto; }
   .nt-gotcha { flex-direction: column; gap: 4px; }
 }
+
+/* ── Shared spacing fixes ────────────────────────────────── */
+/* Diagram frame: every interactive graph canvas sits in a faint panel.
+   Nodes are positioned in % of the padding box, so the inset comes from a
+   border in the panel colour (content-box keeps the canvas height as set). */
+.inet-graph-canvas, .bgp-graph-canvas,
+.ov-graph-canvas, .dns-graph-canvas, .crdt-graph-canvas, .cast-graph-canvas,
+.ecmp-graph-canvas, .rb-graph-canvas, .snmp-graph-canvas, .bb-graph-canvas,
+.dc-graph-canvas, .fwd-graph-canvas, .nt-graph-canvas {
+  box-sizing: content-box;
+  width: auto;
+  border: var(--kp-space-5) solid var(--kp-bg-subtle);
+  border-radius: var(--kp-radius-md);
+  background: var(--kp-bg-subtle);
+  outline: 1px solid var(--kp-border);
+  outline-offset: -1px;
+  margin-bottom: 0;
+  overflow: visible;
+}
+/* CRDT comparison canvases already live inside their own panels */
+.crdt-comp-panel .crdt-graph-canvas {
+  border: 0;
+  outline: none;
+  background: none;
+}
+
+/* Bordered explainer cards (MTU, conntrack): pad their content */
+.tcp-edu-section + .tcp-edu-section { margin-top: var(--kp-space-5); }
+.tcp-edu-section > .mtu-root,
+.tcp-edu-section > .ct-root { padding: var(--kp-space-4) var(--kp-space-5); }
+.tcp-edu-section > .mtu-see-also { padding: var(--kp-space-3) var(--kp-space-5); }
+.tcp-edu-section > .tcp-edu-facts:last-child { border-bottom: none; }
+.mtu-stats { padding: var(--kp-space-2) 0 var(--kp-space-3); }
+
+@media (max-width: 640px) {
+  .inet-graph-canvas, .bgp-graph-canvas,
+  .ov-graph-canvas, .dns-graph-canvas, .crdt-graph-canvas, .cast-graph-canvas,
+  .ecmp-graph-canvas, .rb-graph-canvas, .snmp-graph-canvas, .bb-graph-canvas,
+  .dc-graph-canvas, .fwd-graph-canvas, .nt-graph-canvas {
+    border-width: var(--kp-space-3);
+  }
+  .tcp-edu-section > .mtu-root,
+  .tcp-edu-section > .ct-root { padding: var(--kp-space-3); }
+  .tcp-edu-section > .mtu-see-also { padding: var(--kp-space-3); }
+}
