@@ -22,6 +22,14 @@ interface Collection {
 
 const NOTES_EN: NoteEntry[] = [
   {
+    id: 'dc',
+    title: 'Datacenter — from server to site',
+    date: '2026-10-05',
+    read: '10 min',
+    tags: ['datacenter', 'infrastructure', 'power', 'cooling', 'cabling', 'optics'],
+    blurb: `A cutaway of a three-floor datacenter, from one server outward: the rack and its optics, rows and contained aisles, data halls and floor space, cabling pathways and the meet-me room, UPS, generators and the substation, the cooling plant on the roof, and why the building stands where it does.`,
+  },
+  {
     id: 'nettools',
     title: 'Network troubleshooting CLI — tools, flags, and practice',
     date: '2026-09-30',
@@ -38,7 +46,7 @@ const NOTES_EN: NoteEntry[] = [
     blurb: `The IP header carries source and destination end-to-end, unchanged across every router. The Ethernet header is rewritten at every hop. Two interactive scenarios show exactly how ARP resolves MACs, how a switch forwards by MAC table, and how a router strips one L2 envelope and writes a new one for the next link.`,
   },
   {
-    id: 'dc',
+    id: 'dc-networking',
     title: 'Datacenter networking — from rack to border',
     date: '2026-07-24',
     read: '7 min',
@@ -193,6 +201,14 @@ const NOTES_EN: NoteEntry[] = [
 
 const NOTES_KO: NoteEntry[] = [
   {
+    id: 'dc',
+    title: '데이터센터 — 서버에서 입지까지',
+    date: '2026-10-05',
+    read: '10분',
+    tags: ['datacenter', 'infrastructure', 'power', 'cooling', 'cabling', 'optics'],
+    blurb: `3층짜리 데이터센터 단면도를 따라 서버 한 대에서 바깥으로: 랙과 광모듈, 랙 열과 격리된 통로, 데이터 홀과 상면, 케이블 경로와 MMR, UPS·발전기·변전소, 지붕의 냉각 설비, 그리고 건물이 그 자리에 있는 이유까지.`,
+  },
+  {
     id: 'nettools',
     title: '네트워크 트러블슈팅 CLI — 도구, 플래그, 실전',
     date: '2026-09-30',
@@ -209,7 +225,7 @@ const NOTES_KO: NoteEntry[] = [
     blurb: `IP 헤더는 출발지와 목적지를 종단 간 변하지 않고 전달합니다. 이더넷 헤더는 매 홉마다 새로 씁니다. 두 가지 인터랙티브 시나리오로 ARP가 MAC을 어떻게 찾는지, 스위치가 MAC 테이블로 포워딩하는 방법, 라우터가 L2 봉투를 벗기고 다음 링크를 위해 새로 쓰는 과정을 단계별로 확인할 수 있습니다.`,
   },
   {
-    id: 'dc',
+    id: 'dc-networking',
     title: '데이터센터 네트워킹 — 랙에서 경계까지',
     date: '2026-07-24',
     read: '7분',
@@ -381,7 +397,7 @@ const COLLECTIONS_EN: Collection[] = [
     id: 'dc',
     title: 'Datacenter networking',
     sub: 'Fabric design, topology trade-offs, and cloud infrastructure — from rack to cloud VPC',
-    noteIds: ['dc', 'clos', 'ecmp', 'vpc', 'snmp'],
+    noteIds: ['dc', 'dc-networking', 'clos', 'ecmp', 'vpc', 'snmp'],
   },
 ]
 
@@ -402,7 +418,7 @@ const COLLECTIONS_KO: Collection[] = [
     id: 'dc',
     title: '데이터센터 네트워킹',
     sub: '패브릭 설계, 토폴로지 트레이드오프, 클라우드 인프라 — 랙에서 클라우드 VPC까지',
-    noteIds: ['dc', 'clos', 'ecmp', 'vpc', 'snmp'],
+    noteIds: ['dc', 'dc-networking', 'clos', 'ecmp', 'vpc', 'snmp'],
   },
 ]
 

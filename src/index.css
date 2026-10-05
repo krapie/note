@@ -4919,3 +4919,178 @@ button { font: inherit; cursor: pointer; background: none; border: none; color: 
   .tcp-edu-section > .ct-root { padding: var(--kp-space-3); }
   .tcp-edu-section > .mtu-see-also { padding: var(--kp-space-3); }
 }
+
+/* ── Datacenter facility page (cutaway) ──────────────────── */
+.fac-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 250px;
+  gap: var(--kp-space-4);
+  align-items: start;
+}
+.fac-scroll { overflow-x: auto; }
+.fac-cut {
+  position: relative;
+  box-sizing: content-box;
+  aspect-ratio: 900 / 520;
+  border: var(--kp-space-5) solid var(--kp-bg-subtle);
+  border-radius: var(--kp-radius-md);
+  background: var(--kp-bg-subtle);
+  outline: 1px solid var(--kp-border);
+  outline-offset: -1px;
+}
+.fac-cut-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.fac-shell  { fill: none; stroke: var(--kp-border-strong); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.fac-ground { stroke: var(--kp-fg-3); stroke-width: 2; vector-effect: non-scaling-stroke; }
+
+.fac-zone {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 2px 6px;
+  text-align: center;
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-sm);
+  background: var(--kp-bg);
+  transition: border-color var(--kp-dur-base) var(--kp-ease),
+              background   var(--kp-dur-base) var(--kp-ease),
+              opacity      var(--kp-dur-base) var(--kp-ease);
+}
+.fac-zone-idle   { opacity: 0.55; }
+.fac-zone-active { opacity: 1; border-color: var(--kp-fg); background: var(--kp-bg-muted); z-index: 2; }
+.fac-zone-done   { opacity: 1; border-color: var(--kp-border-strong); }
+
+/* Containers: label top-left, transparent so racks show through */
+.fac-zone-roof,
+.fac-zone-hallA,
+.fac-zone-hallB { align-items: flex-start; justify-content: flex-start; padding: 6px 10px; background: transparent; }
+.fac-zone-hallA.fac-zone-active,
+.fac-zone-hallB.fac-zone-active,
+.fac-zone-roof.fac-zone-active { background: var(--kp-hover-bg); z-index: 0; }
+.fac-zone-roof { align-items: center; justify-content: center; }
+
+.fac-zone-riser .fac-zone-label { writing-mode: vertical-rl; }
+.fac-zone-fiber { border-style: dashed; }
+.fac-zone-floor { background: var(--kp-bg-muted); }
+.fac-zone-floor.fac-zone-active { background: var(--kp-press-bg); }
+
+/* Thin zones: trays, aisle, the highlighted rack — label as a callout */
+.fac-zone-thin { padding: 0; background: var(--kp-bg-muted); border-color: var(--kp-border-strong); }
+.fac-zone-thin.fac-zone-active { background: var(--kp-fg); border-color: var(--kp-fg); z-index: 3; }
+.fac-zone-row.fac-zone-thin { background: transparent; border-style: dashed; z-index: 0; }
+.fac-zone-row.fac-zone-active { background: transparent; border-color: var(--kp-fg); border-style: solid; }
+.fac-zone-row .fac-callout { left: auto; right: 0; }
+.fac-callout {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  font-family: var(--kp-font-mono);
+  font-size: var(--kp-text-2xs);
+  letter-spacing: var(--kp-tracking-mono);
+  white-space: nowrap;
+  color: var(--kp-bg);
+  background: var(--kp-fg);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.fac-zone-label {
+  font-size: var(--kp-text-ui);
+  font-weight: var(--kp-weight-semi);
+  color: var(--kp-fg);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.fac-zone-sub {
+  font-family: var(--kp-font-mono);
+  font-size: var(--kp-text-2xs);
+  color: var(--kp-fg-3);
+  letter-spacing: var(--kp-tracking-mono);
+  line-height: 1.25;
+}
+
+.fac-rackicon {
+  position: absolute;
+  border: 1px solid var(--kp-border-strong);
+  border-radius: 1px;
+  background: var(--kp-bg);
+  z-index: 1;
+}
+
+/* Rack elevation panel */
+.fac-rack {
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-md);
+  background: var(--kp-surface);
+  padding: var(--kp-space-4);
+}
+.fac-rack-title {
+  font-family: var(--kp-font-mono);
+  font-size: var(--kp-text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--kp-fg-3);
+  margin-bottom: var(--kp-space-3);
+}
+.fac-rack-body {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) 22px;
+  gap: 6px;
+}
+.fac-rack-pdu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-sm);
+  font-family: var(--kp-font-mono);
+  font-size: var(--kp-text-2xs);
+  color: var(--kp-fg-3);
+  writing-mode: vertical-rl;
+  transition: background var(--kp-dur-base) var(--kp-ease), color var(--kp-dur-base) var(--kp-ease);
+}
+.fac-rack-units { display: flex; flex-direction: column; gap: 3px; }
+.fac-rack-u {
+  display: flex;
+  align-items: baseline;
+  gap: var(--kp-space-2);
+  padding: 6px 8px;
+  border: 1px solid var(--kp-border);
+  border-radius: var(--kp-radius-sm);
+  color: var(--kp-fg-3);
+  font-size: var(--kp-text-xs);
+  line-height: 1.3;
+  transition: background var(--kp-dur-base) var(--kp-ease), border-color var(--kp-dur-base) var(--kp-ease), color var(--kp-dur-base) var(--kp-ease);
+}
+.fac-rack-u-servers { min-height: 140px; }
+.fac-rack-u-blank   { min-height: 36px; }
+.fac-rack-unum {
+  flex-shrink: 0;
+  width: 40px;
+  font-family: var(--kp-font-mono);
+  font-size: var(--kp-text-2xs);
+  color: var(--kp-fg-4);
+}
+.fac-rack-u.fac-rack-on { border-color: var(--kp-fg); background: var(--kp-bg-muted); color: var(--kp-fg); font-weight: var(--kp-weight-semi); }
+.fac-rack-u.fac-rack-on .fac-rack-unum { color: var(--kp-fg-3); }
+.fac-rack-pdu.fac-rack-on { background: var(--kp-fg); border-color: var(--kp-fg); color: var(--kp-bg); }
+
+.fac-table td:first-child { white-space: nowrap; }
+
+@media (max-width: 900px) {
+  .fac-stage { grid-template-columns: minmax(0, 1fr); }
+  .fac-rack-u-servers { min-height: 72px; }
+}
+@media (max-width: 640px) {
+  .fac-cut { min-width: 720px; border-width: var(--kp-space-3); }
+  .fac-table td:first-child { white-space: normal; }
+}

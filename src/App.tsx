@@ -22,6 +22,7 @@ import LgPage from './pages/LgPage'
 import DcPage from './pages/DcPage'
 import FwdPage from './pages/FwdPage'
 import NetToolsPage from './pages/NetToolsPage'
+import DcFacilityPage from './pages/DcFacilityPage'
 
 type Theme = 'light' | 'dark'
 export type Lang = 'en' | 'ko'
@@ -105,7 +106,8 @@ export default function App() {
             <Route path="/snmp" element={<SnmpPage />} />
             <Route path="/backbone" element={<BackbonePage />} />
             <Route path="/lg" element={<LgPage />} />
-            <Route path="/dc" element={<DcPage />} />
+            <Route path="/dc" element={<DcFacilityPage />} />
+            <Route path="/dc-networking" element={<DcPage />} />
             <Route path="/fwd" element={<FwdPage />} />
             <Route path="/nettools" element={<NetToolsPage />} />
           </Routes>
