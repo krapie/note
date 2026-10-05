@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import IndexPage from './pages/IndexPage'
 import TcpPage from './pages/TcpPage'
 import ClosPage from './pages/ClosPage'
@@ -39,6 +39,13 @@ const LangCtx = createContext<{ lang: Lang; toggleLang: () => void }>({
 
 export function useTheme() { return useContext(ThemeCtx) }
 export function useLang() { return useContext(LangCtx) }
+
+// Client-side navigation keeps the previous scroll offset; start every page at the top.
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+  return null
+}
 
 export default function App() {
   const params = new URLSearchParams(window.location.search)
@@ -86,6 +93,7 @@ export default function App() {
     <LangCtx.Provider value={{ lang, toggleLang }}>
       <ThemeCtx.Provider value={{ theme, toggle, embed }}>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<IndexPage />} />
             <Route path="/tcp" element={<TcpPage />} />
