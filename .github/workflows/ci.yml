@@ -18,7 +18,7 @@ jobs:
         persist-credentials: false
     - name: Go build, vet, test
       run: "set -eu\n# go version comes from each go.mod (toolchain download when newer than the runner's Go)\nfor d in ; do\n  echo \"::group::go $d\"\n  (cd \"$d\" && go build ./... && go vet ./... && go test ./...)\n  echo \"::endgroup::\"\ndone\n"
-    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
       with:
         node-version: '22'
     - name: Node install, build, test
