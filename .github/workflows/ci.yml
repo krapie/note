@@ -5,32 +5,14 @@ on:
     branches: [main]
 
 jobs:
-  # gate: generated from krapie/homeserver .github/workflows/app-gate.yml@aca66e03db9d4c1bae65eede076672e045cb7358 (inline: this repository is public)
   gate:
     if: ${{ !contains(github.event.head_commit.message, '[skip gate]') }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    uses: krapie/ci/.github/workflows/app-gate.yml@a8c270175e61bd44b15c552a8e421e5d7549c28a
     permissions:
       contents: read
-    steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      with:
-        persist-credentials: false
-    - name: Go build, vet, test
-      run: "set -eu\n# go version comes from each go.mod (toolchain download when newer than the runner's Go)\nfor d in ; do\n  echo \"::group::go $d\"\n  (cd \"$d\" && go build ./... && go vet ./... && go test ./...)\n  echo \"::endgroup::\"\ndone\n"
-    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
-      with:
-        node-version: '22'
-    - name: Node install, build, test
-      run: "set -eu\nfor d in .; do\n  echo \"::group::node $d\"\n  # the build is the type check (tsc -b / vite / next); the Docker build repeats it, but only after this gate\n  (cd \"$d\" && npm ci --ignore-scripts --no-audit --no-fund && npm run build --if-present && npm test --if-present)\n  echo \"::endgroup::\"\ndone\n"
-    - name: npm audit (warn only)
-      continue-on-error: true
-      run: "for d in .; do\n  (cd \"$d\" && npm audit --omit=dev --audit-level=high) || echo \"::warning::npm audit reported findings in $d\"\ndone\n"
-    - name: Trivy filesystem scan (warn only)
-      continue-on-error: true
-      run: 'docker run --rm -v "$PWD:/src:ro" aquasec/trivy:0.67.2 fs --scanners vuln,secret --severity CRITICAL,HIGH --exit-code 0 --no-progress /src || echo "::warning::trivy could not run"
-
-        '
+    with:
+      go-dirs: ""
+      node-dirs: "."
   build-and-deploy:
     needs: gate
     if: ${{ !cancelled() && (needs.gate.result == 'success' || needs.gate.result == 'skipped') }}
